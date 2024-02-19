@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "prueba": {
+    "mf-tipo-inscripcion": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -12,14 +12,17 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "udistrital",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/prueba",
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ],
+            "outputPath": "dist/mf-tipo-inscripcion",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.single-spa.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -32,7 +35,13 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "extra-webpack.config.js",
+              "libraryName": "mf-tipo-inscripcion",
+              "libraryTarget": "umd"
+            },
+            "deployUrl": "http://localhost:4210/"
           },
           "configurations": {
             "production": {
@@ -48,24 +57,28 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
+              "buildOptimizer": false,
               "optimization": false,
+              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "namedChunks": true,
+              "outputHashing": "none"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "prueba:build:production"
+              "browserTarget": "mf-tipo-inscripcion:build:production"
             },
             "development": {
-              "buildTarget": "prueba:build:development"
+              "browserTarget": "mf-tipo-inscripcion:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -73,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "prueba:build"
+            "browserTarget": "mf-tipo-inscripcion:build"
           }
         },
         "test": {
@@ -97,5 +110,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "f899b9fb-1f46-4627-b3a8-74e990d66783"
   }
 }
