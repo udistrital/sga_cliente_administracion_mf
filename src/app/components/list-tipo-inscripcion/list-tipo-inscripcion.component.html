@@ -13,8 +13,8 @@
                         <mat-table [dataSource]="source">
                             <!-- Columna ID -->
                             <ng-container matColumnDef="Id">
-                              <mat-header-cell *matHeaderCellDef>{{ 'GLOBAL.id' | translate }}</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.Id }}</mat-cell>
+                              <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+                              <mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</mat-cell>
                             </ng-container>
 
                             <!-- Columna Nombre -->
@@ -31,20 +31,20 @@
 
                             <!-- Columna NivelId -->
                             <ng-container matColumnDef="NivelId">
-                                <mat-header-cell *matHeaderCellDef>{{ 'tipo_inscripcion.nivel' | translate }}</mat-header-cell>
-                                <mat-cell *matCellDef="let row">{{ row.NivelId }}</mat-cell>
+                              <mat-header-cell *matHeaderCellDef>{{ 'GLOBAL.nivel' | translate }}</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.NivelId == 1 ? ('GLOBAL.pregrado' | translate) : ('GLOBAL.posgrado' | translate) }}</mat-cell>
                             </ng-container>
 
                             <!-- Columna Especial -->
                             <ng-container matColumnDef="Especial">
                                 <mat-header-cell *matHeaderCellDef>{{ 'tipo_inscripcion.cupo_especial' | translate }}</mat-header-cell>
-                                <mat-cell *matCellDef="let row">{{ row.Especial }}</mat-cell>
+                                <mat-cell *matCellDef="let row">{{ row.Especial ? ('GLOBAL.activo' | translate) : ('GLOBAL.inactivo' | translate) }}</mat-cell>
                             </ng-container>
 
                             <!-- Columna Activo -->
                             <ng-container matColumnDef="Activo">
                                 <mat-header-cell *matHeaderCellDef>{{ 'tipo_inscripcion.estado' | translate }}</mat-header-cell>
-                                <mat-cell *matCellDef="let row">{{ row.Activo }}</mat-cell>
+                                <mat-cell *matCellDef="let row">{{ row.Activo ? ('GLOBAL.activo' | translate) : ('GLOBAL.inactivo' | translate) }}</mat-cell>
                             </ng-container>
                             
                             <!-- Columna de acciones -->
