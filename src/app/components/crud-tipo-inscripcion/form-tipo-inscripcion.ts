@@ -58,7 +58,7 @@ export let FORM_TIPO_INSCRIPCION = {
       {
           etiqueta: 'select',
           claseGrid: 'col-6',
-          nombre: 'Nivel',
+          nombre: 'NivelId',
           label_i18n: 'nivel',
           placeholder_i18n: 'nivel',
           requerido: true,
