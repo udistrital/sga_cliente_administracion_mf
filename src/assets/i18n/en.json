@@ -18,7 +18,9 @@
     "tooltip_crear": "Create new registration type",
     "tooltip_editar": "Edit registration type",
     "tooltip_cancelar": "Cancel",
-    "tooltip_guargar": "Save"
+    "tooltip_guargar": "Save",
+    "mostrar": "Show inactive records",
+    "ocultar": "Hide inactive record"
 },
 "GLOBAL": {
   "admitir": "Admit",

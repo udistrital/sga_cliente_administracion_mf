@@ -18,7 +18,9 @@
     "tooltip_crear": "Crear tipo de inscripción",
     "tooltip_editar": "Editar tipo de inscripción",
     "tooltip_cancelar": "Cancelar",
-    "tooltip_guargar": "Guardar"
+    "tooltip_guargar": "Guardar",
+    "mostrar": "Mostrar registros inactivos",
+    "ocultar": "Ocultar registros inactivos"
 },
 "GLOBAL": {
   "rol": "Rol",
