@@ -11,7 +11,7 @@ Cliente para la gestión de administracion, parte del Sistema de Gestión Acadé
 - [Angular Material](https://material.angular.io/) 16.2.13
 - [Angular CDK](https://material.angular.io/cdk/categories) 16.2.13
 - [NgRx Store](https://ngrx.io/docs) 16.3.0
-- [ngx-translate](http://www.ngx-translate.com/) 15.0.0
+- [ngx-translate](https://github.com/ngx-translate/core) 15.0.0
   - Incluye ngx-translate Http Loader
 - [Eva Icons](https://akveo.github.io/eva-icons/#/) 1.1.3
 - [Moment.js](https://momentjs.com/docs/) 2.30.1
