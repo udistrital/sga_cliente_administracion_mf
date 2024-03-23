@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,8 @@ import { Output, EventEmitter } from '@angular/core';
 import { InscripcionService } from '../../services/inscripcion.service';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 import { PopUpManager } from '../../managers/popUpManager';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -19,10 +21,16 @@ export class ListTipoInscripcionComponent implements OnInit {
 
   uid: number = 0;
   cambiotab: boolean = false;
-  loading: boolean = false;
 
   //source: LocalDataSource = new LocalDataSource();
-  source: MatTableDataSource<any> = new MatTableDataSource<any>
+  source: MatTableDataSource<any> = new MatTableDataSource<any>;
+  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+
+  showInactives: boolean = true;
+
+  datos: any[] = []
+
   displayedColumns = ['Id', 'Nombre', 'Descripcion', 'NivelId', 'Especial', 'Activo', 'Acciones'];
 
 
@@ -48,15 +56,25 @@ export class ListTipoInscripcionComponent implements OnInit {
       if (res !== null) {
         const data = <Array<any>><unknown>res;
         //this.source.load(data);
-        this.source = new MatTableDataSource(data);
-        
-        this.loading = false;
+        this.datos = data
+        this.cargarDatosTabla(data);
       }
     });
   }
 
+  cargarDatosTabla(datosCargados: any[]): void {
+    let datos = this.showInactives ? datosCargados : datosCargados.filter(d => d.Activo == true);
+    this.source = new MatTableDataSource(datos);
+    this.source.paginator = this.paginator;
+    this.source.sort = this.sort;
+  }
+
+  hideInactive() {
+    this.showInactives = !this.showInactives;
+    this.cargarDatosTabla(this.datos);
+  }
+
   ngOnInit() {
-    this.loading = true;
   }
 
 
