@@ -21,7 +21,6 @@ export class ListTipoInscripcionComponent implements OnInit {
 
   uid: number = 0;
   cambiotab: boolean = false;
-  loading: boolean = false;
 
   //source: LocalDataSource = new LocalDataSource();
   source: MatTableDataSource<any> = new MatTableDataSource<any>;
@@ -76,7 +75,6 @@ export class ListTipoInscripcionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loading = true;
   }
 
 
