@@ -10,7 +10,7 @@
                     <mat-tab label="{{ 'GLOBAL.lista' | translate }}" *ngIf="!cambiotab">
                         <br />
                         
-                        <mat-table [dataSource]="source">
+                        <mat-table [dataSource]="source" class="table">
                             <!-- Columna ID -->
                             <ng-container matColumnDef="Id">
                               <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
@@ -50,7 +50,7 @@
                             <!-- Columna de acciones -->
                             <ng-container matColumnDef="Acciones">
                               <mat-header-cell *matHeaderCellDef>
-                                Acciones
+                                {{ 'GLOBAL.acciones' | translate }}
                                 <button mat-icon-button (click)="onCreate()">
                                   <mat-icon>add_outline</mat-icon>
                                 </button>
