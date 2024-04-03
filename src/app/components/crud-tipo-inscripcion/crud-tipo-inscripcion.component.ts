@@ -6,8 +6,8 @@ import { ProyectoAcademicoService } from '../../services/proyecto_academico.serv
 import { NivelFormacion } from '../../models/proyecto_academico/nivel_formacion';
 import { TipoInscripcion } from '../../models/inscripcion/tipo_inscripcion';
 import { FORM_TIPO_INSCRIPCION } from './form-tipo-inscripcion';
-import Swal from 'sweetalert2';
-import { Store } from '@ngrx/store';
+// @ts-ignore
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 
 @Component({
@@ -117,8 +117,6 @@ export class CrudTipoInscripcionComponent implements OnInit{
       title: this.translate.instant('GLOBAL.actualizar'),
       text: this.translate.instant('tipo_inscripcion.seguro_actualizar_tipo_inscripcion'),
       icon: 'warning',
-      buttons: true,
-      dangerMode: true,
       showCancelButton: true,
     };
     Swal.fire(opt)
@@ -147,8 +145,6 @@ export class CrudTipoInscripcionComponent implements OnInit{
       title: this.translate.instant('GLOBAL.registrar'),
       text: this.translate.instant('tipo_inscripcion.seguro_continuar_registrar_tipo_inscripcion'),
       icon: 'warning',
-      buttons: true,
-      dangerMode: true,
       showCancelButton: true,
     };
     Swal.fire(opt)
