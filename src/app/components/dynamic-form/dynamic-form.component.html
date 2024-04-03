@@ -921,12 +921,16 @@
               *ngSwitchCase="'button'"
               class="row {{ c.ocultar ? 'no-mostrar' : '' }}"
             >
-              <div class="{{ c.claseGrid }}">
-                <button mat-button id="{{ c.id }}" (click)="auxButton(c)">
-                  <i class="{{ c.icono }}"></i>
-                  {{ c.label }}
-                </button>
-              </div>
+            <h1>BYUena mi papa</h1>"
+              <button
+                mat-flat-button
+                color="accent"
+                id="{{ c.id }}"
+                (click)="auxButton(c)"
+              >
+                <i class="{{ c.icono }}"></i>
+                {{ c.label }}
+              </button>
             </div>
 
             <!--label-->
@@ -944,15 +948,16 @@
           *ngIf="normalform.btnLimpiar || normalform.btn"
         >
           <button
-            class="btn btn-primary btn-sm"
+            mat-flat-button
+            color="warn"
             (click)="clearForm()"
             [hidden]="!normalform.btnLimpiar"
           >
             {{ normalform.btnLimpiar }}
           </button>
           <button
-            mat-button
-            class="btn boton-primary"
+            mat-flat-button
+            color="accent"
             (click)="validForm()"
             [hidden]="!normalform.btn"
           >

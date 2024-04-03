@@ -8,8 +8,8 @@
     <mat-card-content>
       <mat-card-content>
         <mat-tab-group fullWidth (changeTab)="selectTab($event)">
+          <div class="table">
           <mat-tab label="{{ 'GLOBAL.lista' | translate }}" *ngIf="!cambiotab">
-            <div class="table">
               <mat-table [dataSource]="source">
                 <!-- Columna ID -->
                 <ng-container matColumnDef="Id">
@@ -79,7 +79,7 @@
                     <button
                       mat-flat-button
                       color="accent"
-                      style="width: 6rem"
+                      style="width: 6rem; min-width: 6rem;"
                       (click)="onCreate()"
                     >
                       <mat-icon>add_outline</mat-icon>
@@ -87,7 +87,7 @@
                     </button>
                   </mat-header-cell>
                   <mat-cell *matCellDef="let row">
-                    <div style="width: 6rem">
+                    <div style="width: 6rem; min-width: 6rem;">
                       <button mat-mini-fab color="accent" (click)="onEdit(row)">
                         <mat-icon>edit_outline</mat-icon>
                       </button>
@@ -110,8 +110,8 @@
                   *matRowDef="let row; columns: displayedColumns"
                 ></mat-row>
               </mat-table>
-            </div>
-          </mat-tab>
+            </mat-tab>
+          </div>
           <mat-tab
             label="{{ 'GLOBAL.formulario' | translate }}"
             *ngIf="cambiotab"
