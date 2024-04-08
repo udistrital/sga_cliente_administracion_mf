@@ -26,7 +26,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion/crud-tipo-inscripcion.component';
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -37,6 +37,7 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
 import { AnyService } from './services/any.service';
 import { InscripcionService } from './services/inscripcion.service';
 import { ProyectoAcademicoService } from './services/proyecto_academico.service';
+import { SpinnerUtilInterceptor, SpinnerUtilModule } from 'spinner-util';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -82,14 +83,16 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     HttpClientModule,
-    StoreModule.forRoot({}, {})
+    StoreModule.forRoot({}, {}),
+    SpinnerUtilModule
   ],
   providers: [
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
     AnyService,
     InscripcionService,
-    ProyectoAcademicoService
+    ProyectoAcademicoService,
+    { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
