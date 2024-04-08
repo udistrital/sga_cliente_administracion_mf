@@ -14,7 +14,7 @@ import { MatSortModule } from '@angular/material/sort'
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -73,6 +73,7 @@ export function createTranslateLoader(http: HttpClient) {
     MatSelectModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    MatSortModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
