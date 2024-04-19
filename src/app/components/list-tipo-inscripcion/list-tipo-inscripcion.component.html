@@ -9,12 +9,17 @@
                 <mat-tab-group fullWidth (changeTab)="selectTab($event)">
                     <mat-tab label="{{ 'GLOBAL.lista' | translate }}" *ngIf="!cambiotab">
                         <br />
-                        
-                        <mat-table [dataSource]="source" class="table">
+            <div class="panel-ocultar">
+                          <button mat-icon-button (click)="hideInactive()">
+                            <mat-icon>{{ showInactives ? 'visibility_off' : 'visibility' }}</mat-icon>
+                          </button>
+                          {{ (showInactives ? 'tipo_inscripcion.ocultar' : 'tipo_inscripcion.mostrar') | translate }}
+                        </div>
+                        <mat-table [dataSource]="source" class="table" matSort>
                             <!-- Columna ID -->
                             <ng-container matColumnDef="Id">
-                              <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
-                              <mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</mat-cell>
+                              <mat-header-cell *matHeaderCellDef>{{ 'GLOBAL.id' | translate }}</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.Id }}</mat-cell>
                             </ng-container>
 
                             <!-- Columna Nombre -->
@@ -68,6 +73,10 @@
                             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                             <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row> 
                           </mat-table>
+                          <mat-paginator
+                            [pageSize]="5"
+                            [pageSizeOptions]="[]"
+                            showFirstLastButtons></mat-paginator>
                     </mat-tab>
                     <mat-tab label="{{ 'GLOBAL.formulario' | translate }}" *ngIf="cambiotab">
                         <udistrital-crud-tipo-inscripcion [tipo_periodo_id]="uid" (eventChange)="onChange($event)"></udistrital-crud-tipo-inscripcion>
