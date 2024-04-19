@@ -9,13 +9,13 @@
                 <mat-tab-group fullWidth (changeTab)="selectTab($event)">
                     <mat-tab label="{{ 'GLOBAL.lista' | translate }}" *ngIf="!cambiotab">
                         <br />
-                        <div class="panel-ocultar">
+            <div class="panel-ocultar">
                           <button mat-icon-button (click)="hideInactive()">
                             <mat-icon>{{ showInactives ? 'visibility_off' : 'visibility' }}</mat-icon>
                           </button>
                           {{ (showInactives ? 'tipo_inscripcion.ocultar' : 'tipo_inscripcion.mostrar') | translate }}
                         </div>
-                        <mat-table [dataSource]="source" matSort>
+                        <mat-table [dataSource]="source" class="table" matSort>
                             <!-- Columna ID -->
                             <ng-container matColumnDef="Id">
                               <mat-header-cell *matHeaderCellDef>{{ 'GLOBAL.id' | translate }}</mat-header-cell>
@@ -55,7 +55,7 @@
                             <!-- Columna de acciones -->
                             <ng-container matColumnDef="Acciones">
                               <mat-header-cell *matHeaderCellDef>
-                                Acciones
+                                {{ 'GLOBAL.acciones' | translate }}
                                 <button mat-icon-button (click)="onCreate()">
                                   <mat-icon>add_outline</mat-icon>
                                 </button>
