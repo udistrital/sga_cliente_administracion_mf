@@ -20,7 +20,7 @@
             "allowedCommonJsDependencies": [
               "lodash"
            ],
-            "outputPath": "dist/mf-tipo-inscripcion",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.single-spa.ts",
             "polyfills": [
@@ -40,36 +40,46 @@
               "path": "extra-webpack.config.js",
               "libraryName": "mf-tipo-inscripcion",
               "libraryTarget": "umd"
-            },
-            "deployUrl": "http://localhost:4210/"
+            }
           },
           "configurations": {
             "production": {
-              "budgets": [
+              "optimization":true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "buildOptimizer": true,
+              "fileReplacements": [
                 {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.production.ts"
                 }
               ],
-              "outputHashing": "none"
+              "deployUrl": "https://sgaadministracion.portaloas.udistrital.edu.co/"
             },
             "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "outputHashing": "none"
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ],
+              "deployUrl": "https://pruebassgaadministracion.portaloas.udistrital.edu.co/"
+            },
+            "local": {
+              "deployUrl": "http://localhost:4211/"
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "local"
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
@@ -79,9 +89,12 @@
             },
             "development": {
               "browserTarget": "mf-tipo-inscripcion:build:development"
+            },
+            "local": {
+              "browserTarget": "mf-tipo-inscripcion:build:local"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "local"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
