@@ -170,7 +170,7 @@ export class ListTipoInscripcionComponent implements OnInit {
   }
 
   itemselec(event: any): void {
-    // console.log("afssaf");
+    return
   }
 
 }
