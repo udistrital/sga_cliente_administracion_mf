@@ -6,7 +6,7 @@
 
 export const environment = {
   production: true,
-  apiUrl: "http://sgaadministracion.portaloas.udistrital.edu.co/",
+  apiUrl: "https://sgaadministracion.portaloas.udistrital.edu.co/",
   INSCRIPCION_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/inscripcion_crud/v2/',
   PROYECTO_ACADEMICO_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/proyecto_academico_crud/v1/',
 };
