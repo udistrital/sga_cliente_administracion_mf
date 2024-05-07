@@ -9,4 +9,9 @@ export const environment = {
   apiUrl: "https://sgaadministracion.portaloas.udistrital.edu.co/",
   INSCRIPCION_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/inscripcion_crud/v2/',
   PROYECTO_ACADEMICO_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/proyecto_academico_crud/v1/',
+  SGA_ADMISIONES_MID: 'http://pruebasapi3.intranetoas.udistrital.edu.co:8547/v1/',
+  EVALUACION_INSCRIPCION_SERVICE: 'http://pruebasapi2.intranetoas.udistrital.edu.co:8118/v1/',
+  PARAMETROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/parametros/v1/',
+  SGA_DERECHO_PECUNARIO_MID: 'http://pruebasapi3.intranetoas.udistrital.edu.co:8544/v1/',
+  CALENDARIO_MID_SERVICE: 'http://pruebasapi2.intranetoas.udistrital.edu.co:8545/v1/',
 };
