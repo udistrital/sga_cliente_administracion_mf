@@ -1,4 +1,67 @@
 {
+
+  "soporte": {
+    "titulo": "Soporte de configuracion del sistema para convocatorias",
+    "nota": "Nota",
+    "aviso":" A continuación usted podra generar el comprobante de configuracion del sistema para una convocatoria especifica, para ello debera seleccionar las variables iniciales requeridas.",
+    "sub_titulo": "Tipo de Inscripción",
+    "nivel": "Nivel",
+    "historicos": "Historicos",
+    "orden": "Orden",
+    "convocatoria": "Convocatoria",
+    "generacion": "Generación",
+    "usuario": "Usuario",
+    "nodata": "No se encontraron historicos registrados",
+    "continuar": "Continuar",
+    "variables": "Variables",
+    "periodo": "Periodo a consultar:",
+    "nivel_aviso": "Nivel a consultar:",
+    "seleccionar":"Seleccionar",
+    "resumen": "Resumen Informacion",
+    "nombre_periodo": "Nombre del periodo", 
+    "fecha_global": "Fecha global",
+    "semanas": "Semanas",
+    "proceso": "Proceso",
+    "actividad": "Actividad",
+    "descripcion": "Descripción",
+    "activo": "Activo",
+    "inactivo": "Inactivo",
+    "derecho_pecuniario": "Derecho pecuniario",
+    "codigo": "Código",
+    "nombre": "Nombre",
+    "factor": "Factor",
+    "costo": "Costo",
+    "no-pecuniarios": "No  se encontro data de Pecuniarios",
+    "tipo_cuenta": "Tipo de cuenta",
+    "no_cuenta_pecuniarios": "No  se encontro data de  cuentas Pecuniarios",
+    "proyecto_curricular": "Proyectos Curriculares",
+    "calendario": "Calendario",
+    "facultad": "Facultad",
+    "modalidad": "Modalidad",
+    "criteriosSubcritrios": "Criterios y Subcriterios",
+    "criterio": "Criterio",
+    "subcriterio": "Subcriterio",
+    "codigo_abreviacion": "Código abreviación"
+
+
+
+},
+
+
+"inscripcion": {
+  "info_basica": "Información básica",
+  "formacion_academica": "Formación académica",
+  "idiomas": "Idiomas",
+  "experiencia_laboral": "Experiencia laboral",
+  "produccion_academica": "Producción académica",
+  "documento_programa": "Documentos solicitados",
+  "descuento_matricula": "Descuentos de matrícula",
+  "propuesta_grado": "Propuesta de trabajo de grado",
+  "perfil": "Detalle de inscripción"
+
+},
+  
+
   "tipo_inscripcion": {
     "titulo": "Tipos de Inscripción",
     "sub_titulo": "Tipo de Inscripción",

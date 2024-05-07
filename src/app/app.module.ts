@@ -38,6 +38,13 @@ import { AnyService } from './services/any.service';
 import { InscripcionService } from './services/inscripcion.service';
 import { ProyectoAcademicoService } from './services/proyecto_academico.service';
 import { SpinnerUtilInterceptor, SpinnerUtilModule } from 'spinner-util';
+import { SoporteConfiguracionComponent } from './components/soporte-configuracion/soporte-configuracion/soporte-configuracion.component';
+import { ResumenConfiguracionComponent } from './components/soporte-configuracion/resumen-configuracion/resumen-configuracion.component';
+import { EvaluacionInscripcionService } from './services/evaluacion_inscripcion.service';
+import { ParametrosService } from './services/parametros.service';
+import { SgaAdmisionesMid } from './services/sga_admisiones_mid.service';
+import { SgaCalendarioMidServiceService } from './services/sga-calendario-mid.service.service';
+import { SgaDerechoPecuniarioMidService } from './services/sga-derecho-pecuniario-mid.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -46,9 +53,12 @@ export function createTranslateLoader(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    DynamicFormComponent,
     CrudTipoInscripcionComponent,
     ListTipoInscripcionComponent,
-    DynamicFormComponent
+    SoporteConfiguracionComponent,
+    ResumenConfiguracionComponent,
+
   ],
   imports: [
     MatTabsModule,
@@ -92,6 +102,12 @@ export function createTranslateLoader(http: HttpClient) {
     AnyService,
     InscripcionService,
     ProyectoAcademicoService,
+    EvaluacionInscripcionService,
+    ParametrosService,
+    ProyectoAcademicoService,
+    SgaAdmisionesMid,
+    SgaCalendarioMidServiceService,
+    SgaDerechoPecuniarioMidService,
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
