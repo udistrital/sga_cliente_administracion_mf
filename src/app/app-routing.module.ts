@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: "lista", component: ListTipoInscripcionComponent },
   { path: "crear", component:  CrudTipoInscripcionComponent},
   { path: "soporte", component: SoporteConfiguracionComponent },
-  { path: "lista", component: AppComponent }
+  { path: "lista", component: AppComponent },
 
 ];
 
