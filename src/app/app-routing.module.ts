@@ -11,12 +11,10 @@ import { ResumenConfiguracionComponent } from './components/soporte-configuracio
 
 
 const routes: Routes = [
-
   { path: "lista", component: ListTipoInscripcionComponent },
   { path: "crear", component:  CrudTipoInscripcionComponent},
   { path: "soporte", component: SoporteConfiguracionComponent },
   { path: "lista", component: AppComponent },
-
 ];
 
 
