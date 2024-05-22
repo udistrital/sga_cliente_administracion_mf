@@ -17,7 +17,6 @@ import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -45,6 +44,8 @@ import { ParametrosService } from './services/parametros.service';
 import { SgaAdmisionesMid } from './services/sga_admisiones_mid.service';
 import { SgaCalendarioMidServiceService } from './services/sga-calendario-mid.service.service';
 import { SgaDerechoPecuniarioMidService } from './services/sga-derecho-pecuniario-mid.service';
+import { VisualizarSoporteDocumento } from './components/soporte-configuracion/visualizar-soporte/visualizar-soporte.component';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -58,6 +59,7 @@ export function createTranslateLoader(http: HttpClient) {
     ListTipoInscripcionComponent,
     SoporteConfiguracionComponent,
     ResumenConfiguracionComponent,
+    VisualizarSoporteDocumento
 
   ],
   imports: [
@@ -85,6 +87,7 @@ export function createTranslateLoader(http: HttpClient) {
     BrowserAnimationsModule,
     AppRoutingModule,
     MatSortModule,
+    NgxDocViewerModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
