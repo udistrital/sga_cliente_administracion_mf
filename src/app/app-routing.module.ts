@@ -8,13 +8,14 @@ import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
 import { SoporteConfiguracionComponent } from './components/soporte-configuracion/soporte-configuracion/soporte-configuracion.component';
 import { ResumenConfiguracionComponent } from './components/soporte-configuracion/resumen-configuracion/resumen-configuracion.component';
-
+import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
 
 const routes: Routes = [
   { path: "lista", component: ListTipoInscripcionComponent },
   { path: "crear", component:  CrudTipoInscripcionComponent},
   { path: "soporte", component: SoporteConfiguracionComponent },
   { path: "lista", component: AppComponent },
+  { path: "correo-udnet", component: CorreoUdnetComponent },
 ];
 
 
