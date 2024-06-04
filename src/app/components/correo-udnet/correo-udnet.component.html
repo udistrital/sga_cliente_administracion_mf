@@ -1,3 +1,5 @@
+
+<!--
 <mat-card>
   <mat-card-header class="justify-centred">
     <mat-card-title>{{
@@ -112,3 +114,51 @@
     </div>
   </mat-card-actions>
 </mat-card>
+-->
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Proceso admisión</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+      <th>Gestion</th>
+      <th>Enviar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Trámite en curso</td>
+      <td>20/05/2021</td>
+      <td>En Edición</td>
+      <td>
+        <button mat-mini-fab color="accent">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </td>
+      <td>
+        <button mat-mini-fab color="accent" disabled>
+          <mat-icon>send</mat-icon>
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Admitido</td>
+      <td>21/05/2021</td>
+      <td>Aprobado</td>
+      <td>
+        <button mat-mini-fab color="accent">
+          <mat-icon>search</mat-icon>
+        </button>
+      </td>
+      <td>
+        <button mat-mini-fab color="accent" disabled>
+          <mat-icon>send</mat-icon>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+</table>

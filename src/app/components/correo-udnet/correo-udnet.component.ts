@@ -1,11 +1,12 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { SolicitudesCorreos, ListadoCorreos } from 'src/app/models/correos_administrativos/solicitudes_correos';
-import { SolicitudesCorreosService } from 'src/app/services/solicitudes_correos.service';
-import { PopUpManager } from 'src/app/managers/popUpManager';
+import { SolicitudesCorreos  } from '../../models/correos_administrativos/solicitudes_correos';
+import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
+import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'udistrital-correo-udnet',
