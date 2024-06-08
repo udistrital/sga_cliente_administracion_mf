@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { SolicitudesCorreos  } from '../../models/correos_administrativos/solicitudes_correos';
+import { SolicitudesCorreos } from '../../models/correos_administrativos/solicitudes_correos';
 import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,27 +7,30 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'udistrital-correo-udnet',
   templateUrl: './correo-udnet.component.html',
   styleUrls: ['./correo-udnet.component.scss']
 })
 export class CorreoUdnetComponent implements OnInit {
-  displayedColumns: string[] = ['#', 'procesoAdminicion', 'fecha', 'estado', 'gestion', 'enviar'];
+  displayedColumns: string[] = ['#','procesoAdminicion','fecha','estado'];
+  displayedColumns2: string[] = ['facultad','codigo','numeroDocumento','primerNombre','segundoNombre','primerApellido','segundoApellido','correoPersonal','telefono','usuarioAsignado','correoAsignado'];
   solicitudes: SolicitudesCorreos[] = [];
+  solicitudesTabla2: SolicitudesCorreos[] = [];
   dataSource!: MatTableDataSource<SolicitudesCorreos>;
+  dataSource2!: MatTableDataSource<SolicitudesCorreos>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('paginator2') paginator2!: MatPaginator;
 
   constructor(
     private translate: TranslateService,
     private solicitudesCorreosService: SolicitudesCorreosService,
-    private popUpManager: PopUpManager,
-    private router: Router
+    private popUpManager: PopUpManager
   ) { }
 
   async ngOnInit() {
     await this.cargarDatosTabla();
+    await this.cargarDatosTabla2();
   }
 
   async cargarDatosTabla() {
@@ -39,6 +42,17 @@ export class CorreoUdnetComponent implements OnInit {
 
     this.dataSource = new MatTableDataSource<SolicitudesCorreos>(this.solicitudes);
     this.dataSource.paginator = this.paginator;
+  }
+
+  async cargarDatosTabla2() {
+    try {
+      await this.cargarSolicitudesCorreosTabla2();
+    } catch (error: unknown) {
+      this.popUpManager.showErrorToast("ERROR GENERAL" + error);
+    }
+
+    this.dataSource2 = new MatTableDataSource<SolicitudesCorreos>(this.solicitudesTabla2);
+    this.dataSource2.paginator = this.paginator2;
   }
 
   async cargarSolicitudesCorreos() {
@@ -55,20 +69,18 @@ export class CorreoUdnetComponent implements OnInit {
     });
   }
 
-  ajustarBotonesSegunEstado(solicitud: any) {
-    const estado = solicitud.estado;
-    if (estado) {
-      let accion, tipo;
-      if (estado === 'Aprobado') {
-        accion = 'VER';
-        tipo = 'ver';
-      } else {
-        accion = 'EDITAR';
-        tipo = 'editar';
-      }
-      solicitud['gestion'] = { value: accion, type: tipo, disabled: false };
-      solicitud['enviar'] = { value: undefined, type: 'enviar', disabled: true };
-    }
+  async cargarSolicitudesCorreosTabla2() {
+    return new Promise((resolve, reject) => {
+      this.solicitudesCorreosService.get('solicitudes-correos?query=activo:true&limit=0').subscribe(
+        (response: any) => {
+          this.solicitudesTabla2 = response["Data"];
+          resolve(true);
+        },
+        (error: unknown) => {
+          reject(error);
+        }
+      );
+    });
   }
 
   aplicarFiltro(event: Event) {
@@ -80,31 +92,18 @@ export class CorreoUdnetComponent implements OnInit {
     }
   }
 
-  enviaraRevision(id: string) {
-    const solicitud: any = this.solicitudes.filter((solicitud: any) => solicitud._id === id);
-    let solicitud_edit = solicitud[0];
+  aplicarFiltro2(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource2.filter = filterValue.trim().toLowerCase();
 
-    solicitud_edit.estado = 'En Revisión';
-    this.solicitudesCorreosService.put('solicitudes-correos/' + id, solicitud_edit).subscribe(
-      (resp: any) => {
-        if (resp.Status == "200") {
-          this.popUpManager.showSuccessAlert(this.translate.instant('solicitudes_correos.enviar_revision_ok'));
-          this.recargarSolicitudesCorreos();
-        } else {
-          this.popUpManager.showErrorAlert(this.translate.instant('solicitudes_correos.enviar_revision_fallo'));
-        }
-      },
-      (err: unknown) => {
-        this.popUpManager.showErrorAlert(this.translate.instant('solicitudes_correos.enviar_revision_fallo'));
-      }
-    );
-  }
-
-  async recargarSolicitudesCorreos() {
-    try {
-      await this.cargarDatosTabla();
-    } catch (error: unknown) {
-      this.popUpManager.showErrorToast(this.translate.instant('ERROR.sin_informacion_en') + ': <b>' + this.translate.instant('solicitudes_correos.solicitudes_correos') + '</b>.');
+    if (this.dataSource2.paginator) {
+      this.dataSource2.paginator.firstPage();
     }
   }
+
+  mostrarTabla(tablaId: string) {
+    document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
+    document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
+  }
 }
+
