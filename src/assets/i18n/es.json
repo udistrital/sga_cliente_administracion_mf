@@ -91,7 +91,10 @@
   "resultados_solicitudes":"Respuesta",
   "proceso_adminicion" :"Admisión",
   "gestion":"Gestion",
-  "nueva_solicitud":"Nueva Solicitud"
+  "nueva_solicitud":"Nueva Solicitud",
+  "descargar_listado":"Descargar Listado",
+  "cargar_listado":"Cargar Listado",
+  "confirmar_gestion":"Confirmar Gestion"
 },
 "GLOBAL": {
   "rol": "Rol",
