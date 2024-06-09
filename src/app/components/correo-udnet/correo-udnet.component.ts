@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./correo-udnet.component.scss']
 })
 export class CorreoUdnetComponent implements OnInit {
-  displayedColumns: string[] = ['#','procesoAdminicion','fecha','estado'];
+  displayedColumns: string[] = ['#','procesoAdminicion','fecha','estado', 'gestion'];
   displayedColumns2: string[] = ['facultad','codigo','numeroDocumento','primerNombre','segundoNombre','primerApellido','segundoApellido','correoPersonal','telefono','usuarioAsignado','correoAsignado'];
   solicitudes: SolicitudesCorreos[] = [];
   solicitudesTabla2: SolicitudesCorreos[] = [];

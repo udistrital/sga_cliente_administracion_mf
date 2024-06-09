@@ -106,9 +106,36 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
       </table>
       <mat-paginator #paginator2 [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      
+      <button mat-fab class="float-button" (click)="mostrarTabla('tabla1')">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
     </div>
     <mat-paginator class="paginacion" [pageSize]="10"> </mat-paginator>
   </mat-card-content>
+  
+  <div class="observaciones" style="margin: 20px 0; border: 1px solid black; padding: 10px;">
+    <h3>{{ "GLOBAL.observaciones" | translate }}</h3>
+    <textarea rows="4" style="width: 100%; border: 1px solid black;"></textarea>
+  </div>
+
+  <mat-card-actions>
+    <div class="container-bottons">
+      <button
+        mat-flat-button
+        color="warn"
+        (click)="cargarSolicitudesCorreos()"
+      >
+        {{ "solicitudes_correos.descargar_listado" | translate }}
+      </button>
+      <button mat-flat-button color="accent" routerLink="/formulario/crear/0">
+        {{ "solicitudes_correos.cargar_listado" | translate }}
+      </button>
+      <button mat-flat-button color="primary" (click)="cargarSolicitudesCorreos()">
+        {{ "solicitudes_correos.confirmar_gestion" | translate }}
+      </button>
+    </div>
+  </mat-card-actions>
 </mat-card>
 
 <!--
