@@ -94,7 +94,8 @@
   "nueva_solicitud":"Nueva Solicitud",
   "descargar_listado":"Descargar Listado",
   "cargar_listado":"Cargar Listado",
-  "confirmar_gestion":"Confirmar Gestion"
+  "confirmar_gestion":"Confirmar Gestion",
+  "listado":"Listado de correos"
 },
 "GLOBAL": {
   "rol": "Rol",

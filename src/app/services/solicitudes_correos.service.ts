@@ -3,7 +3,6 @@ import { RequestManager } from '../managers/requestManager';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
-
 @Injectable()
 export class SolicitudesCorreosService {
 
@@ -34,13 +33,9 @@ export class SolicitudesCorreosService {
     cargarDatos(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
-        return this.http.post('/api/upload-csv', formData).pipe(
-            map(response => {
-                return response;
-            })
-        );
+        return this.http.post('/api/upload-csv', formData);
     }
-    
+
     descargarDatos(): Observable<Blob> {
         return this.http.get('/api/download-csv', { responseType: 'blob' }).pipe(
             map(response => {
@@ -48,5 +43,5 @@ export class SolicitudesCorreosService {
             })
         );
     }
-}
 
+}

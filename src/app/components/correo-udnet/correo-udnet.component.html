@@ -1,17 +1,16 @@
 <mat-card>
-  <mat-card-header class="justify-center">
+  <mat-card-header class="justify-center" *ngIf="mostrarTabla1">
     <mat-card-title>{{ "solicitudes_correos.consulta_solicitudes" | translate }}</mat-card-title>
     <mat-card-subtitle>{{ "solicitudes_correos.resultados_solicitudes" | translate }}</mat-card-subtitle>
   </mat-card-header>
 
-  <mat-card-content>
-    <div class="responsive-form">
-      <div class="form-item one-third-width">
-        <mat-form-field class="form-field">
-          <input matInput (keyup)="aplicarFiltro($event)" placeholder="Buscar" #input />
-        </mat-form-field>
-      </div>
+  <mat-card-content>    <div class="responsive-form" *ngIf="mostrarTabla1">
+    <div class="form-item one-third-width">
+      <mat-form-field class="form-field">
+        <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
+      </mat-form-field>
     </div>
+  </div>
 
     <div id="tabla1" [style.display]="mostrarTabla1 ? 'block' : 'none'">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z5">
@@ -51,7 +50,19 @@
       </table>
     </div>
 
+    <mat-card-header class="justify-center" *ngIf="!mostrarTabla1">
+      <mat-card-title>{{ "solicitudes_correos.listado" | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ "solicitudes_correos.resultados_solicitudes" | translate }}</mat-card-subtitle>
+    </mat-card-header>
+
     <div id="tabla2" [style.display]="mostrarTabla1 ? 'none' : 'block'">
+      <div class="responsive-form">
+        <div class="form-item one-third-width">
+          <mat-form-field class="form-field">
+            <input matInput (keyup)="aplicarFiltro($event, 'tabla2')" placeholder="Buscar" #inputTabla2 />
+          </mat-form-field>
+        </div>
+      </div>
       <table mat-table [dataSource]="dataSource2">
         <!-- Column Definitions -->
         <ng-container matColumnDef="facultad">
@@ -131,8 +142,9 @@
       <button mat-flat-button color="warn" (click)="descargarCSV()">
         {{ "solicitudes_correos.descargar_listado" | translate }}
       </button>
-      <button mat-flat-button color="accent" routerLink="/formulario/crear/0">
+      <button mat-flat-button color="accent" (click)="inputFile.click()">
         {{ "solicitudes_correos.cargar_listado" | translate }}
+        <input #inputFile type="file" (change)="cargarCSV($event)" accept=".csv" style="display: none;">
       </button>
       <button mat-flat-button color="primary" (click)="cargarSolicitudesCorreos()">
         {{ "solicitudes_correos.confirmar_gestion" | translate }}
@@ -140,52 +152,3 @@
     </div>
   </mat-card-actions>
 </mat-card>
-
-<!--
-<table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Proceso admisión</th>
-      <th>Fecha</th>
-      <th>Estado</th>
-      <th>Gestion</th>
-      <th>Enviar</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Trámite en curso</td>
-      <td>20/05/2021</td>
-      <td>En Edición</td>
-      <td>
-        <button mat-mini-fab color="accent">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </td>
-      <td>
-        <button mat-mini-fab color="accent" disabled>
-          <mat-icon>send</mat-icon>
-        </button>
-      </td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Admitido</td>
-      <td>21/05/2021</td>
-      <td>Aprobado</td>
-      <td>
-        <button mat-mini-fab color="accent">
-          <mat-icon>search</mat-icon>
-        </button>
-      </td>
-      <td>
-        <button mat-mini-fab color="accent" disabled>
-          <mat-icon>send</mat-icon>
-        </button>
-      </td>
-    </tr>
-    </tbody>
-</table>
--->

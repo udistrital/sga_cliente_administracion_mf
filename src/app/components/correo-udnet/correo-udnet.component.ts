@@ -19,9 +19,7 @@ export class CorreoUdnetComponent implements OnInit {
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
-  
   mostrarTabla1: boolean = true;
-  cargarSolicitudesCorreos: any;
 
   constructor(
     private solicitudesCorreosService: SolicitudesCorreosService,
@@ -53,22 +51,13 @@ export class CorreoUdnetComponent implements OnInit {
     this.dataSource2.paginator = this.paginator2;
   }
 
-  aplicarFiltro(event: Event) {
+  aplicarFiltro(event: any, tabla: string) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-
-  aplicarFiltro2(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource2.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource2.paginator) {
-      this.dataSource2.paginator.firstPage();
-    }
-  }
-
   mostrarTabla(tablaId: string) {
     document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
     document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
@@ -79,10 +68,8 @@ export class CorreoUdnetComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file) {
       this.solicitudesCorreosService.cargarDatos(file).subscribe(response => {
-        this.popUpManager.showSuccessAlert('Archivo cargado con éxito.');
-        this.cargarDatosTabla2(); // Recargar datos después de la carga del archivo
       }, error => {
-        this.popUpManager.showErrorAlert('Error al cargar el archivo.');
+        console.error('Error al cargar el archivo CSV:', error);
       });
     }
   }
@@ -91,13 +78,18 @@ export class CorreoUdnetComponent implements OnInit {
     this.solicitudesCorreosService.descargarDatos().subscribe(blob => {
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.download = 'solicitudes_correos.csv';
+      link.download = 'solicitudes_correos_tabla2.csv';
       link.click();
     }, error => {
       this.popUpManager.showErrorAlert('Error al descargar el archivo.');
     });
   }
+
+  cargarSolicitudesCorreos() {
+    //implementar la lógica que se necesite para confirmar la gestión de las solicitudes.
+    // Por ejemplo, enviar datos al backend para ser procesados.
+    console.log("Confirmar gestión de solicitudes correos");
+    this.popUpManager.showSuccessAlert('Gestión de solicitudes confirmada.');
+  }
+
 }
-
-
-
