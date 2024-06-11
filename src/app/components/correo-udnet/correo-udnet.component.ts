@@ -1,10 +1,9 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { SolicitudesCorreos } from '../../models/correos_administrativos/solicitudes_correos';
-import { PopUpManager } from '../../managers/popUpManager';
-import { TranslateService } from '@ngx-translate/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
+import { PopUpManager } from '../../managers/popUpManager';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'udistrital-correo-udnet',
@@ -20,9 +19,12 @@ export class CorreoUdnetComponent implements OnInit {
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
+  
+  mostrarTabla1: boolean = true;
   cargarSolicitudesCorreos: any;
 
   constructor(
+    private solicitudesCorreosService: SolicitudesCorreosService,
     private translate: TranslateService,
     private popUpManager: PopUpManager
   ) { }
@@ -70,6 +72,32 @@ export class CorreoUdnetComponent implements OnInit {
   mostrarTabla(tablaId: string) {
     document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
     document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
+    this.mostrarTabla1 = tablaId === 'tabla1';
+  }
+
+  cargarCSV(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.solicitudesCorreosService.cargarDatos(file).subscribe(response => {
+        this.popUpManager.showSuccessAlert('Archivo cargado con éxito.');
+        this.cargarDatosTabla2(); // Recargar datos después de la carga del archivo
+      }, error => {
+        this.popUpManager.showErrorAlert('Error al cargar el archivo.');
+      });
+    }
+  }
+
+  descargarCSV() {
+    this.solicitudesCorreosService.descargarDatos().subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'solicitudes_correos.csv';
+      link.click();
+    }, error => {
+      this.popUpManager.showErrorAlert('Error al descargar el archivo.');
+    });
   }
 }
+
+
 
