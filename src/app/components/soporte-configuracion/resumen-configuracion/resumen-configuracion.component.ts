@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -21,9 +21,10 @@ import { TAGS_INSCRIPCION_PROGRAMA } from './def_tags_por_programa';
   styleUrls: ['./resumen-configuracion.component.scss']
 })
 export class ResumenConfiguracionComponent {
+  @Output() soportehijo= new EventEmitter<boolean>();
   procesos!: any
-  variables:boolean= true
-  resumen:boolean=false
+  variables: boolean = true
+  resumen: boolean = false
   periodo!: any
   nivel!: number
   proyectos: any;
@@ -55,7 +56,7 @@ export class ResumenConfiguracionComponent {
   displayedColumnsSubCriterios = ["nombre", "descripcion", "activo"]
   displayedColumnsDerechosPecuniarios = ["codigo", "nombre", "factor", "costo"]
   displayedColumnsProyectoCurricular = ["calendario", "facultad", "nombre", "nivel", "modalidad",]
-  displayedColumnsDerechosPecuniariosCuentas =["tipoCuneta","descripcion"]
+  displayedColumnsDerechosPecuniariosCuentas = ["tipoCuneta", "descripcion"]
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
 
@@ -86,7 +87,6 @@ export class ResumenConfiguracionComponent {
   loadResumen() {
     this.resumen = true
     this.loadCalendario()
-    this.loadDerechoPecuniarios()
     this.loadCriterioSubCriterio()
   }
 
@@ -144,15 +144,14 @@ export class ResumenConfiguracionComponent {
         const semanas = diferenciaMs / (1000 * 60 * 60 * 24 * 7);
         const semanasRedondeadas = Math.floor(semanas);
         this.semanasCalendario = semanasRedondeadas
-
         this.loadDatacalendario()
-       
+        this.loadDerechoPecuniarios()
       }
     })
   }
 
   loadDatacalendario() {
-    let periodo:any[]=[]
+    let periodo: any[] = []
     this.sgaCalendarioMidService.get('calendario-academico/').subscribe(
       (response: any) => {
         console.log(response)
@@ -173,7 +172,7 @@ export class ResumenConfiguracionComponent {
 
 
 
-  loadProcessActivity(periodo:any) {
+  loadProcessActivity(periodo: any) {
     this.sgaCalendarioMidService.get('calendario-academico/v2/' + periodo.Id).subscribe(
       (response: any) => {
         console.log("DataCalendario")
@@ -188,44 +187,62 @@ export class ResumenConfiguracionComponent {
 
   loadDerechoPecuniarios() {
     let datosCargados: Concepto[] = [];
-    this.sgaDerechoPecunarioMidService
-      .get('derechos-pecuniarios/vigencias/' + 39)
-      .subscribe(
-        (response: any) => {
-          console.log("Pecuniarios")
-          console.log(response)
-          var data: any[] = response.Data;
-          if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
-            data.forEach((obj) => {
-              var concepto = new Concepto();
-              concepto.Id = obj.ParametroId.Id;
-              concepto.Codigo = obj.ParametroId.CodigoAbreviacion;
-              concepto.Nombre = obj.ParametroId.Nombre;
-              concepto.FactorId = obj.Id;
-              concepto.Factor = JSON.parse(obj.Valor).NumFactor;
-              if (JSON.parse(obj.Valor).Costo !== undefined) {
-                concepto.Costo = JSON.parse(obj.Valor).Costo;
+    this.parametrosService.get('periodo?query=CodigoAbreviacion:VG&limit=0&sortby=Id&order=desc').subscribe((response: any) => {
+      console.log("Ultimo")
+      console.log(response)
+      if(response.Status === "200" && response.Success === true){
+        for (let index = 0; index < response.Data.length; index++) {
+          console.log(response.Data[index].Year)
+          console.log(this.FechaGlobal)
+          if(response.Data[index].Year == this.FechaGlobal  ){
+            this.sgaDerechoPecunarioMidService
+            .get('derechos-pecuniarios/vigencias/' + response.Data[index].Id)
+            .subscribe(
+              (response: any) => {
+                console.log("Pecuniarios")
+                console.log(response)
+                var data: any[] = response.Data;
+                if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
+                  data.forEach((obj) => {
+                    var concepto = new Concepto();
+                    concepto.Id = obj.ParametroId.Id;
+                    concepto.Codigo = obj.ParametroId.CodigoAbreviacion;
+                    concepto.Nombre = obj.ParametroId.Nombre;
+                    concepto.FactorId = obj.Id;
+                    concepto.Factor = JSON.parse(obj.Valor).NumFactor;
+                    if (JSON.parse(obj.Valor).Costo !== undefined) {
+                      concepto.Costo = JSON.parse(obj.Valor).Costo;
+                    }
+                    datosCargados.push(concepto);
+    
+                  });
+                } else {
+                  this.popUpManager.showAlert(
+                    'info',
+                    this.translate.instant('derechos_pecuniarios.no_conceptos')
+                  );
+                }
+    
+    
+                this.derechosPecuniarios = new MatTableDataSource(datosCargados);
+                this.derechosPecuniarios.paginator = this.paginator;
+              },
+              () => {
+                this.popUpManager.showErrorAlert(
+                  this.translate.instant('ERROR.general')
+                );
               }
-              datosCargados.push(concepto);
-        
-            });
-          } else {
-            this.popUpManager.showAlert(
-              'info',
-              this.translate.instant('derechos_pecuniarios.no_conceptos')
             );
+            
           }
-
-
-          this.derechosPecuniarios = new MatTableDataSource(datosCargados);
-          this.derechosPecuniarios.paginator = this.paginator;
-        },
-        () => {
-          this.popUpManager.showErrorAlert(
-            this.translate.instant('ERROR.general')
-          );
         }
-      );
+
+
+      }
+
+    })
+
+
   }
 
   loadDataCunetaPecuniarios() {
@@ -236,7 +253,7 @@ export class ResumenConfiguracionComponent {
           console.log(response)
           if (response.Status === "200") {
             this.cuentaDerechosPecuniarios = new MatTableDataSource(response.Data)
-          }else{
+          } else {
             console.log("Error cuentas de banco")
           }
         })
@@ -367,5 +384,8 @@ export class ResumenConfiguracionComponent {
     }
     );
   }
-
+  cerrar(){
+    this.soportehijo.emit(false)
+    console.log("hola")
+  }
 }

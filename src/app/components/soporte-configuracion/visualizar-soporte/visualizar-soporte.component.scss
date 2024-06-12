@@ -1,0 +1,14 @@
+.dinamic-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5; 
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    padding: 20px; 
+    margin: 20px 0; 
+}
+
+.dinamic-form object {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); /* Sombra alrededor del visor de PDF */
+}
