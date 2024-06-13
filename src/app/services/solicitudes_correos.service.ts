@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RequestManager } from '../managers/requestManager';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import * as Papa from 'papaparse';
 
 @Injectable()
 export class SolicitudesCorreosService {
@@ -30,18 +31,28 @@ export class SolicitudesCorreosService {
         return this.requestManager.delete(endpoint, element.Id);
     }
 
-    cargarDatos(file: File): Observable<any> {
-        const formData = new FormData();
-        formData.append('file', file);
-        return this.http.post('/api/upload-csv', formData);
+
+    cargarDatos(file: File): Observable<any[]> {
+        return new Observable<any[]>(observer => {
+            Papa.parse(file, {
+                header: true,
+                complete: (result) => {
+                    observer.next(result.data);
+                    observer.complete();
+                },
+                error: (error) => {
+                    observer.error(error);
+                }
+            });
+        });
     }
 
-    descargarDatos(): Observable<Blob> {
-        return this.http.get('/api/download-csv', { responseType: 'blob' }).pipe(
-            map(response => {
-                return response;
-            })
-        );
+    descargarDatos(data: any[]): Observable<Blob> {
+        return new Observable<Blob>(observer => {
+            const csvData = Papa.unparse(data);
+            const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            observer.next(blob);
+            observer.complete();
+        });
     }
-
 }

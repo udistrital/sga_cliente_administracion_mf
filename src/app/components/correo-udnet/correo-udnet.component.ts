@@ -51,31 +51,61 @@ export class CorreoUdnetComponent implements OnInit {
     this.dataSource2.paginator = this.paginator2;
   }
 
-  aplicarFiltro(event: any, tabla: string) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-  mostrarTabla(tablaId: string) {
-    document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
-    document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
-    this.mostrarTabla1 = tablaId === 'tabla1';
-  }
-
   cargarCSV(event: any) {
     const file: File = event.target.files[0];
     if (file) {
-      this.solicitudesCorreosService.cargarDatos(file).subscribe(response => {
+      this.solicitudesCorreosService.cargarDatos(file).subscribe(data => {
+        this.dataSource2 = new MatTableDataSource(data);
+        this.dataSource2.paginator = this.paginator2;
       }, error => {
         console.error('Error al cargar el archivo CSV:', error);
       });
     }
   }
 
-  descargarCSV() {
+/*  aplicarFiltro(event: any, tabla: string) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }*/
+
+  aplicarFiltro(event: any, tabla: string) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    if (tabla === 'tabla1') {
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+    } else {
+      this.dataSource2.filter = filterValue.trim().toLowerCase();
+      if (this.dataSource2.paginator) {
+        this.dataSource2.paginator.firstPage();
+      }
+    }
+  }
+
+  mostrarTabla(tablaId: string) {
+    document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
+    document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
+    this.mostrarTabla1 = tablaId === 'tabla1';
+  }
+
+  /*descargarCSV() {
     this.solicitudesCorreosService.descargarDatos().subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'solicitudes_correos_tabla2.csv';
+      link.click();
+    }, error => {
+      this.popUpManager.showErrorAlert('Error al descargar el archivo.');
+    });
+  }*/
+
+  descargarCSV() {
+    const data = this.dataSource2.data;
+    this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.download = 'solicitudes_correos_tabla2.csv';
