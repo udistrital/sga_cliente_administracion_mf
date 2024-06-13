@@ -47,6 +47,9 @@ import { SgaDerechoPecuniarioMidService } from './services/sga-derecho-pecuniari
 import { VisualizarSoporteDocumento } from './components/soporte-configuracion/visualizar-soporte/visualizar-soporte.component';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proyecto/definir-opcion-proyecto.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -90,6 +93,9 @@ export function createTranslateLoader(http: HttpClient) {
     AppRoutingModule,
     MatSortModule,
     NgxDocViewerModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatTooltipModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
