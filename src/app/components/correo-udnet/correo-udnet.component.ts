@@ -1,9 +1,11 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'udistrital-correo-udnet',
@@ -21,10 +23,15 @@ export class CorreoUdnetComponent implements OnInit {
   @ViewChild('paginator2') paginator2!: MatPaginator;
   mostrarTabla1: boolean = true;
 
+  nuevoProceso: string = '';
+  nuevoEstado: string = 'Pendiente';
+a: any;
+
   constructor(
     private solicitudesCorreosService: SolicitudesCorreosService,
     private translate: TranslateService,
-    private popUpManager: PopUpManager
+    private popUpManager: PopUpManager,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -63,14 +70,6 @@ export class CorreoUdnetComponent implements OnInit {
     }
   }
 
-/*  aplicarFiltro(event: any, tabla: string) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }*/
-
   aplicarFiltro(event: any, tabla: string) {
     const filterValue = (event.target as HTMLInputElement).value;
     if (tabla === 'tabla1') {
@@ -92,17 +91,6 @@ export class CorreoUdnetComponent implements OnInit {
     this.mostrarTabla1 = tablaId === 'tabla1';
   }
 
-  /*descargarCSV() {
-    this.solicitudesCorreosService.descargarDatos().subscribe(blob => {
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'solicitudes_correos_tabla2.csv';
-      link.click();
-    }, error => {
-      this.popUpManager.showErrorAlert('Error al descargar el archivo.');
-    });
-  }*/
-
   descargarCSV() {
     const data = this.dataSource2.data;
     this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
@@ -113,6 +101,19 @@ export class CorreoUdnetComponent implements OnInit {
     }, error => {
       this.popUpManager.showErrorAlert('Error al descargar el archivo.');
     });
+  }
+
+  anadirNuevaSolicitud() {
+    const nuevaSolicitud = {
+      procesoAdminicion: this.nuevoProceso,
+      fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+      estado: this.nuevoEstado
+    };
+    const data = this.dataSource.data;
+    data.push(nuevaSolicitud);
+    this.dataSource.data = data; // Actualizar dataSource
+    this.nuevoProceso = ''; // Limpiar campo de nuevo proceso
+    this.nuevoEstado = 'Pendiente'; // Resetear estado
   }
 
   cargarSolicitudesCorreos() {

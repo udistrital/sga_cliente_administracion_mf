@@ -95,7 +95,8 @@
   "descargar_listado":"Descargar Listado",
   "cargar_listado":"Cargar Listado",
   "confirmar_gestion":"Confirmar Gestion",
-  "listado":"Listado de correos"
+  "listado":"Listado de correos",
+  "num_document":"Numero Documento"
 },
 "GLOBAL": {
   "rol": "Rol",
