@@ -1,0 +1,22 @@
+<div class="container">
+  <h2>Definición de opciones para pregrado</h2>
+  <form>
+    <mat-form-field appearance="fill">
+      <mat-label>Nivel</mat-label>
+      <mat-select [(ngModel)]="nivel" name="nivel" required>
+        <mat-option *ngFor="let anno of annos" [value]="anno.Id">{{ anno.Nombre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Opciones</mat-label>
+      <mat-select [(ngModel)]="opciones" name="opciones" required>
+        <mat-option *ngFor="let opcion of opcionesList" [value]="opcion">{{ opcion }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <input type="file" (change)="onFileSelected($event)" name="documentoSoporte" required>
+
+    <button mat-raised-button color="primary" [disabled]="!isFormValid()" (click)="onSubmit()">Aceptar</button>
+  </form>
+</div>
