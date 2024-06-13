@@ -11,11 +11,18 @@ import { ResumenConfiguracionComponent } from './components/soporte-configuracio
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
 
 const routes: Routes = [
+<<<<<<< HEAD
   { path: "lista", component: ListTipoInscripcionComponent },
   { path: "crear", component:  CrudTipoInscripcionComponent},
   { path: "soporte", component: SoporteConfiguracionComponent },
   { path: "lista", component: AppComponent },
   { path: "correo-udnet", component: CorreoUdnetComponent },
+=======
+  { path: "inscripcion/lista", component: ListTipoInscripcionComponent },
+  { path: "inscripcion/crear", component:  CrudTipoInscripcionComponent},
+  { path: "inscripcion/soporte", component: SoporteConfiguracionComponent },
+  { path: "inscripcion/lista", component: AppComponent }
+>>>>>>> origin/develop
 ];
 
 
