@@ -657,5 +657,14 @@
   "placeholder_direccion_entidad": "Ej: Cra 8 # 40-78 Piso 1",
   "item": "Ítem",
   "evaluar": "Evaluar"
+},
+
+"opcion": {
+  "titulo1": "Definición de opciones para pregrado",
+  "titulo2": "Documento Soporte",
+  "periodo": "Periodo",
+  "opciones": "Opciones",
+  "archivo": "Seleccionar archivo",
+  "aceptar": "Aceptar"
 }
 }
