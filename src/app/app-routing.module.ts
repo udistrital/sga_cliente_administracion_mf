@@ -8,13 +8,15 @@ import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
 import { SoporteConfiguracionComponent } from './components/soporte-configuracion/soporte-configuracion/soporte-configuracion.component';
 import { ResumenConfiguracionComponent } from './components/soporte-configuracion/resumen-configuracion/resumen-configuracion.component';
+import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proyecto/definir-opcion-proyecto.component';
 
 
 const routes: Routes = [
-  { path: "inscripcion/lista", component: ListTipoInscripcionComponent },
-  { path: "inscripcion/crear", component:  CrudTipoInscripcionComponent},
-  { path: "inscripcion/soporte", component: SoporteConfiguracionComponent },
-  { path: "inscripcion/lista", component: AppComponent }
+  { path: "lista", component: ListTipoInscripcionComponent },
+  { path: "crear", component:  CrudTipoInscripcionComponent},
+  { path: "soporte", component: SoporteConfiguracionComponent },
+  { path: "opcion", component: DefinirOpcionProyectoComponent },
+  { path: "lista", component: AppComponent },
 ];
 
 
