@@ -10,20 +10,6 @@
         <mat-form-field class="form-field">
           <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
         </mat-form-field>
-        <!-- Botón flotante con icono + -->
-        <button mat-mini-fab color="primary" class="float-button-add"  (click)="anadirNuevaSolicitud()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <!-- Estilo para el botón flotante -->
-        <style>
-          .float-button-add {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background-color: blue;
-            color: white;
-          }
-        </style>
       </div>
     </div>
 
@@ -160,7 +146,7 @@
         {{ "solicitudes_correos.cargar_listado" | translate }}
         <input #inputFile type="file" (change)="cargarCSV($event)" accept=".csv" style="display: none;">
       </button>
-      <button mat-flat-button color="primary" (click)="cargarSolicitudesCorreos()">
+      <button mat-flat-button color="primary" (click)="confirmarGestion()">
         {{ "solicitudes_correos.confirmar_gestion" | translate }}
       </button>
     </div>

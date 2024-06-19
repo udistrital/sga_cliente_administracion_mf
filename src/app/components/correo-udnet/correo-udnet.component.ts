@@ -5,7 +5,6 @@ import { SolicitudesCorreosService } from '../../services/solicitudes_correos.se
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'udistrital-correo-udnet',
@@ -23,9 +22,11 @@ export class CorreoUdnetComponent implements OnInit {
   @ViewChild('paginator2') paginator2!: MatPaginator;
   mostrarTabla1: boolean = true;
 
+  selectedSolicitud: any | null = null; // Variable para almacenar la solicitud seleccionada
+
+
   nuevoProceso: string = '';
   nuevoEstado: string = 'Pendiente';
-a: any;
 
   constructor(
     private solicitudesCorreosService: SolicitudesCorreosService,
@@ -35,10 +36,25 @@ a: any;
   ) { }
 
   ngOnInit() {
-    this.cargarDatosTabla();
+    this.loadData();
     this.cargarDatosTabla2();
   }
 
+  loadData(): void {
+    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.EstadoId.Id:100').subscribe(res => {
+      if (res !== null) {
+        const data = <Array<any>><unknown>res;
+        const formattedData = data.map(item => ({
+          id: item.Id, // Agregar el ID de la solicitud para referencia
+          procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
+          fecha: item.FechaRadicacion,
+          estado: item.EstadoTipoSolicitudId.EstadoId.Nombre
+        }));
+        this.dataSource = new MatTableDataSource(formattedData);
+        this.dataSource.paginator = this.paginator;
+      }
+    });
+  }
   cargarDatosTabla() {
     const data = [
       { procesoAdminicion: 'Proceso 1', fecha: '2024-06-01', estado: 'Pendiente' },
@@ -85,12 +101,6 @@ a: any;
     }
   }
 
-  mostrarTabla(tablaId: string) {
-    document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
-    document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
-    this.mostrarTabla1 = tablaId === 'tabla1';
-  }
-
   descargarCSV() {
     const data = this.dataSource2.data;
     this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
@@ -103,24 +113,78 @@ a: any;
     });
   }
 
-  anadirNuevaSolicitud() {
-    const nuevaSolicitud = {
-      procesoAdminicion: this.nuevoProceso,
-      fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
-      estado: this.nuevoEstado
-    };
-    const data = this.dataSource.data;
-    data.push(nuevaSolicitud);
-    this.dataSource.data = data; // Actualizar dataSource
-    this.nuevoProceso = ''; // Limpiar campo de nuevo proceso
-    this.nuevoEstado = 'Pendiente'; // Resetear estado
+  /*cargarSolicitudesCorreos() {
+    if (this.selectedSolicitudId !== null) {
+      // Realizar la solicitud PUT para cambiar de Radicado a Gestionado
+      this.solicitudesCorreosService.put(`solicitud/${this.selectedSolicitudId}`, { 
+        EstadoTipoSolicitudId: { 
+          EstadoId: { 
+            Id: 105 // Cambiar el ID del estado a Gestionado (105)
+          }
+        },
+        FechaModificacion: this.formatCurrentDate()
+      }).subscribe(res => {
+        // Manejar la respuesta si es necesario
+        console.log('Solicitud actualizada exitosamente:', res);
+        this.popUpManager.showSuccessAlert('Solicitud gestionada correctamente.');
+        this.loadData(); // Recargar los datos después de la actualización
+      }, error => {
+        console.error('Error al actualizar la solicitud:', error);
+        this.popUpManager.showErrorAlert('Error al gestionar la solicitud.');
+      });
+    } else {
+      console.warn('No se ha seleccionado ninguna solicitud para gestionar.');
+      this.popUpManager.showErrorAlert('Debe seleccionar una solicitud para gestionar.');
+    }
+  }*/
+
+  confirmarGestion() {
+    if (this.selectedSolicitud) {
+      // Realizar la solicitud PUT para cambiar de Radicado a Gestionado
+      this.solicitudesCorreosService.put(`solicitud/${this.selectedSolicitud.id}`, { 
+        EstadoTipoSolicitudId: { 
+          EstadoId: { 
+            Id: 105 // Cambiar el ID del estado a Gestionado (105)
+          }
+        },
+        FechaModificacion: this.formatCurrentDate()
+      }).subscribe(res => {
+        // Manejar la respuesta si es necesario
+        console.log('Solicitud actualizada exitosamente:', res);
+        this.popUpManager.showSuccessAlert('Solicitud gestionada correctamente.');
+        this.loadData(); // Recargar los datos después de la actualización
+        this.selectedSolicitud = null; // Limpiar la selección después de gestionar
+      }, error => {
+        console.error('Error al actualizar la solicitud:', error);
+        this.popUpManager.showErrorAlert('Error al gestionar la solicitud.');
+      });
+    } else {
+      console.warn('No se ha seleccionado ninguna solicitud para gestionar.');
+      this.popUpManager.showErrorAlert('Debe seleccionar una solicitud para gestionar.');
+    }
   }
 
-  cargarSolicitudesCorreos() {
-    //implementar la lógica que se necesite para confirmar la gestión de las solicitudes.
-    // Por ejemplo, enviar datos al backend para ser procesados.
-    console.log("Confirmar gestión de solicitudes correos");
-    this.popUpManager.showSuccessAlert('Gestión de solicitudes confirmada.');
+  formatCurrentDate(): string { 
+    const now = new Date(); 
+    const pad = (n: number) => n < 10 ? '0' + n : n; 
+    const year = now.getUTCFullYear();
+    const month = pad(now.getUTCMonth() + 1); 
+    const day = pad(now.getUTCDate()); 
+    const hours = pad(now.getUTCHours()); 
+    const minutes = pad(now.getUTCMinutes()); 
+    const seconds = pad(now.getUTCSeconds()); 
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} +0000 +0000`; 
+  } 
+
+  seleccionarSolicitud(row: any) {
+    this.selectedSolicitud = row;
+    console.log('Solicitud seleccionada:', this.selectedSolicitud);
+  }
+
+  mostrarTabla(tablaId: string) {
+    document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
+    document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
+    this.mostrarTabla1 = tablaId === 'tabla1';
   }
 
 }

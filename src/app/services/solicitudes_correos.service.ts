@@ -8,26 +8,26 @@ import * as Papa from 'papaparse';
 export class SolicitudesCorreosService {
 
     constructor(private requestManager: RequestManager, private http: HttpClient) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
+        this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
     }
 
     get(endpoint: string) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
+        this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
         return this.requestManager.get(endpoint);
     }
 
     post(endpoint: any, element: any) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
+        this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
         return this.requestManager.post(endpoint, element);
     }
 
     put(endpoint: any, element: any) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
+        this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
         return this.requestManager.put(endpoint, element);
     }
 
     delete(endpoint: any, element: { Id: any; }) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
+        this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
         return this.requestManager.delete(endpoint, element.Id);
     }
 
@@ -56,3 +56,4 @@ export class SolicitudesCorreosService {
         });
     }
 }
+
