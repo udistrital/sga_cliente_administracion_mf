@@ -622,5 +622,13 @@
   "placeholder_direccion_entidad": "E.g.: Cra 8 # 40-78 Piso 1",
   "item": "Item",
   "evaluar": "Evaluate"
+},
+"opcion": {
+  "titulo1": "Definition of options for undergraduate",
+  "titulo2": "Support Document",
+  "periodo": "Period",
+  "opciones": "Options",
+  "archivo": "Select file",
+  "aceptar": "Accept"
 }
 }
