@@ -96,7 +96,10 @@
   "cargar_listado":"Cargar Listado",
   "confirmar_gestion":"Confirmar Gestion",
   "listado":"Listado de correos",
-  "num_document":"Numero Documento"
+  "num_document":"Numero Documento",
+  "correo_personal":"Correo Personal",
+  "usuario_asginado":"Usuario Asignado",
+  "correo_asignado":"Correo Asignado"
 },
 "GLOBAL": {
   "rol": "Rol",
