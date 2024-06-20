@@ -52,6 +52,7 @@
       "documento_programa": "Requested Documents",
       "descuento_matricula": "Tuition Discounts",
       "propuesta_grado": "Thesis Proposal",
+      "suite_inscripcion": "Registration Suite",
       "perfil": "Registration Details"
     },
 
@@ -82,6 +83,7 @@
   "admitir": "Admit",
   "aspirantes_inscritos": "Enrolled Applicants",
   "click_aqui": "Click here",
+  "calendario": "Calendar",
   "detalle": "Detail",
   "adjuntar": "Attach",
   "observaciones": "Observations",
