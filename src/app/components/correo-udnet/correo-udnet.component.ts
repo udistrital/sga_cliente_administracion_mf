@@ -42,15 +42,37 @@ export class CorreoUdnetComponent implements OnInit {
         const formattedData = data.map(item => ({
           id: item.Id,
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
-          fecha: item.FechaRadicacion,
+          fecha: this.formatDate(item.FechaRadicacion), // Aplicamos la función formatDate para mostrar la fecha en DD/MM/YYYY
           estado: item.EstadoTipoSolicitudId.EstadoId.Nombre
         }));
+  
+        formattedData.sort((a, b) => {
+          // Primero ordenamos por estado "Radicado"
+          if (a.estado === 'Radicado' && b.estado !== 'Radicado') {
+            return -1;
+          } else if (a.estado !== 'Radicado' && b.estado === 'Radicado') {
+            return 1;
+          } else {
+            // Si ambos son "Radicado" o ninguno lo es, ordenamos por fecha
+            const dateA = new Date(a.fecha);
+            const dateB = new Date(b.fecha);
+            return dateB.getTime() - dateA.getTime();
+          }
+        });
+  
         this.dataSource = new MatTableDataSource(formattedData);
         this.dataSource.paginator = this.paginator;
       }
     });
   }
-
+  
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 
   cargarDatosTabla2() {
     const data2 = [
@@ -88,11 +110,9 @@ export class CorreoUdnetComponent implements OnInit {
     }
   }
 
-
   mostrarTabla(tablaId: string) {
     this.mostrarTabla1 = tablaId === 'tabla1';
   }
-
 
   descargarCSV() {
     const data = this.dataSource2.data;
@@ -155,7 +175,6 @@ export class CorreoUdnetComponent implements OnInit {
       }
     );
   }
-  
 
   onGestionClick(id: number) {
     this.selectedSolicitudId = id;
