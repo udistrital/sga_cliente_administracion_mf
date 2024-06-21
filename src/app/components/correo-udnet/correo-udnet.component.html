@@ -13,36 +13,36 @@
       </div>
     </div>
 
-    <div id="tabla1" [style.display]="mostrarTabla1 ? 'block' : 'none'">
+    <div id="tabla1" class="centered-cells blue-background" [style.display]="mostrarTabla1 ? 'block' : 'none'">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z5">
 
         <ng-container matColumnDef="#">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>#</mat-header-cell> 
-          <mat-cell mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">#</th> 
+          <td mat-cell *matCellDef="let element; let i = index" class="sub-cell">{{ i + 1 }}</td>>
         </ng-container>
 
         <ng-container matColumnDef="procesoAdminicion">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.proceso_adminicion" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.procesoAdminicion }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "solicitudes_correos.proceso_adminicion" | translate }}</th>
+          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.procesoAdminicion }}</td>
         </ng-container>
 
         <ng-container matColumnDef="fecha">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.fecha" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.fecha }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.fecha" | translate }}</th>
+          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.fecha }}</td>
         </ng-container>
 
         <ng-container matColumnDef="estado">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.estado" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.estado }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.estado" | translate }}</th>
+          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.estado }}</td>
         </ng-container>
 
         <ng-container matColumnDef="gestion">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>Gestión</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="onGestionClick(element.id)">
+          <th mat-header-cell *matHeaderCellDef class="cell">Gestión</th>
+          <td mat-cell *matCellDef="let element" class="sub-cell">
+            <button mat-icon-button class="blue-header-icon" (click)="onGestionClick(element.id)">
               <mat-icon>search</mat-icon>
             </button>
-          </mat-cell>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -66,58 +66,58 @@
       <table mat-table [dataSource]="dataSource2">
         <!-- Column Definitions -->
         <ng-container matColumnDef="facultad">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "soporte.facultad" | translate }}</mat-header-cell> 
-          <mat-cell mat-cell *matCellDef="let element">{{ element.facultad }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "soporte.facultad" | translate }}</th> 
+          <th mat-cell *matCellDef="let element">{{ element.facultad }}</th>
         </ng-container>
 
         <ng-container matColumnDef="codigo">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "soporte.codigo" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.codigo }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "soporte.codigo" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.codigo }}</th>
         </ng-container>
 
         <ng-container matColumnDef="numeroDocumento">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.numero_documento" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.numeroDocumento }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "solicitudes_correos.numero_documento" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.numeroDocumento }}</th>
         </ng-container>
 
         <ng-container matColumnDef="primerNombre">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.primer_nombre" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.primerNombre }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.primer_nombre" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.primerNombre }}</th>
         </ng-container>
 
         <ng-container matColumnDef="segundoNombre">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.segundo_nombre" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.segundoNombre }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.segundo_nombre" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.segundoNombre }}</th>
         </ng-container>
 
         <ng-container matColumnDef="primerApellido">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.primer_apellido" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.primerApellido }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.primer_apellido" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.primerApellido }}</th>
         </ng-container>
 
         <ng-container matColumnDef="segundoApellido">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.segundo_apéllido" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.segundoApellido }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.segundo_apellido" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.segundoApellido }}</th>
         </ng-container>
 
         <ng-container matColumnDef="correoPersonal">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.correo_personal" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.correoPersonal }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell">{{ "solicitudes_correos.correo_personal" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.correoPersonal }}</th>
         </ng-container>
 
         <ng-container matColumnDef="telefono">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "GLOBAL.telefono" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.telefono }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="cell" >{{ "GLOBAL.telefono" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.telefono }}</th>
         </ng-container>
 
         <ng-container matColumnDef="usuarioAsignado">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.usuario_asginado" | translate }}</mat-header-cell>
-          <mat-cell mat-cell *matCellDef="let element">{{ element.usuarioAsignado }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="sugerido-header">{{ "solicitudes_correos.usuario_asignado" | translate }}</th>
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.usuarioAsignado }}</th>
         </ng-container>
 
         <ng-container matColumnDef="correoAsignado">
-          <mat-header-cell mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.correo_asginado" | translate }}</mat-header-cell> 
-          <mat-cell mat-cell *matCellDef="let element">{{ element.correoAsignado }}</mat-cell>
+          <th mat-header-cell *matHeaderCellDef class="sugerido-header">{{ "solicitudes_correos.correo_asignado" | translate }}</th> 
+          <th mat-cell *matCellDef="let element" class="sub-cell">{{ element.correoAsignado }}</th>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>

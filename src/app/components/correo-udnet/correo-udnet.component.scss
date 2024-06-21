@@ -21,15 +21,22 @@
     border-radius: 4px;
   }
   
-  mat-header-cell {
+  .cell {
     background-color: #03678f !important;
     color: white !important;
+    //border-right: 1px solid #e0e0e0;
   }
-  
-  mat-cell,
-  mat-header-cell {
+
+  .cell,
+  .sub-cell {
     border-right: 1px solid #e0e0e0;
   }
+
+  .sugerido-header {
+    background-color: #fff2cc !important;
+    color: #212121 !important;
+  }
+  
   
   .info-boxes {
     display: flex;
@@ -57,4 +64,26 @@
     cursor: pointer;
     color: white !important;
     padding: 10px;
+  }
+
+  .centered-cells {
+    text-align: center;
+  
+    &.blue-background {
+      background-color: #03678f;
+  
+      th, td {
+        color: black;
+        border-color: #03678f;
+      }
+    }
+  
+    &.yellow-background {
+      background-color: #f5c731c0;
+  
+      th, td {
+        color: black;
+        border-color: black;
+      }
+    }
   }

@@ -124,10 +124,23 @@ export class CorreoUdnetComponent implements OnInit {
     };
   
     const updatedSolicitud = {
+      Id: this.selectedSolicitudId,
       EstadoTipoSolicitudId: {
-        Id: 105 
+        Id: 95,
+        DependenciaId: 0,
+        NumeroDias: 0,
+        FechaCreacion: "2024-06-15 13:02:06.512295 +0000 +0000",  
+        FechaModificacion: formatDate(new Date()),
+        Activo: true
       },
-      FechaModificacion: formatDate(new Date()) 
+      Referencia: "{}",
+      Resultado: "",
+      FechaRadicacion: "2024-06-15 16:00:00 +0000 +0000",  
+      FechaCreacion: "2024-06-15 16:48:37.638665 +0000 +0000",  
+      FechaModificacion: formatDate(new Date()),
+      SolicitudFinalizada: false,
+      Activo: true,
+      SolicitudPadreId: null
     };
   
     this.solicitudesCorreosService.put(`solicitud/${this.selectedSolicitudId}`, updatedSolicitud).subscribe(
