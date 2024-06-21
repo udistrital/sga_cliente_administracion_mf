@@ -42,18 +42,16 @@ export class CorreoUdnetComponent implements OnInit {
         const formattedData = data.map(item => ({
           id: item.Id,
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
-          fecha: this.formatDate(item.FechaRadicacion), // Aplicamos la función formatDate para mostrar la fecha en DD/MM/YYYY
+          fecha: this.formatDate(item.FechaRadicacion),
           estado: item.EstadoTipoSolicitudId.EstadoId.Nombre
         }));
   
         formattedData.sort((a, b) => {
-          // Primero ordenamos por estado "Radicado"
           if (a.estado === 'Radicado' && b.estado !== 'Radicado') {
             return -1;
           } else if (a.estado !== 'Radicado' && b.estado === 'Radicado') {
             return 1;
           } else {
-            // Si ambos son "Radicado" o ninguno lo es, ordenamos por fecha
             const dateA = new Date(a.fecha);
             const dateB = new Date(b.fecha);
             return dateB.getTime() - dateA.getTime();
@@ -132,32 +130,16 @@ export class CorreoUdnetComponent implements OnInit {
       return;
     }
   
-    const formatDate = (date: Date): string => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-      const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds} +0000 +0000`;
-    };
-  
     const updatedSolicitud = {
       Id: this.selectedSolicitudId,
       EstadoTipoSolicitudId: {
-        Id: 95,
-        DependenciaId: 0,
-        NumeroDias: 0,
-        FechaCreacion: "2024-06-15 13:02:06.512295 +0000 +0000",  
-        FechaModificacion: formatDate(new Date()),
-        Activo: true
+        Id: 95 
       },
       Referencia: "{}",
       Resultado: "",
-      FechaRadicacion: "2024-06-15 16:00:00 +0000 +0000",  
-      FechaCreacion: "2024-06-15 16:48:37.638665 +0000 +0000",  
-      FechaModificacion: formatDate(new Date()),
+      FechaRadicacion: "2024-06-15 16:00:00 +0000 +0000",
+      FechaCreacion: "2024-06-15 16:48:37.638665 +0000 +0000",
+      FechaModificacion: "2024-06-15 16:48:37.63876 +0000 +0000",
       SolicitudFinalizada: false,
       Activo: true,
       SolicitudPadreId: null
