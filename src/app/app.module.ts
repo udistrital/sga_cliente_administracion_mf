@@ -50,6 +50,8 @@ import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proy
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
+import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -64,7 +66,8 @@ export function createTranslateLoader(http: HttpClient) {
     SoporteConfiguracionComponent,
     ResumenConfiguracionComponent,
     VisualizarSoporteDocumento,
-    DefinirOpcionProyectoComponent
+    DefinirOpcionProyectoComponent,
+    CorreoUdnetComponent
 
   ],
   imports: [
@@ -119,6 +122,7 @@ export function createTranslateLoader(http: HttpClient) {
     SgaAdmisionesMid,
     SgaCalendarioMidServiceService,
     SgaDerechoPecuniarioMidService,
+    SolicitudesCorreosService,
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]

@@ -86,6 +86,17 @@
     "mostrar": "Mostrar registros inactivos",
     "ocultar": "Ocultar registros inactivos"
 },
+
+"solicitudes_correos":{
+  "consulta_solicitudes":"Solicitudes",
+  "resultados_solicitudes":"Respuesta",
+  "proceso_adminicion" :"Admisión",
+  "gestion":"Gestion",
+  "nueva_solicitud":"Nueva Solicitud",
+  "descargar_listado":"Descargar Listado",
+  "cargar_listado":"Cargar Listado",
+  "confirmar_gestion":"Confirmar Gestion"
+},
 "GLOBAL": {
   "rol": "Rol",
   "click_aqui": "Clic aquí",
