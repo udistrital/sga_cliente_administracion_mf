@@ -14,5 +14,6 @@ export const environment = {
   PARAMETROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/parametros/v1/',
   SGA_DERECHO_PECUNARIO_MID: 'http://pruebasapi3.intranetoas.udistrital.edu.co:8544/v1/',
   CALENDARIO_MID_SERVICE: 'http://pruebasapi2.intranetoas.udistrital.edu.co:8545/v1/',
-  
+  SOLICITUDES_ADMINISTRACION:'https://autenticacion.portaloas.udistrital.edu.co/apioas/solicitudes_crud/v1',
+  SGA_CORREOS_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/admisiones_mid/v1',
 };
