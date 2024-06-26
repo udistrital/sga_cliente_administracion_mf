@@ -47,11 +47,11 @@ import { SgaDerechoPecuniarioMidService } from './services/sga-derecho-pecuniari
 import { VisualizarSoporteDocumento } from './components/soporte-configuracion/visualizar-soporte/visualizar-soporte.component';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proyecto/definir-opcion-proyecto.component';
-import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
-import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
+import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
