@@ -1,10 +1,11 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { SolicitudesCorreos } from '../../models/correos_administrativos/solicitudes_correos';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'udistrital-correo-udnet',
@@ -20,11 +21,17 @@ export class CorreoUdnetComponent implements OnInit {
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
-  cargarSolicitudesCorreos: any;
+  mostrarTabla1: boolean = true;
+
+  nuevoProceso: string = '';
+  nuevoEstado: string = 'Pendiente';
+a: any;
 
   constructor(
+    private solicitudesCorreosService: SolicitudesCorreosService,
     private translate: TranslateService,
-    private popUpManager: PopUpManager
+    private popUpManager: PopUpManager,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -51,25 +58,69 @@ export class CorreoUdnetComponent implements OnInit {
     this.dataSource2.paginator = this.paginator2;
   }
 
-  aplicarFiltro(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  cargarCSV(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.solicitudesCorreosService.cargarDatos(file).subscribe(data => {
+        this.dataSource2 = new MatTableDataSource(data);
+        this.dataSource2.paginator = this.paginator2;
+      }, error => {
+        console.error('Error al cargar el archivo CSV:', error);
+      });
     }
   }
 
-  aplicarFiltro2(event: Event) {
+  aplicarFiltro(event: any, tabla: string) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource2.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource2.paginator) {
-      this.dataSource2.paginator.firstPage();
+    if (tabla === 'tabla1') {
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+    } else {
+      this.dataSource2.filter = filterValue.trim().toLowerCase();
+      if (this.dataSource2.paginator) {
+        this.dataSource2.paginator.firstPage();
+      }
     }
   }
 
   mostrarTabla(tablaId: string) {
     document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
     document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
+    this.mostrarTabla1 = tablaId === 'tabla1';
   }
-}
 
+  descargarCSV() {
+    const data = this.dataSource2.data;
+    this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'solicitudes_correos_tabla2.csv';
+      link.click();
+    }, error => {
+      this.popUpManager.showErrorAlert('Error al descargar el archivo.');
+    });
+  }
+
+  anadirNuevaSolicitud() {
+    const nuevaSolicitud = {
+      procesoAdminicion: this.nuevoProceso,
+      fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+      estado: this.nuevoEstado
+    };
+    const data = this.dataSource.data;
+    data.push(nuevaSolicitud);
+    this.dataSource.data = data; // Actualizar dataSource
+    this.nuevoProceso = ''; // Limpiar campo de nuevo proceso
+    this.nuevoEstado = 'Pendiente'; // Resetear estado
+  }
+
+  cargarSolicitudesCorreos() {
+    //implementar la lógica que se necesite para confirmar la gestión de las solicitudes.
+    // Por ejemplo, enviar datos al backend para ser procesados.
+    console.log("Confirmar gestión de solicitudes correos");
+    this.popUpManager.showSuccessAlert('Gestión de solicitudes confirmada.');
+  }
+
+}
