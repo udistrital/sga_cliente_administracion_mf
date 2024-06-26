@@ -66,8 +66,8 @@ export function createTranslateLoader(http: HttpClient) {
     SoporteConfiguracionComponent,
     ResumenConfiguracionComponent,
     VisualizarSoporteDocumento,
-    CorreoUdnetComponent,
-    DefinirOpcionProyectoComponent
+    DefinirOpcionProyectoComponent,
+    CorreoUdnetComponent
 
   ],
   imports: [
