@@ -52,9 +52,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
 import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
