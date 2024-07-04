@@ -13,12 +13,17 @@ import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proy
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
 
 const routes: Routes = [
+
+  { path: "lista", component: ListTipoInscripcionComponent },
+  { path: "crear", component:  CrudTipoInscripcionComponent},
+  { path: "soporte", component: SoporteConfiguracionComponent },
+  { path: "opcion", component: DefinirOpcionProyectoComponent },
+  { path: "lista", component: AppComponent },
+  { path: "correo-udnet", component: CorreoUdnetComponent },
   { path: "inscripcion/lista", component: ListTipoInscripcionComponent },
   { path: "inscripcion/crear", component:  CrudTipoInscripcionComponent},
   { path: "inscripcion/soporte", component: SoporteConfiguracionComponent },
-  { path: "opcion", component: DefinirOpcionProyectoComponent },
-  { path: "inscripcion/lista", component: AppComponent },
-  { path: "correo-udnet", component: CorreoUdnetComponent }
+  { path: "inscripcion/lista", component: AppComponent }
 ];
 
 

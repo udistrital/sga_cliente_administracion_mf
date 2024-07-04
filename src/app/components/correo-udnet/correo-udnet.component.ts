@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
+import { CorreoInscripcionMidService } from '../../services/correo_inscripcion_mid.service';
 
 interface Element {
   facultad: string;
@@ -55,7 +56,8 @@ export class CorreoUdnetComponent implements OnInit {
     private translate: TranslateService,
     private popUpManager: PopUpManager,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private correoInscripcionMidService: CorreoInscripcionMidService
   ) { }
 
   ngOnInit(): void {
@@ -200,7 +202,6 @@ export class CorreoUdnetComponent implements OnInit {
 
   toggleFormVisibility(): void {
     // Implementa la lógica para alternar la visibilidad del formulario aquí
-    // Por ejemplo:
     this.mostrarTabla1 = !this.mostrarTabla1;
   }
 
@@ -208,7 +209,51 @@ export class CorreoUdnetComponent implements OnInit {
     this.selectedSolicitudId = id;
     this.mostrarTabla('tabla2');
   }
+  
+// metodos tarea 323
 
+  onEnviarClick(): void {
+    const data = {
+      // Aquí puedes pasar los datos que necesitas enviar al backend.
+      // Asegúrate de reemplazar estos datos con los que realmente necesitas.
+      asignaciones: this.dataSource2.data.map(item => ({
+        facultad: item.facultad,
+        codigo: item.codigo,
+        numeroDocumento: item.numeroDocumento,
+        primerNombre: item.primerNombre,
+        segundoNombre: item.segundoNombre,
+        primerApellido: item.primerApellido,
+        segundoApellido: item.segundoApellido,
+        correoPersonal: item.correoPersonal,
+        telefono: item.telefono,
+        usuarioAsignado: item.usuarioAsignado,
+        correoAsignado: item.correoAsignado
+      }))
+    };
+
+    this.correoInscripcionMidService.post('asignacion', data).subscribe(
+      (      response: any) => {
+        this.popUpManager.showSuccessAlert('Correos asignados correctamente.');
+        console.log(response);
+      },
+      (      error: any) => {
+        this.popUpManager.showErrorAlert('Error al asignar correos.');
+        console.error('Error al asignar correos:', error);
+      }
+    );
+  }
+
+  toggleFormulario(): void {
+    this.mostrarFormulario = !this.mostrarFormulario;
+  }
+
+  cancelarObservacion(): void {
+    this.observacionForm.reset();
+    this.toggleFormulario();
+  }
+
+
+// metodos de observaciones 
   agregarObservacion(): void {
     if (this.observacionForm.valid) {
       const observacion: Observacion = {
@@ -218,8 +263,10 @@ export class CorreoUdnetComponent implements OnInit {
         cuerpoObservacion: this.observacionForm.value.cuerpoObservacion,
         fecha: new Date()
       };
+
       this.observaciones.push(observacion);
       this.observacionForm.reset();
+      this.toggleFormVisibility();
     }
   }
 
@@ -249,4 +296,41 @@ export class CorreoUdnetComponent implements OnInit {
         return '';
     }
   }
+
+  //metodos para tabla2 campos de usuario y correo
+
+  agregarAsignacion(asignacion: any): void {
+    this.correoInscripcionMidService.post('asignacion', asignacion).subscribe((response: any) => {
+      // Manejar la respuesta después de la asignación
+      this.cargarDatosTabla2();
+    });
+  }
+
+  onSubmit(): void {
+    if (this.observacionForm.valid) {
+      const formValue = this.observacionForm.value;
+      const asignacion = {
+        tipoObservacion: formValue.tipoObservacion,
+        nombres: formValue.nombreRemitente.nombres,
+        apellidos: formValue.nombreRemitente.apellidos,
+        cuerpoObservacion: formValue.cuerpoObservacion,
+        fecha: new Date(),
+        usuarioAsignado: this.obtenerUsuarioAsignado(),  // Método para obtener el usuario asignado
+        correoAsignado: this.obtenerCorreoAsignado()    // Método para obtener el correo asignado
+      };
+      this.agregarAsignacion(asignacion);
+    }
+  }
+
+  obtenerUsuarioAsignado(): string {
+    // Implementar lógica para obtener el usuario asignado
+    return 'usuarioAsignadoEjemplo';
+  }
+
+  obtenerCorreoAsignado(): string {
+    // Implementar lógica para obtener el correo asignado
+    return 'correoAsignado@example.com';
+  }
+
 }
+

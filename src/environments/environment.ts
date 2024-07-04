@@ -17,4 +17,5 @@ export const environment = {
   SGA_CRUD_PARAMETRO: 'http://pruebasapi2.intranetoas.udistrital.edu.co:8094/v1/',
   SOLICITUDES_ADMINISTRACION:'http://pruebasapi2.intranetoas.udistrital.edu.co:8117/v1/',
   SGA_CORREOS_MID: 'http://pruebasapi3.intranetoas.udistrital.edu.co:8547/',
+  tercerosMidUrl: 'http://localhost:8098/v1/',
 };
