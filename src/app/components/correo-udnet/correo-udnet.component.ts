@@ -7,6 +7,7 @@ import { SolicitudesCorreosService } from '../../services/solicitudes_correos.se
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
 import { CorreoInscripcionMidService } from '../../services/correo_inscripcion_mid.service';
+import { SgaAdmisionesMid } from '../../services/sga_admisiones_mid.service';
 
 interface Element {
   facultad: string;
@@ -57,7 +58,8 @@ export class CorreoUdnetComponent implements OnInit {
     private popUpManager: PopUpManager,
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private correoInscripcionMidService: CorreoInscripcionMidService
+    private correoInscripcionMidService: CorreoInscripcionMidService,
+    private sgaAdmisionesMid: SgaAdmisionesMid
   ) { }
 
   ngOnInit(): void {
@@ -115,12 +117,14 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   cargarDatosTabla2(): void {
-    const data2: Element[] = [
-      { facultad: 'Ingeniería', codigo: '001', numeroDocumento: '12345678', primerNombre: 'Juan', segundoNombre: 'Carlos', primerApellido: 'Pérez', segundoApellido: 'García', correoPersonal: 'juan@example.com', telefono: '1234567890', usuarioAsignado: 'Usuario1', correoAsignado: 'user1@example.com' },
-      { facultad: 'Medicina', codigo: '002', numeroDocumento: '87654321', primerNombre: 'Ana', segundoNombre: 'María', primerApellido: 'López', segundoApellido: 'Martínez', correoPersonal: 'ana@example.com', telefono: '0987654321', usuarioAsignado: 'Usuario2', correoAsignado: 'user2@example.com' }
-    ];
-    this.dataSource2 = new MatTableDataSource(data2);
-    this.dataSource2.paginator = this.paginator2;
+    this.sgaAdmisionesMid.obtenerCorreosAsignados(45).subscribe((response: { usuarioSugerido: string; correo_asignado: string; }) => {
+      const data2: Element[] = [
+        { facultad: 'Ingeniería', codigo: '001', numeroDocumento: '12345678', primerNombre: 'Juan', segundoNombre: 'Carlos', primerApellido: 'Pérez', segundoApellido: 'García', correoPersonal: 'juan@example.com', telefono: '1234567890', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado },
+        { facultad: 'Medicina', codigo: '002', numeroDocumento: '87654321', primerNombre: 'Ana', segundoNombre: 'María', primerApellido: 'López', segundoApellido: 'Martínez', correoPersonal: 'ana@example.com', telefono: '0987654321', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado }
+      ];
+      this.dataSource2 = new MatTableDataSource(data2);
+      this.dataSource2.paginator = this.paginator2;
+    });
   }
 
   cargarCSV(event: any): void {
@@ -201,7 +205,6 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   toggleFormVisibility(): void {
-    // Implementa la lógica para alternar la visibilidad del formulario aquí
     this.mostrarTabla1 = !this.mostrarTabla1;
   }
 
@@ -209,13 +212,9 @@ export class CorreoUdnetComponent implements OnInit {
     this.selectedSolicitudId = id;
     this.mostrarTabla('tabla2');
   }
-  
-// metodos tarea 323
 
   onEnviarClick(): void {
     const data = {
-      // Aquí puedes pasar los datos que necesitas enviar al backend.
-      // Asegúrate de reemplazar estos datos con los que realmente necesitas.
       asignaciones: this.dataSource2.data.map(item => ({
         facultad: item.facultad,
         codigo: item.codigo,
@@ -232,11 +231,11 @@ export class CorreoUdnetComponent implements OnInit {
     };
 
     this.correoInscripcionMidService.post('asignacion', data).subscribe(
-      (      response: any) => {
+      response => {
         this.popUpManager.showSuccessAlert('Correos asignados correctamente.');
         console.log(response);
       },
-      (      error: any) => {
+      error => {
         this.popUpManager.showErrorAlert('Error al asignar correos.');
         console.error('Error al asignar correos:', error);
       }
@@ -252,8 +251,6 @@ export class CorreoUdnetComponent implements OnInit {
     this.toggleFormulario();
   }
 
-
-// metodos de observaciones 
   agregarObservacion(): void {
     if (this.observacionForm.valid) {
       const observacion: Observacion = {
@@ -297,11 +294,8 @@ export class CorreoUdnetComponent implements OnInit {
     }
   }
 
-  //metodos para tabla2 campos de usuario y correo
-
   agregarAsignacion(asignacion: any): void {
     this.correoInscripcionMidService.post('asignacion', asignacion).subscribe((response: any) => {
-      // Manejar la respuesta después de la asignación
       this.cargarDatosTabla2();
     });
   }
@@ -315,22 +309,18 @@ export class CorreoUdnetComponent implements OnInit {
         apellidos: formValue.nombreRemitente.apellidos,
         cuerpoObservacion: formValue.cuerpoObservacion,
         fecha: new Date(),
-        usuarioAsignado: this.obtenerUsuarioAsignado(),  // Método para obtener el usuario asignado
-        correoAsignado: this.obtenerCorreoAsignado()    // Método para obtener el correo asignado
+        usuarioAsignado: this.obtenerUsuarioAsignado(),
+        correoAsignado: this.obtenerCorreoAsignado()
       };
       this.agregarAsignacion(asignacion);
     }
   }
 
   obtenerUsuarioAsignado(): string {
-    // Implementar lógica para obtener el usuario asignado
     return 'usuarioAsignadoEjemplo';
   }
 
   obtenerCorreoAsignado(): string {
-    // Implementar lógica para obtener el correo asignado
     return 'correoAsignado@example.com';
   }
-
 }
-

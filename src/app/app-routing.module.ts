@@ -9,7 +9,6 @@ import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion
 import { SoporteConfiguracionComponent } from './components/soporte-configuracion/soporte-configuracion/soporte-configuracion.component';
 import { ResumenConfiguracionComponent } from './components/soporte-configuracion/resumen-configuracion/resumen-configuracion.component';
 import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proyecto/definir-opcion-proyecto.component';
-
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
 
 const routes: Routes = [
