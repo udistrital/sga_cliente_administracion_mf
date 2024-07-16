@@ -1,58 +1,58 @@
 import { Injectable } from '@angular/core';
-import { RequestManager } from '../managers/requestManager';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import * as Papa from 'papaparse';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SolicitudesCorreosService {
 
-    constructor(private requestManager: RequestManager, private http: HttpClient) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
-    }
+  private baseUrl = 'http://pruebasapi2.intranetoas.udistrital.edu.co:8117/v1/';
 
-    get(endpoint: string) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
-        return this.requestManager.get(endpoint);
-    }
+  constructor(private http: HttpClient) {}
 
-    post(endpoint: any, element: any) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
-        return this.requestManager.post(endpoint, element);
-    }
+  get(endpoint: string): Observable<any> {
+    const url = `${this.baseUrl}${endpoint}`;
+    return this.http.get(url);
+  }
 
-    put(endpoint: any, element: any) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
-        return this.requestManager.put(endpoint, element);
-    }
+  post(endpoint: string, element: any): Observable<any> {
+    const url = `${this.baseUrl}${endpoint}`;
+    return this.http.post(url, element);
+  }
 
-    delete(endpoint: any, element: { Id: any; }) {
-        this.requestManager.setPath('SOLICITUDES_CORREOS_SERVICE');
-        return this.requestManager.delete(endpoint, element.Id);
-    }
+  put(endpoint: string, element: any): Observable<any> {
+    const url = `${this.baseUrl}${endpoint}`; 
+    return this.http.put(url, element);
+  }
 
+  delete(endpoint: string, id: any): Observable<any> {
+    const url = `${this.baseUrl}${endpoint}/${id}`;
+    return this.http.delete(url);
+  }
 
-    cargarDatos(file: File): Observable<any[]> {
-        return new Observable<any[]>(observer => {
-            Papa.parse(file, {
-                header: true,
-                complete: (result) => {
-                    observer.next(result.data);
-                    observer.complete();
-                },
-                error: (error) => {
-                    observer.error(error);
-                }
-            });
-        });
-    }
+  cargarDatos(file: File): Observable<any[]> {
+    return new Observable<any[]>(observer => {
+      Papa.parse(file, {
+        header: true,
+        complete: (result) => {
+          observer.next(result.data);
+          observer.complete();
+        },
+        error: (error) => {
+          observer.error(error);
+        }
+      });
+    });
+  }
 
-    descargarDatos(data: any[]): Observable<Blob> {
-        return new Observable<Blob>(observer => {
-            const csvData = Papa.unparse(data);
-            const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-            observer.next(blob);
-            observer.complete();
-        });
-    }
+  descargarDatos(data: any[]): Observable<Blob> {
+    return new Observable<Blob>(observer => {
+      const csvData = Papa.unparse(data);
+      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+      observer.next(blob);
+      observer.complete();
+    });
+  }
 }

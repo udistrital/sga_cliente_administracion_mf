@@ -1,11 +1,35 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
+import { CorreoInscripcionMidService } from '../../services/correo_inscripcion_mid.service';
+import { SgaAdmisionesMid } from '../../services/sga_admisiones_mid.service';
+
+interface Element {
+  facultad: string;
+  codigo: string;
+  numeroDocumento: string;
+  primerNombre: string;
+  segundoNombre: string;
+  primerApellido: string;
+  segundoApellido: string;
+  correoPersonal: string;
+  telefono: string;
+  usuarioAsignado: string;
+  correoAsignado: string;
+}
+
+interface Observacion {
+  tipoObservacion: string;
+  nombres: string;
+  apellidos: string;
+  cuerpoObservacion: string;
+  fecha: Date;
+}
 
 @Component({
   selector: 'udistrital-correo-udnet',
@@ -13,56 +37,101 @@ import { MatSelectChange } from '@angular/material/select';
   styleUrls: ['./correo-udnet.component.scss']
 })
 export class CorreoUdnetComponent implements OnInit {
+  mostrarTabla1: boolean = true;
   displayedColumns: string[] = ['#', 'procesoAdminicion', 'fecha', 'estado', 'gestion'];
   displayedColumns2: string[] = ['facultad', 'codigo', 'numeroDocumento', 'primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'correoPersonal', 'telefono', 'usuarioAsignado', 'correoAsignado'];
-  
+
   dataSource!: MatTableDataSource<any>;
-  dataSource2!: MatTableDataSource<any>;
-  
+  dataSource2!: MatTableDataSource<Element>;
+
+  selectedSolicitudId!: number;
+  observaciones: Observacion[] = []; // Arreglo para almacenar las observaciones
+  observacionForm!: FormGroup; // Formulario para la observación
+  mostrarFormulario: boolean = false; // Propiedad para controlar la visibilidad del formulario
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
-  mostrarTabla1: boolean = true;
-
-  nuevoProceso: string = '';
-  nuevoEstado: string = 'Pendiente';
-a: any;
 
   constructor(
     private solicitudesCorreosService: SolicitudesCorreosService,
     private translate: TranslateService,
     private popUpManager: PopUpManager,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private fb: FormBuilder,
+    private correoInscripcionMidService: CorreoInscripcionMidService,
+    private sgaAdmisionesMid: SgaAdmisionesMid
   ) { }
 
-  ngOnInit() {
-    this.cargarDatosTabla();
+  ngOnInit(): void {
+    this.initForm();
+    this.loadData();
     this.cargarDatosTabla2();
   }
 
-  cargarDatosTabla() {
-    const data = [
-      { procesoAdminicion: 'Proceso 1', fecha: '2024-06-01', estado: 'Pendiente' },
-      { procesoAdminicion: 'Proceso 2', fecha: '2024-06-02', estado: 'Completado' },
-      { procesoAdminicion: 'Proceso 3', fecha: '2024-06-03', estado: 'En Proceso' }
-    ];
-    this.dataSource = new MatTableDataSource(data);
-    this.dataSource.paginator = this.paginator;
+  initForm(): void {
+    this.observacionForm = this.fb.group({
+      tipoObservacion: ['', Validators.required],
+      nombreRemitente: this.fb.group({
+        nombres: ['', Validators.required],
+        apellidos: ['', Validators.required]
+      }),
+      cuerpoObservacion: ['', Validators.required]
+    });
   }
 
-  cargarDatosTabla2() {
-    const data2 = [
-      { facultad: 'Ingeniería', codigo: '001', numeroDocumento: '12345678', primerNombre: 'Juan', segundoNombre: 'Carlos', primerApellido: 'Pérez', segundoApellido: 'García', correoPersonal: 'juan@example.com', telefono: '1234567890', usuarioAsignado: 'Usuario1', correoAsignado: 'user1@example.com' },
-      { facultad: 'Medicina', codigo: '002', numeroDocumento: '87654321', primerNombre: 'Ana', segundoNombre: 'María', primerApellido: 'López', segundoApellido: 'Martínez', correoPersonal: 'ana@example.com', telefono: '0987654321', usuarioAsignado: 'Usuario2', correoAsignado: 'user2@example.com' }
-    ];
-    this.dataSource2 = new MatTableDataSource(data2);
-    this.dataSource2.paginator = this.paginator2;
+  loadData(): void {
+    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40').subscribe(res => {
+      if (res !== null) {
+        const data = <Array<any>>res;
+        const formattedData = data.map(item => ({
+          id: item.Id,
+          procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
+          fecha: this.formatDate(item.FechaRadicacion),
+          estado: item.EstadoTipoSolicitudId.EstadoId.Nombre
+        }));
+
+        formattedData.sort((a, b) => {
+          if (a.estado === 'Radicado' && b.estado !== 'Radicado') {
+            return -1;
+          } else if (a.estado !== 'Radicado' && b.estado === 'Radicado') {
+            return 1;
+          } else {
+            const dateA = new Date(a.fecha);
+            const dateB = new Date(b.fecha);
+            return dateB.getTime() - dateA.getTime();
+          }
+        });
+
+        this.dataSource = new MatTableDataSource(formattedData);
+        this.dataSource.paginator = this.paginator;
+      }
+    });
   }
 
-  cargarCSV(event: any) {
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  cargarDatosTabla2(): void {
+    this.sgaAdmisionesMid.obtenerCorreosAsignados(45).subscribe((response: { usuarioSugerido: string; correo_asignado: string; }) => {
+      const data2: Element[] = [
+        { facultad: 'Ingeniería', codigo: '001', numeroDocumento: '12345678', primerNombre: 'Juan', segundoNombre: 'Carlos', primerApellido: 'Pérez', segundoApellido: 'García', correoPersonal: 'juan@example.com', telefono: '1234567890', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado },
+        { facultad: 'Medicina', codigo: '002', numeroDocumento: '87654321', primerNombre: 'Ana', segundoNombre: 'María', primerApellido: 'López', segundoApellido: 'Martínez', correoPersonal: 'ana@example.com', telefono: '0987654321', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado }
+      ];
+      this.dataSource2 = new MatTableDataSource(data2);
+      this.dataSource2.paginator = this.paginator2;
+    });
+  }
+
+  cargarCSV(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
       this.solicitudesCorreosService.cargarDatos(file).subscribe(data => {
-        this.dataSource2 = new MatTableDataSource(data);
+        this.dataSource2 = new MatTableDataSource<Element>(data);
         this.dataSource2.paginator = this.paginator2;
       }, error => {
         console.error('Error al cargar el archivo CSV:', error);
@@ -70,7 +139,7 @@ a: any;
     }
   }
 
-  aplicarFiltro(event: any, tabla: string) {
+  aplicarFiltro(event: any, tabla: string): void {
     const filterValue = (event.target as HTMLInputElement).value;
     if (tabla === 'tabla1') {
       this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -85,13 +154,11 @@ a: any;
     }
   }
 
-  mostrarTabla(tablaId: string) {
-    document.getElementById('tabla1')!.style.display = tablaId === 'tabla1' ? 'block' : 'none';
-    document.getElementById('tabla2')!.style.display = tablaId === 'tabla2' ? 'block' : 'none';
+  mostrarTabla(tablaId: string): void {
     this.mostrarTabla1 = tablaId === 'tabla1';
   }
 
-  descargarCSV() {
+  descargarCSV(): void {
     const data = this.dataSource2.data;
     this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
       const link = document.createElement('a');
@@ -103,24 +170,157 @@ a: any;
     });
   }
 
-  anadirNuevaSolicitud() {
-    const nuevaSolicitud = {
-      procesoAdminicion: this.nuevoProceso,
-      fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
-      estado: this.nuevoEstado
+  confirmarGestion(): void {
+    if (!this.selectedSolicitudId) {
+      this.popUpManager.showErrorAlert('No se ha seleccionado ninguna solicitud.');
+      return;
+    }
+
+    const updatedSolicitud = {
+      Id: this.selectedSolicitudId,
+      EstadoTipoSolicitudId: {
+        Id: 95
+      },
+      Referencia: "{}",
+      Resultado: "",
+      FechaRadicacion: "2024-06-15 16:00:00 +0000 +0000",
+      FechaCreacion: "2024-06-15 16:48:37.638665 +0000 +0000",
+      FechaModificacion: "2024-06-15 16:48:37.63876 +0000 +0000",
+      SolicitudFinalizada: false,
+      Activo: true,
+      SolicitudPadreId: null
     };
-    const data = this.dataSource.data;
-    data.push(nuevaSolicitud);
-    this.dataSource.data = data; // Actualizar dataSource
-    this.nuevoProceso = ''; // Limpiar campo de nuevo proceso
-    this.nuevoEstado = 'Pendiente'; // Resetear estado
+
+    this.solicitudesCorreosService.put(`solicitud/${this.selectedSolicitudId}`, updatedSolicitud).subscribe(
+      () => {
+        this.popUpManager.showSuccessAlert('Gestión de solicitudes confirmada.');
+        this.loadData();
+        this.mostrarTabla('tabla1');
+      },
+      error => {
+        this.popUpManager.showErrorAlert('Error al confirmar la gestión de solicitudes.');
+        console.error('Error:', error);
+      }
+    );
   }
 
-  cargarSolicitudesCorreos() {
-    //implementar la lógica que se necesite para confirmar la gestión de las solicitudes.
-    // Por ejemplo, enviar datos al backend para ser procesados.
-    console.log("Confirmar gestión de solicitudes correos");
-    this.popUpManager.showSuccessAlert('Gestión de solicitudes confirmada.');
+  toggleFormVisibility(): void {
+    this.mostrarTabla1 = !this.mostrarTabla1;
   }
 
+  onGestionClick(id: number): void {
+    this.selectedSolicitudId = id;
+    this.mostrarTabla('tabla2');
+  }
+
+  onEnviarClick(): void {
+    const data = {
+      asignaciones: this.dataSource2.data.map(item => ({
+        facultad: item.facultad,
+        codigo: item.codigo,
+        numeroDocumento: item.numeroDocumento,
+        primerNombre: item.primerNombre,
+        segundoNombre: item.segundoNombre,
+        primerApellido: item.primerApellido,
+        segundoApellido: item.segundoApellido,
+        correoPersonal: item.correoPersonal,
+        telefono: item.telefono,
+        usuarioAsignado: item.usuarioAsignado,
+        correoAsignado: item.correoAsignado
+      }))
+    };
+
+    this.correoInscripcionMidService.post('asignacion', data).subscribe(
+      response => {
+        this.popUpManager.showSuccessAlert('Correos asignados correctamente.');
+        console.log(response);
+      },
+      error => {
+        this.popUpManager.showErrorAlert('Error al asignar correos.');
+        console.error('Error al asignar correos:', error);
+      }
+    );
+  }
+
+  toggleFormulario(): void {
+    this.mostrarFormulario = !this.mostrarFormulario;
+  }
+
+  cancelarObservacion(): void {
+    this.observacionForm.reset();
+    this.toggleFormulario();
+  }
+
+  agregarObservacion(): void {
+    if (this.observacionForm.valid) {
+      const observacion: Observacion = {
+        tipoObservacion: this.observacionForm.value.tipoObservacion,
+        nombres: this.observacionForm.value.nombreRemitente.nombres,
+        apellidos: this.observacionForm.value.nombreRemitente.apellidos,
+        cuerpoObservacion: this.observacionForm.value.cuerpoObservacion,
+        fecha: new Date()
+      };
+
+      this.observaciones.push(observacion);
+      this.observacionForm.reset();
+      this.toggleFormVisibility();
+    }
+  }
+
+  mostrarFormularioObservacion() {
+    this.mostrarFormulario = true;
+  }
+
+  ocultarFormularioObservacion() {
+    this.mostrarFormulario = false;
+  }
+
+  getObservacionColor(tipo: string): string {
+    switch (tipo) {
+      case 'usuarioEspecifico':
+        return 'usuario-especifico-color';
+      case 'general':
+        return 'general-color';
+      case 'sobreCampo':
+        return 'sobre-campo-color';
+      case 'erroresParticulares':
+        return 'errores-particulares-color';
+      case 'erroresPlataforma':
+        return 'errores-plataforma-color';
+      case 'duplicaciones':
+        return 'duplicaciones-color';
+      default:
+        return '';
+    }
+  }
+
+  agregarAsignacion(asignacion: any): void {
+    this.correoInscripcionMidService.post('asignacion', asignacion).subscribe((response: any) => {
+      this.cargarDatosTabla2();
+    });
+  }
+
+  onSubmit(): void {
+    if (this.observacionForm.valid) {
+      const formValue = this.observacionForm.value;
+      const asignacion = {
+        tipoObservacion: formValue.tipoObservacion,
+        nombres: formValue.nombreRemitente.nombres,
+        apellidos: formValue.nombreRemitente.apellidos,
+        cuerpoObservacion: formValue.cuerpoObservacion,
+        fecha: new Date(),
+        usuarioAsignado: this.obtenerUsuarioAsignado(),
+        correoAsignado: this.obtenerCorreoAsignado()
+      };
+      this.agregarAsignacion(asignacion);
+    }
+  }
+
+  obtenerUsuarioAsignado(): string {
+    return 'usuarioAsignadoEjemplo';
+  }
+
+  obtenerCorreoAsignado(): string {
+    return 'correoAsignado@example.com';
+  }
 }
