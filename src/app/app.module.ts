@@ -53,6 +53,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
 import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 import { CorreoInscripcionMidService } from './services/correo_inscripcion_mid.service';
+import { AuthGuard } from '../_guards/auth.guard';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -111,6 +112,7 @@ export function createTranslateLoader(http: HttpClient) {
     SpinnerUtilModule
   ],
   providers: [
+    AuthGuard,
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
     AnyService,

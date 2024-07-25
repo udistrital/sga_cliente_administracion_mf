@@ -10,29 +10,70 @@ import { SoporteConfiguracionComponent } from './components/soporte-configuracio
 import { ResumenConfiguracionComponent } from './components/soporte-configuracion/resumen-configuracion/resumen-configuracion.component';
 import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proyecto/definir-opcion-proyecto.component';
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
+import { AuthGuard } from '../_guards/auth.guard';
 
 const routes: Routes = [
 
-  { path: "lista", component: ListTipoInscripcionComponent },
-  { path: "crear", component:  CrudTipoInscripcionComponent},
-  { path: "soporte", component: SoporteConfiguracionComponent },
-  { path: "opcion", component: DefinirOpcionProyectoComponent },
-  { path: "lista", component: AppComponent },
-  { path: "correo-udnet", component: CorreoUdnetComponent },
-  { path: "inscripcion/lista", component: ListTipoInscripcionComponent },
-  { path: "inscripcion/crear", component:  CrudTipoInscripcionComponent},
-  { path: "inscripcion/soporte", component: SoporteConfiguracionComponent },
-  { path: "inscripcion/lista", component: AppComponent }
+  {
+    path: "lista",
+    canActivate: [AuthGuard],
+    component: ListTipoInscripcionComponent
+  },
+  {
+    path: "crear",
+    canActivate: [AuthGuard],
+    component: CrudTipoInscripcionComponent
+  },
+  {
+    path: "soporte",
+    canActivate: [AuthGuard],
+    component: SoporteConfiguracionComponent
+  },
+  {
+    path: "opcion",
+    canActivate: [AuthGuard],
+    component: DefinirOpcionProyectoComponent
+  },
+  {
+    path: "lista",
+    canActivate: [AuthGuard],
+    component: AppComponent
+  },
+  {
+    path: "correo-udnet",
+    canActivate: [AuthGuard],
+    component: CorreoUdnetComponent
+  },
+  {
+    path: "inscripcion/lista",
+    canActivate: [AuthGuard],
+    component: ListTipoInscripcionComponent
+  },
+  {
+    path: "inscripcion/crear",
+    canActivate: [AuthGuard],
+    component: CrudTipoInscripcionComponent
+  },
+  {
+    path: "inscripcion/soporte",
+    canActivate: [AuthGuard],
+    component: SoporteConfiguracionComponent
+  },
+  {
+    path: "inscripcion/lista",
+    canActivate: [AuthGuard],
+    component: AppComponent
+  }
 ];
 
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [ 
+  providers: [
     provideRouter(routes),
     { provide: APP_BASE_HREF, useValue: '/administracion/' },
     getSingleSpaExtraProviders(),
-    provideHttpClient(withFetch()) ]
+    provideHttpClient(withFetch())]
 })
 export class AppRoutingModule { }
