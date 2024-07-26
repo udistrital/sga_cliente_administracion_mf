@@ -65,7 +65,6 @@ export class CorreoUdnetComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadData();
-    this.cargarDatosTabla2();
   }
 
   initForm(): void {
@@ -80,14 +79,15 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   loadData(): void {
-    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40').subscribe(res => {
+    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40,Activo:true,Id__gt:48578&limit=0').subscribe(res => {
       if (res !== null) {
         const data = <Array<any>>res;
         const formattedData = data.map(item => ({
           id: item.Id,
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
           fecha: this.formatDate(item.FechaRadicacion),
-          estado: item.EstadoTipoSolicitudId.EstadoId.Nombre
+          estado: item.EstadoTipoSolicitudId.EstadoId.Nombre,
+          referencia: JSON.parse(item.Referencia)
         }));
 
         formattedData.sort((a, b) => {
@@ -110,20 +110,18 @@ export class CorreoUdnetComponent implements OnInit {
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const year = date.getUTCFullYear();
     return `${day}/${month}/${year}`;
   }
 
-  cargarDatosTabla2(): void {
-    this.sgaAdmisionesMid.obtenerCorreosAsignados(45).subscribe((response: { usuarioSugerido: string; correo_asignado: string; }) => {
-      const data2: Element[] = [
-        { facultad: 'Ingeniería', codigo: '001', numeroDocumento: '12345678', primerNombre: 'Juan', segundoNombre: 'Carlos', primerApellido: 'Pérez', segundoApellido: 'García', correoPersonal: 'juan@example.com', telefono: '1234567890', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado },
-        { facultad: 'Medicina', codigo: '002', numeroDocumento: '87654321', primerNombre: 'Ana', segundoNombre: 'María', primerApellido: 'López', segundoApellido: 'Martínez', correoPersonal: 'ana@example.com', telefono: '0987654321', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado }
-      ];
-      this.dataSource2 = new MatTableDataSource(data2);
+  cargarDatosTabla2(periodo: number, opcion: number): void {
+    this.sgaAdmisionesMid.get('gestion-correos/correo-sugerido?id_periodo='+periodo+'&opcion='+opcion).subscribe((response: any) => {
+
+      this.dataSource2 = new MatTableDataSource(response.Data);
       this.dataSource2.paginator = this.paginator2;
+      
     });
   }
 
@@ -208,8 +206,9 @@ export class CorreoUdnetComponent implements OnInit {
     this.mostrarTabla1 = !this.mostrarTabla1;
   }
 
-  onGestionClick(id: number): void {
-    this.selectedSolicitudId = id;
+  onGestionClick(solicitud: any): void {
+    this.selectedSolicitudId = solicitud.id;
+    this.cargarDatosTabla2(solicitud.referencia.Periodo, solicitud.referencia.Opcion);
     this.mostrarTabla('tabla2');
   }
 
@@ -296,7 +295,7 @@ export class CorreoUdnetComponent implements OnInit {
 
   agregarAsignacion(asignacion: any): void {
     this.correoInscripcionMidService.post('asignacion', asignacion).subscribe((response: any) => {
-      this.cargarDatosTabla2();
+      /* this.cargarDatosTabla2(); */
     });
   }
 
