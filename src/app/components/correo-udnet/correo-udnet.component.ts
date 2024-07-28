@@ -47,7 +47,7 @@ export class CorreoUdnetComponent implements OnInit {
   selectedSolicitudId!: number;
   observaciones: Observacion[] = []; // Arreglo para almacenar las observaciones
   observacionForm!: FormGroup; // Formulario para la observación
-  mostrarFormulario: boolean = false; // Propiedad para controlar la visibilidad del formulario
+  mostrarFormulario: boolean = true; // Propiedad para controlar la visibilidad del formulario
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
@@ -87,9 +87,10 @@ export class CorreoUdnetComponent implements OnInit {
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
           fecha: this.formatDate(item.FechaRadicacion),
           estado: item.EstadoTipoSolicitudId.EstadoId.Nombre,
-          referencia: JSON.parse(item.Referencia)
+          referencia: JSON.parse(item.Referencia),
+          estadoStyle: this.getEstadoStyle(item.EstadoTipoSolicitudId.EstadoId.Id)
         }));
-
+  
         formattedData.sort((a, b) => {
           if (a.estado === 'Radicado' && b.estado !== 'Radicado') {
             return -1;
@@ -101,13 +102,24 @@ export class CorreoUdnetComponent implements OnInit {
             return dateB.getTime() - dateA.getTime();
           }
         });
-
+  
         this.dataSource = new MatTableDataSource(formattedData);
         this.dataSource.paginator = this.paginator;
       }
     });
   }
-
+  
+  getEstadoStyle(EstadoId: number): { color: string } {
+    switch (EstadoId) {
+      case 105:
+        return { color: 'var(--success-accent)' };
+      case 100:
+        return { color: 'var(--danger-base)' };
+      default:
+        return { color: 'black'};
+    }
+  }
+  
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     const day = String(date.getUTCDate()).padStart(2, '0');
@@ -129,14 +141,15 @@ export class CorreoUdnetComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file) {
       this.solicitudesCorreosService.cargarDatos(file).subscribe(data => {
-        this.dataSource2 = new MatTableDataSource<Element>(data);
+        const limitedData = data.slice(0, 100); // Limitar a 100 registros
+        this.dataSource2 = new MatTableDataSource<Element>(limitedData);
         this.dataSource2.paginator = this.paginator2;
       }, error => {
         console.error('Error al cargar el archivo CSV:', error);
       });
     }
   }
-
+  
   aplicarFiltro(event: any, tabla: string): void {
     const filterValue = (event.target as HTMLInputElement).value;
     if (tabla === 'tabla1') {
@@ -157,7 +170,7 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   descargarCSV(): void {
-    const data = this.dataSource2.data;
+    const data = this.dataSource2.data.slice(0, 100); // Limitar a 100 registros
     this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
@@ -167,6 +180,7 @@ export class CorreoUdnetComponent implements OnInit {
       this.popUpManager.showErrorAlert('Error al descargar el archivo.');
     });
   }
+  
 
   confirmarGestion(): void {
     if (!this.selectedSolicitudId) {
@@ -264,14 +278,6 @@ export class CorreoUdnetComponent implements OnInit {
       this.observacionForm.reset();
       this.toggleFormVisibility();
     }
-  }
-
-  mostrarFormularioObservacion() {
-    this.mostrarFormulario = true;
-  }
-
-  ocultarFormularioObservacion() {
-    this.mostrarFormulario = false;
   }
 
   getObservacionColor(tipo: string): string {

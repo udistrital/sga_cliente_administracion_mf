@@ -12,10 +12,6 @@
       <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
       <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
     </mat-form-field>
-
-
-
-
     <!-- Inicia tabla principal -->
     <div id="tabla1" class="centered-cells blue-background table-rounded table"
       [style.display]="mostrarTabla1 ? 'block' : 'none'">
@@ -42,10 +38,11 @@
 
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.estado" | translate }}</th>
-          <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">{{ element.estado }}
+          <td mat-cell *matCellDef="let element" [ngStyle]="element.estadoStyle" class="status-indicator">
+            {{ element.estado }}
           </td>
         </ng-container>
-
+       
         <ng-container matColumnDef="gestion">
           <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.acciones" | translate }}</th>
           <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">
@@ -61,30 +58,20 @@
     </div>
     <!-- Finaliza tabla principal -->
 
-
-
     <div id="tabla2" class="table-rounded table" [style.display]="mostrarTabla1 ? 'none' : 'block'">
-
-
-
-
-
       <mat-form-field class="form-field">
         <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
         <input matInput (keyup)="aplicarFiltro($event, 'tabla2')" placeholder="Buscar" #inputTabla2 />
       </mat-form-field>
-
-
-
       <table mat-table [dataSource]="dataSource2">
         <ng-container matColumnDef="facultad">
           <th mat-header-cell *matHeaderCellDef>{{ "soporte.facultad" | translate }}</th>
-          <td mat-cell *matCellDef="let element">{{ element.facultad }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.Facultad }}</td>
         </ng-container>
 
         <ng-container matColumnDef="codigo">
           <th mat-header-cell *matHeaderCellDef>{{ "soporte.codigo" | translate }}</th>
-          <td mat-cell *matCellDef="let element">{{ element.codigo }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.Codigo }}</td>
         </ng-container>
 
         <ng-container matColumnDef="numeroDocumento">
@@ -141,59 +128,35 @@
       </table>
       <mat-paginator #paginator2 [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 
-      <div style="margin-top: 20px;">
-        <mat-card>
-          <mat-card-content>
-            <div *ngIf="mostrarFormulario" class="observacion-form">
-              <form [formGroup]="observacionForm" (ngSubmit)="agregarObservacion()">
-                <!-- Tipo de Observación -->
-                <div class="form-group">
-                  <label for="tipoObservacion">Tipo de Observación:</label>
-                  <select id="tipoObservacion" formControlName="tipoObservacion">
-                    <option value="usuarioEspecifico">Usuario Específico</option>
-                    <option value="general">General</option>
-                    <option value="sobreCampo">Sobre Campo</option>
-                    <option value="erroresParticulares">Errores Particulares</option>
-                    <option value="erroresPlataforma">Errores Plataforma</option>
-                    <option value="duplicaciones">Duplicaciones</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-                <!-- Nombres y Apellidos -->
-                <div formGroupName="nombreRemitente" class="form-group">
-                  <label for="nombres">Nombres:</label>
-                  <input id="nombres" formControlName="nombres">
-                  <label for="apellidos">Apellidos:</label>
-                  <input id="apellidos" formControlName="apellidos">
-                </div>
-                <!-- Cuerpo de la Observación -->
-                <div class="form-group">
-                  <label for="cuerpoObservacion">Cuerpo de la Observación:</label>
-                  <textarea id="cuerpoObservacion" formControlName="cuerpoObservacion"></textarea>
-                </div>
-                <!-- Botones -->
-                <div class="container-buttons">
-                  <button type="submit" class="boton-primary">Agregar Observación</button>
-                  <button mat-button type="button" (click)="ocultarFormularioObservacion()">Cancelar</button>
-                </div>
-              </form>
-            </div>
-            <div *ngIf="!mostrarFormulario">
-              <button mat-button (click)="mostrarFormularioObservacion()" class="boton-primary">Anexar
-                Observación</button>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-
-
+      <mat-card>
+        <mat-card-content>
+          <div *ngIf="mostrarFormulario">
+            <form [formGroup]="observacionForm" (ngSubmit)="agregarObservacion()">              
+              <div class="form-group">
+                <mat-card-title>
+                  {{ "GLOBAL.observaciones" | translate }}
+                </mat-card-title>
+                <mat-card-subtitle>
+                  {{ "solicitudes_correos.observacion_descripcion" | translate }}
+                </mat-card-subtitle>
+                <textarea id="cuerpoObservacion" formControlName="cuerpoObservacion"
+                  class="full-width-textarea"></textarea>
+              </div>              
+              <div class="container-buttons">
+                <button mat-flat-button color="primary">
+                  {{ "solicitudes_correos.observacion" | translate }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </mat-card-content>
 
   <mat-card-actions *ngIf="!mostrarTabla1">
-    <div class="container-bottons" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <div style="display: flex; gap: 10px;">
+    <div class="container-return">
+      <div class="container-buttons">
         <button mat-flat-button color="warn" (click)="descargarCSV()">
           {{ "solicitudes_correos.descargar_listado" | translate }}
         </button>
@@ -211,13 +174,4 @@
       </button>
     </div>
   </mat-card-actions>
-  
-
-<!--   <mat-card-actions *ngIf="!mostrarTabla1">
-    <button mat-flat-button color="primary" class="margin-y" (click)="mostrarTabla('tabla1')">
-      <mat-icon>keyboard_arrow_left</mat-icon>
-      {{ "GLOBAL.regresar" | translate }}
-    </button>
-  </mat-card-actions> -->
-
 </mat-card>

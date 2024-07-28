@@ -1,4 +1,48 @@
 //HOVER SOBRE LAS FILAS
 .mat-mdc-row:hover .mat-mdc-cell {
-    background-color: var(--color100);
-  }
+  background-color: var(--color100);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  
+}
+
+.full-width-textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  background-color: #ECECEC;
+  border: none;
+  border-bottom: 1px solid #898989;
+  border-radius: 5px 5px 0 0;
+  outline: none;
+  margin-bottom: 20px;
+  color: #212121;
+  font-size: 16px;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.full-width-textarea:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.container-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.container-return {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.status-indicator {
+  font-weight: bold;  
+}
