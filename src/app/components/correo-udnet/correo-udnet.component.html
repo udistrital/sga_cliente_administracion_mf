@@ -8,7 +8,7 @@
     </mat-card-subtitle>
   </mat-card-header><br>
   <mat-card-content>
-    <mat-form-field class="form-field">
+    <mat-form-field class="form-field" *ngIf="mostrarTabla1">
       <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
       <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
     </mat-form-field>
@@ -16,179 +16,131 @@
 
 
 
-
-
-    <div id="tabla1" class="centered-cells blue-background table-rounded" [style.display]="mostrarTabla1 ? 'block' : 'none'">
+    <!-- Inicia tabla principal -->
+    <div id="tabla1" class="centered-cells blue-background table-rounded table"
+      [style.display]="mostrarTabla1 ? 'block' : 'none'">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z5">
 
         <ng-container matColumnDef="#">
-          <th mat-header-cell *matHeaderCellDef class="cell">#</th> 
-          <td mat-cell *matCellDef="let element; let i = index" class="sub-cell" data-column="procesoAdminicion">{{ i + 1 }}</td>
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let element; let i = index" data-column="procesoAdminicion">{{ i +
+            1 }}</td>
         </ng-container>
 
         <ng-container matColumnDef="procesoAdminicion">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "solicitudes_correos.proceso_adminicion" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell" data-column="procesoAdminicion">{{ element.procesoAdminicion }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.proceso_admision" | translate }}
+          </th>
+          <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">{{
+            element.procesoAdminicion }}</td>
         </ng-container>
 
         <ng-container matColumnDef="fecha">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.fecha" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell" data-column="procesoAdminicion">{{ element.fecha }}</td>
-        </ng-container>
-
-
-        
-
-        ....
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-        <ng-container matColumnDef="gestion">
-          <th mat-header-cell *matHeaderCellDef class="cell">Gestión</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell" data-column="procesoAdminicion">
-            <button mat-icon-button class="blue-header-icon" (click)="onGestionClick(element)">
-              <mat-icon>search</mat-icon>
-            </button>
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.fecha" | translate }}</th>
+          <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">{{ element.fecha }}
           </td>
         </ng-container>
 
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.estado" | translate }}</th>
+          <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">{{ element.estado }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="gestion">
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.acciones" | translate }}</th>
+          <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">
+            <button mat-icon-button (click)="onGestionClick(element)" matTooltip="Ver">
+              <mat-icon style="color: var(--others-accent);">search</mat-icon>
+            </button>
+          </td>
+        </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-      
       <mat-paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="10" showFirstLastButtons></mat-paginator>
     </div>
+    <!-- Finaliza tabla principal -->
 
 
 
-    <ng-template #dialogTemplate let-data>
-      <h2 mat-dialog-title>{{ "periodo.detalles_periodo" | translate }}</h2>
-      <mat-dialog-content>
-        <p>{{ "GLOBAL.ano" | translate }}: {{ data.Year }}</p>
-        <p>{{ "GLOBAL.periodo" | translate }}: {{ data.Ciclo }}</p>
-        <p>{{ "GLOBAL.descripcion" | translate }}: {{ data.Descripcion }}</p>
-        <p>
-          {{ "GLOBAL.codigo_abreviacion" | translate }}:
-          {{ data.CodigoAbreviacion }}
-        </p>
-        <p>
-          {{ "GLOBAL.fecha_inicio" | translate }}:
-          {{ data.InicioVigencia | date : "dd/MM/yyyy" }}
-        </p>
-        <p>
-          {{ "GLOBAL.fecha_fin" | translate }}:
-          {{ data.FinVigencia | date : "dd/MM/yyyy" }}
-        </p>
-      </mat-dialog-content>
-      <mat-dialog-actions>
-        <button mat-button mat-dialog-close>{{ "Cerrar" }}</button>
-      </mat-dialog-actions>
-    </ng-template>
-    
+    <div id="tabla2" class="table-rounded table" [style.display]="mostrarTabla1 ? 'none' : 'block'">
 
 
 
 
 
+      <mat-form-field class="form-field">
+        <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
+        <input matInput (keyup)="aplicarFiltro($event, 'tabla2')" placeholder="Buscar" #inputTabla2 />
+      </mat-form-field>
 
-    <mat-card-header class="center-content blue-header" *ngIf="!mostrarTabla1">
-      <mat-card-title>{{ "solicitudes_correos.listado" | translate }}</mat-card-title>
-      <mat-card-subtitle>{{ "solicitudes_correos.resultados_solicitudes" | translate }}</mat-card-subtitle>
-    </mat-card-header>
 
-    <div id="tabla2" class="table-rounded" [style.display]="mostrarTabla1 ? 'none' : 'block'">
-      <div class="responsive-form search-left">
-        <div class="form-item large-width">
-          <mat-form-field class="form-field large-form-field">
-            <input matInput (keyup)="aplicarFiltro($event, 'tabla2')" placeholder="Buscar" #inputTabla2 />
-          </mat-form-field>
-        </div>
-        <button mat-icon-button matTooltip="Regresar" (click)="mostrarTabla('tabla1')" class="back-button">
-          <mat-icon>keyboard_arrow_left</mat-icon>
-        </button>
-      </div>
+
       <table mat-table [dataSource]="dataSource2">
         <ng-container matColumnDef="facultad">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "soporte.facultad" | translate }}</th> 
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.facultad }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "soporte.facultad" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.facultad }}</td>
         </ng-container>
 
         <ng-container matColumnDef="codigo">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "soporte.codigo" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.codigo }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "soporte.codigo" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.codigo }}</td>
         </ng-container>
 
         <ng-container matColumnDef="numeroDocumento">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "solicitudes_correos.numero_documento" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.NumeroDocumento }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.numero_documento" | translate }}
+          </th>
+          <td mat-cell *matCellDef="let element">{{ element.NumeroDocumento }}</td>
         </ng-container>
 
         <ng-container matColumnDef="primerNombre">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.primer_nombre" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.PrimerNombre }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.primer_nombre" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.PrimerNombre }}</td>
         </ng-container>
 
         <ng-container matColumnDef="segundoNombre">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.segundo_nombre" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.SegundoNombre }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.segundo_nombre" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.SegundoNombre }}</td>
         </ng-container>
 
         <ng-container matColumnDef="primerApellido">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.primer_apellido" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.PrimerApellido }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.primer_apellido" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.PrimerApellido }}</td>
         </ng-container>
 
         <ng-container matColumnDef="segundoApellido">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.segundo_apellido" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.SegundoApellido }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.segundo_apellido" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.SegundoApellido }}</td>
         </ng-container>
 
         <ng-container matColumnDef="correoPersonal">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "solicitudes_correos.correo_personal" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.CorreoPersonal }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.correo_personal" | translate }}
+          </th>
+          <td mat-cell *matCellDef="let element">{{ element.CorreoPersonal }}</td>
         </ng-container>
 
         <ng-container matColumnDef="telefono">
-          <th mat-header-cell *matHeaderCellDef class="cell">{{ "GLOBAL.telefono" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.Telefono }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.telefono" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.Telefono }}</td>
         </ng-container>
 
         <ng-container matColumnDef="usuarioAsignado">
-          <th mat-header-cell *matHeaderCellDef class="sugerido-header">{{ "solicitudes_correos.usuario_asignado" | translate }}</th>
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.correo_asignado }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.usuario_asignado" |
+            translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.correo_asignado }}</td>
         </ng-container>
 
         <ng-container matColumnDef="correoAsignado">
-          <th mat-header-cell *matHeaderCellDef class="sugerido-header">{{ "solicitudes_correos.correo_asignado" | translate }}</th> 
-          <td mat-cell *matCellDef="let element" class="sub-cell">{{ element.correo_asignado }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.correo_asignado" |
+            translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.correo_asignado }}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns2"></tr>
       </table>
       <mat-paginator #paginator2 [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-      
+
       <div style="margin-top: 20px;">
         <mat-card>
           <mat-card-content>
@@ -227,39 +179,45 @@
               </form>
             </div>
             <div *ngIf="!mostrarFormulario">
-              <button mat-button (click)="mostrarFormularioObservacion()" class="boton-primary">Anexar Observación</button>
+              <button mat-button (click)="mostrarFormularioObservacion()" class="boton-primary">Anexar
+                Observación</button>
             </div>
           </mat-card-content>
         </mat-card>
       </div>
 
-      Observaciones guardadas 
-      <div *ngFor="let observacion of observaciones" class="observacion">
-        <div class="header">
-          <div>Tipo de Observación: {{ observacion.tipoObservacion }}</div>
-          <div>Fecha: {{ observacion.fecha | date:'dd/MM/yyyy' }}</div>
-        </div>
-        <div class="body">
-          <div>Nombres: {{ observacion.nombres }}</div>
-          <div>Apellidos: {{ observacion.apellidos }}</div>
-          <div>Cuerpo de la Observación: {{ observacion.cuerpoObservacion }}</div>
-        </div>
-      </div>
+
+
     </div>
   </mat-card-content>
 
   <mat-card-actions *ngIf="!mostrarTabla1">
-    <div class="container-bottons">
-      <button mat-flat-button color="warn" (click)="descargarCSV()">
-        {{ "solicitudes_correos.descargar_listado" | translate }}
-      </button>
-      <button mat-flat-button color="accent" (click)="inputFile.click()">
-        {{ "solicitudes_correos.cargar_listado" | translate }}
-        <input #inputFile type="file" (change)="cargarCSV($event)" accept=".csv" style="display: none;">
-      </button>
-      <button mat-flat-button color="primary" (click)="confirmarGestion()">
-        {{ "solicitudes_correos.confirmar_gestion" | translate }}
+    <div class="container-bottons" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div style="display: flex; gap: 10px;">
+        <button mat-flat-button color="warn" (click)="descargarCSV()">
+          {{ "solicitudes_correos.descargar_listado" | translate }}
+        </button>
+        <button mat-flat-button color="accent" (click)="inputFile.click()">
+          {{ "solicitudes_correos.cargar_listado" | translate }}
+          <input #inputFile type="file" (change)="cargarCSV($event)" accept=".csv" style="display: none;">
+        </button>
+        <button mat-flat-button color="primary" (click)="confirmarGestion()">
+          {{ "solicitudes_correos.confirmar_gestion" | translate }}
+        </button>
+      </div>
+      <button mat-flat-button color="primary" (click)="mostrarTabla('tabla1')">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+        {{ "GLOBAL.regresar" | translate }}
       </button>
     </div>
   </mat-card-actions>
+  
+
+<!--   <mat-card-actions *ngIf="!mostrarTabla1">
+    <button mat-flat-button color="primary" class="margin-y" (click)="mostrarTabla('tabla1')">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+      {{ "GLOBAL.regresar" | translate }}
+    </button>
+  </mat-card-actions> -->
+
 </mat-card>

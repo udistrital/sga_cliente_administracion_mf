@@ -90,8 +90,8 @@
 "solicitudes_correos":{
   "consulta_solicitudes":"Gestión de correos institucionales",
   "resultados_solicitudes":"Creación y administración de cuentas de correo",
-  "proceso_adminicion" :"Admisión",
-  "gestion":"Gestion",
+  "proceso_admision" :"Proceso admisión",
+  "gestion":"Gestión",
   "nueva_solicitud":"Nueva Solicitud",
   "descargar_listado":"Descargar Listado",
   "cargar_listado":"Cargar Listado",
