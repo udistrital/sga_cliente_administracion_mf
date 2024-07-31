@@ -160,11 +160,10 @@ export class CorreoUdnetComponent implements OnInit {
 
   descargarCSV(): void {
     const data = this.dataSource2.data;
-    this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'solicitudes_correos_tabla2.csv';
-      link.click();
+    const chunkSize = 1000;
+  
+    this.solicitudesCorreosService.descargarDatos(data, chunkSize).subscribe(() => {
+      this.popUpManager.showSuccessAlert('Archivo descargado correctamente.');
     }, error => {
       this.popUpManager.showErrorAlert('Error al descargar el archivo.');
     });

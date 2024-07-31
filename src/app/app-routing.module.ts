@@ -41,7 +41,7 @@ const routes: Routes = [
   },
   {
     path: "correo-udnet",
-    canActivate: [AuthGuard],
+    /* canActivate: [AuthGuard], */
     component: CorreoUdnetComponent
   },
   {
