@@ -40,7 +40,7 @@ const routes: Routes = [
     component: AppComponent
   },
   {
-    path: "correo-udnet",
+    path: "correo-institucional",
     /* canActivate: [AuthGuard], */
     component: CorreoUdnetComponent
   },
