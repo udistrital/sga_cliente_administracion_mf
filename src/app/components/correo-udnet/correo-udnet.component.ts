@@ -47,7 +47,7 @@ export class CorreoUdnetComponent implements OnInit {
   selectedSolicitudId!: number;
   observaciones: Observacion[] = []; // Arreglo para almacenar las observaciones
   observacionForm!: FormGroup; // Formulario para la observación
-  mostrarFormulario: boolean = false; // Propiedad para controlar la visibilidad del formulario
+  mostrarFormulario: boolean = true; // Propiedad para controlar la visibilidad del formulario
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
@@ -65,7 +65,6 @@ export class CorreoUdnetComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadData();
-    this.cargarDatosTabla2();
   }
 
   initForm(): void {
@@ -80,16 +79,18 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   loadData(): void {
-    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40').subscribe(res => {
+    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40,Activo:true,Id__gt:48578&limit=0').subscribe(res => {
       if (res !== null) {
         const data = <Array<any>>res;
         const formattedData = data.map(item => ({
           id: item.Id,
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
           fecha: this.formatDate(item.FechaRadicacion),
-          estado: item.EstadoTipoSolicitudId.EstadoId.Nombre
+          estado: item.EstadoTipoSolicitudId.EstadoId.Nombre,
+          referencia: JSON.parse(item.Referencia),
+          estadoStyle: this.getEstadoStyle(item.EstadoTipoSolicitudId.EstadoId.Id)
         }));
-
+  
         formattedData.sort((a, b) => {
           if (a.estado === 'Radicado' && b.estado !== 'Radicado') {
             return -1;
@@ -101,29 +102,38 @@ export class CorreoUdnetComponent implements OnInit {
             return dateB.getTime() - dateA.getTime();
           }
         });
-
+  
         this.dataSource = new MatTableDataSource(formattedData);
         this.dataSource.paginator = this.paginator;
       }
     });
   }
-
+  
+  getEstadoStyle(EstadoId: number): { color: string } {
+    switch (EstadoId) {
+      case 105:
+        return { color: 'var(--success-accent)' };
+      case 100:
+        return { color: 'var(--danger-base)' };
+      default:
+        return { color: 'black'};
+    }
+  }
+  
   formatDate(dateString: string): string {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const year = date.getUTCFullYear();
     return `${day}/${month}/${year}`;
   }
 
-  cargarDatosTabla2(): void {
-    this.sgaAdmisionesMid.obtenerCorreosAsignados(45).subscribe((response: { usuarioSugerido: string; correo_asignado: string; }) => {
-      const data2: Element[] = [
-        { facultad: 'Ingeniería', codigo: '001', numeroDocumento: '12345678', primerNombre: 'Juan', segundoNombre: 'Carlos', primerApellido: 'Pérez', segundoApellido: 'García', correoPersonal: 'juan@example.com', telefono: '1234567890', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado },
-        { facultad: 'Medicina', codigo: '002', numeroDocumento: '87654321', primerNombre: 'Ana', segundoNombre: 'María', primerApellido: 'López', segundoApellido: 'Martínez', correoPersonal: 'ana@example.com', telefono: '0987654321', usuarioAsignado: response.usuarioSugerido, correoAsignado: response.correo_asignado }
-      ];
-      this.dataSource2 = new MatTableDataSource(data2);
+  cargarDatosTabla2(periodo: number, opcion: number): void {
+    this.sgaAdmisionesMid.get('gestion-correos/correo-sugerido?id_periodo='+periodo+'&opcion='+opcion).subscribe((response: any) => {
+
+      this.dataSource2 = new MatTableDataSource(response.Data);
       this.dataSource2.paginator = this.paginator2;
+      
     });
   }
 
@@ -131,14 +141,15 @@ export class CorreoUdnetComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file) {
       this.solicitudesCorreosService.cargarDatos(file).subscribe(data => {
-        this.dataSource2 = new MatTableDataSource<Element>(data);
+        const limitedData = data.slice(0, 100); // Limitar a 100 registros
+        this.dataSource2 = new MatTableDataSource<Element>(limitedData);
         this.dataSource2.paginator = this.paginator2;
       }, error => {
         console.error('Error al cargar el archivo CSV:', error);
       });
     }
   }
-
+  
   aplicarFiltro(event: any, tabla: string): void {
     const filterValue = (event.target as HTMLInputElement).value;
     if (tabla === 'tabla1') {
@@ -159,7 +170,7 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   descargarCSV(): void {
-    const data = this.dataSource2.data;
+    const data = this.dataSource2.data.slice(0, 100); // Limitar a 100 registros
     this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
@@ -169,6 +180,7 @@ export class CorreoUdnetComponent implements OnInit {
       this.popUpManager.showErrorAlert('Error al descargar el archivo.');
     });
   }
+  
 
   confirmarGestion(): void {
     if (!this.selectedSolicitudId) {
@@ -208,8 +220,9 @@ export class CorreoUdnetComponent implements OnInit {
     this.mostrarTabla1 = !this.mostrarTabla1;
   }
 
-  onGestionClick(id: number): void {
-    this.selectedSolicitudId = id;
+  onGestionClick(solicitud: any): void {
+    this.selectedSolicitudId = solicitud.id;
+    this.cargarDatosTabla2(solicitud.referencia.Periodo, solicitud.referencia.Opcion);
     this.mostrarTabla('tabla2');
   }
 
@@ -267,14 +280,6 @@ export class CorreoUdnetComponent implements OnInit {
     }
   }
 
-  mostrarFormularioObservacion() {
-    this.mostrarFormulario = true;
-  }
-
-  ocultarFormularioObservacion() {
-    this.mostrarFormulario = false;
-  }
-
   getObservacionColor(tipo: string): string {
     switch (tipo) {
       case 'usuarioEspecifico':
@@ -296,7 +301,7 @@ export class CorreoUdnetComponent implements OnInit {
 
   agregarAsignacion(asignacion: any): void {
     this.correoInscripcionMidService.post('asignacion', asignacion).subscribe((response: any) => {
-      this.cargarDatosTabla2();
+      /* this.cargarDatosTabla2(); */
     });
   }
 

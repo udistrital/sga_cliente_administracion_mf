@@ -88,19 +88,20 @@
 },
 
 "solicitudes_correos":{
-  "consulta_solicitudes":"Solicitudes",
-  "resultados_solicitudes":"Respuesta",
-  "proceso_adminicion" :"Admisión",
-  "gestion":"Gestion",
-  "nueva_solicitud":"Nueva Solicitud",
+  "consulta_solicitudes":"Gestión de correos institucionales",
+  "resultados_solicitudes":"¡Bienvenido! Aquí podrás gestionar y administrar las cuentas de correo institucionales de manera eficiente y sencilla.",
+  "proceso_admision" :"Proceso admisión",
+  "gestion":"Gestión",
   "descargar_listado":"Descargar Listado",
   "cargar_listado":"Cargar Listado",
-  "confirmar_gestion":"Confirmar Gestion",
+  "confirmar_gestion":"Confirmar Gestión",
   "listado":"Listado de correos",
-  "numero_documento":"Numero Documento",
-  "correo_personal":"Correo Personal",
-  "usuario_asignado":"Usuario Asignado",
-  "correo_asignado":"Correo Asignado"
+  "numero_documento":"Número documento",
+  "correo_personal":"Correo personal",
+  "usuario_asignado":"Usuario asignado",
+  "correo_asignado":"Correo asignado",
+  "observacion":"Agregar Observación",
+  "observacion_descripcion":"Proporciona tus comentarios o detalles adicionales en el campo de abajo"
 },
 "GLOBAL": {
   "rol": "Rol",

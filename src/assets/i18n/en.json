@@ -79,6 +79,22 @@
     "mostrar": "Show inactive records",
     "ocultar": "Hide inactive record"
 },
+    "solicitudes_correos": {
+    "consulta_solicitudes":"Management of institutional emails",
+    "resultados_solicitudes":"Welcome! Here you can manage and administer institutional email accounts efficiently and easily.",
+    "proceso_admision":"Admission process",
+    "gestion":"Management",
+    "descargar_listado":"Download List",
+    "cargar_listado":"Upload List",
+    "confirmar_gestion":"Confirm Management",
+    "listado":"List of emails",
+    "numero_documento":"Document number",
+    "correo_personal":"Personal email",
+    "usuario_asignado":"Assigned user",
+    "correo_asignado":"Assigned email",
+    "observacion":"Add Observation",
+    "observacion_descripcion":"Provide your comments or additional details in the field below"
+},
 "GLOBAL": {
   "admitir": "Admit",
   "aspirantes_inscritos": "Enrolled Applicants",
@@ -624,6 +640,7 @@
   "placeholder_direccion_entidad": "E.g.: Cra 8 # 40-78 Piso 1",
   "item": "Item",
   "evaluar": "Evaluate",
+  "fecha": "Date",
   "filtro": "Filter"
 },
 "opcion": {
