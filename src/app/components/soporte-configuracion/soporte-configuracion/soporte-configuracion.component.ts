@@ -1,9 +1,11 @@
-import { Component, Input, } from '@angular/core';
+import { Component, Input, ViewChild, } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { VisualizarSoporteDocumento } from '../visualizar-soporte/visualizar-soporte.component';
 import { SgaAdmisionesMid } from '../../../services/sga_admisiones_mid.service';
 import saveAs from 'file-saver';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-soporte-configuracion',
@@ -11,6 +13,10 @@ import saveAs from 'file-saver';
   styleUrls: ['./soporte-configuracion.component.scss']
 })
 export class SoporteConfiguracionComponent {
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  
   soporte: boolean = true
   resumen: boolean = false
   folderTagtoReload!: string;
@@ -23,6 +29,8 @@ export class SoporteConfiguracionComponent {
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource([{ orden: 1, convocatoria: "2024-1", generacion: "2021", usuario: "admin" }])
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   activateVariables() {
@@ -82,17 +90,21 @@ export class SoporteConfiguracionComponent {
     saveAs(blob, fileName);
   }
 
+  visualizarSoporte(valor: boolean) {
+    console.log("fds")
+    console.log(this.soporte)
+    this.soporte = !valor
+    this.resumen = valor
+    console.log(this.soporte)
+  }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
-visualizarSoporte(valor: boolean) {
-  console.log("fds")
-  console.log(this.soporte)
-  this.soporte = !valor
-  this.resumen = valor
-  console.log(this.soporte)
 }
-
-}
-
-

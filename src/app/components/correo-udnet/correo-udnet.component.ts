@@ -54,6 +54,7 @@ export class CorreoUdnetComponent implements OnInit {
   observaciones: Observacion[] = []; // Arreglo para almacenar las observaciones
   observacionForm!: FormGroup; // Formulario para la observación
   mostrarFormulario: boolean = true; // Propiedad para controlar la visibilidad del formulario
+  
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;

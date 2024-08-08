@@ -640,7 +640,8 @@
   "placeholder_direccion_entidad": "E.g.: Cra 8 # 40-78 Piso 1",
   "item": "Item",
   "evaluar": "Evaluate",
-  "fecha": "Date"
+  "fecha": "Date",
+  "filtro": "Filter"
 },
 "opcion": {
   "titulo1": "Definition of options for undergraduate",

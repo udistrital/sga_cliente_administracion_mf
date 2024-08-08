@@ -15,6 +15,13 @@
     <!-- Inicia tabla principal -->
     <div id="tabla1" class="centered-cells blue-background table-rounded table"
       [style.display]="mostrarTabla1 ? 'block' : 'none'">
+    <mat-form-field class="form-field" *ngIf="mostrarTabla1">
+      <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
+      <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
+    </mat-form-field>
+    <!-- Inicia tabla principal -->
+    <div id="tabla1" class="centered-cells blue-background table-rounded table"
+      [style.display]="mostrarTabla1 ? 'block' : 'none'">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z5">
 
         <ng-container matColumnDef="#">
@@ -72,6 +79,8 @@
         <ng-container matColumnDef="codigo">
           <th mat-header-cell *matHeaderCellDef>{{ "soporte.codigo" | translate }}</th>
           <td mat-cell *matCellDef="let element">{{ element.Codigo }}</td>
+          <th mat-header-cell *matHeaderCellDef>{{ "soporte.codigo" | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.Codigo }}</td>
         </ng-container>
 
         <ng-container matColumnDef="numeroDocumento">
@@ -82,7 +91,7 @@
 
         <ng-container matColumnDef="primerNombre">
           <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.primer_nombre" | translate }}</th>
-          <td mat-cell *matCellDef="let element">{{ element.NombreCompleto }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.PrimerNombre }}</td>
         </ng-container>
 
         <ng-container matColumnDef="segundoNombre">
@@ -127,6 +136,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns2"></tr>
       </table>
       <mat-paginator #paginator2 [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
 
       <mat-card>
         <mat-card-content>

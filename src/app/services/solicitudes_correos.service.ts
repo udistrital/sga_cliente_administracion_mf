@@ -38,11 +38,11 @@ export class SolicitudesCorreosService {
     return new Observable<any[]>(observer => {
       Papa.parse(file, {
         header: true,
-        complete: (result) => {
+        complete: (result: any) => {
           observer.next(result.data);
           observer.complete();
         },
-        error: (error) => {
+        error: (error: any) => {
           observer.error(error);
         }
       });
