@@ -11,7 +11,7 @@
             <mat-label>{{"GLOBAL.filtro" | translate}}</mat-label>
             <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
         </mat-form-field>
-        <div class="mat-elevation-z8 contenedor-tabla">
+        <div class="contenedor-tabla">
             <table mat-table [dataSource]="dataSource" matSort>
         
                 <ng-container matColumnDef="orden">

@@ -50,7 +50,7 @@
                     <mat-card-title class="titulo-resumen">{{ 'soporte.proceso' | translate }}: {{ proceso.Proceso }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                    <div class="mat-elevation-z8 contenedor-tabla">
+                    <div class="contenedor-tabla">
                         <table mat-table [dataSource]="proceso.Actividades">
                     
                             <ng-container matColumnDef="nombre">
@@ -85,7 +85,7 @@
                 <div class="title soporte"><strong> {{'soporte.derecho_pecuniario' | translate}}</strong></div>
                 <mat-card>
                     <mat-card-content>
-                        <div class="mat-elevation-z8 contenedor-tabla">
+                        <div class="contenedor-tabla">
                             <table mat-table [dataSource]="derechosPecuniarios" matSort>
                         
                                 <ng-container matColumnDef="codigo">
@@ -121,7 +121,7 @@
                 </mat-card>
                 <mat-card>
                     <mat-card-content>
-                        <div class="mat-elevation-z8 contenedor-tabla">
+                        <div class="contenedor-tabla">
                             <table mat-table [dataSource]="cuentaDerechosPecuniarios" matSort>
                         
                                 <ng-container matColumnDef="tipoCuneta">
@@ -149,7 +149,7 @@
             <div  class="title soporte"><strong> {{'soporte.proyecto_curricular' | translate}}</strong></div>
                 <mat-card>
                     <mat-card-content>
-                        <div class="mat-elevation-z8 contenedor-tabla">
+                        <div class="contenedor-tabla">
                             <table mat-table [dataSource]="proyectoCurricular">
                         
                                 <ng-container matColumnDef="calendario">
@@ -210,7 +210,7 @@
                                 </div>
                             </mat-card-header>
                             <mat-card-content>
-                                <div class="mat-elevation-z8 contenedor-tabla">
+                                <div class="contenedor-tabla">
                                     <table mat-table [dataSource]="criterio.SubCriterios">
                                 
                                         <ng-container matColumnDef="nombre">

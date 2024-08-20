@@ -6,6 +6,8 @@ import { SgaAdmisionesMid } from '../../../services/sga_admisiones_mid.service';
 import saveAs from 'file-saver';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { PopUpManager } from '../../../managers/popUpManager';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-soporte-configuracion',
@@ -25,7 +27,12 @@ export class SoporteConfiguracionComponent {
 
 
 
-  constructor(private dialog: MatDialog, private admisionServices: SgaAdmisionesMid) { }
+  constructor(
+    private dialog: MatDialog, 
+    private admisionServices: SgaAdmisionesMid,
+    private popUpManager: PopUpManager,
+    private translate: TranslateService,
+  ) { }
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource([{ orden: 1, convocatoria: "2024-1", generacion: "2021", usuario: "admin" }])
@@ -50,16 +57,30 @@ export class SoporteConfiguracionComponent {
     });
   }
 
-  documento(option: string) {
-    this.admisionServices.get("admision/soporte/40/2").subscribe((response: any) => {
-      console.log(response)
-      if (response.status == 200 && response.success == true) {
-        if (option == "ver") {
-          this.VisualizarPdf(response.data.pdf);
+  async documento(option: string) {
+    const soporte: any = await this.recuperarSoporte();
+    if (option == "ver") {
+      this.VisualizarPdf(soporte.data.pdf);
+    } else {
+      this.downloadPdf(soporte.data.pdf, "Soporte.pdf");
+    }
+  }
+
+  recuperarSoporte() {
+    return new Promise((resolve, reject) => {
+      this.admisionServices.get("admision/soporte/40/2").subscribe((res: any) => {
+        if (res.status == 200 && res.success == true) {
+          resolve(res);
         } else {
-          this.downloadPdf(response.data.pdf, "Soporte.pdf");
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(false);
         }
-      }
+      },
+        (error: any) => {
+          console.error(error);
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(error);
+        });
     });
   }
 
