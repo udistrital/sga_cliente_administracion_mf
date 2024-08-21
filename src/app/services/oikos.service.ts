@@ -15,25 +15,25 @@ const httpOptions = {
   providedIn: 'root',
 })
 
-export class InscripcionService {
+export class OikosService {
 
   constructor(private requestManager: RequestManager) {
-    this.requestManager.setPath('INSCRIPCION_SERVICE');
+    this.requestManager.setPath('OIKOS_SERVICE');
   }
   get(endpoint:string) {
-    this.requestManager.setPath('INSCRIPCION_SERVICE');
+    this.requestManager.setPath('OIKOS_SERVICE');
     return this.requestManager.get(endpoint);
   }
   post(endpoint:string, element:any) {
-    this.requestManager.setPath('INSCRIPCION_SERVICE');
+    this.requestManager.setPath('OIKOS_SERVICE');
     return this.requestManager.post(endpoint, element);
   }
   put(endpoint:string, element:any) {
-    this.requestManager.setPath('INSCRIPCION_SERVICE');
+    this.requestManager.setPath('OIKOS_SERVICE');
     return this.requestManager.put(endpoint, element);
   }
   delete(endpoint:string, element:any) {
-    this.requestManager.setPath('INSCRIPCION_SERVICE');
+    this.requestManager.setPath('OIKOS_SERVICE');
     return this.requestManager.delete(endpoint, element.Id);
   }
 }

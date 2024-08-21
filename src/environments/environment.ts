@@ -17,4 +17,7 @@ export const environment = {
   SGA_CRUD_PARAMETRO: 'http://pruebasapi2.intranetoas.udistrital.edu.co:8094/v1/',
   SOLICITUDES_ADMINISTRACION:'http://pruebasapi2.intranetoas.udistrital.edu.co:8117/v1/',
   TERCEROS_MID: 'http://pruebasapi2.intranetoas.udistrital.edu.co:8123',
+  OIKOS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/oikos_crud_api/v2/',
+  TERCEROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/terceros_crud/v1/',
+  SGA_MID_SERVICE: 'http://pruebasapi.intranetoas.udistrital.edu.co:8119/v1/',
 };
