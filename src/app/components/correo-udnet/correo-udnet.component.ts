@@ -1,13 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SolicitudesCorreosService } from '../../services/solicitudes_correos.service';
 import { PopUpManager } from '../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
 import { CorreoInscripcionMidService } from '../../services/correo_inscripcion_mid.service';
 import { SgaAdmisionesMid } from '../../services/sga_admisiones_mid.service';
+import { InscripcionService } from '../../services/inscripcion.service';
+import { OikosService } from '../../services/oikos.service';
+import { TercerosService } from '../../services/terceros.service';
+import { forkJoin, of } from 'rxjs';
+import { mergeMap, map, switchMap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+/* import { SgaMidService } from '../../services/sga_mid.service'; */
 
 interface Element {
   facultad: string;
@@ -48,18 +54,25 @@ export class CorreoUdnetComponent implements OnInit {
   observaciones: Observacion[] = []; // Arreglo para almacenar las observaciones
   observacionForm!: FormGroup; // Formulario para la observación
   mostrarFormulario: boolean = true; // Propiedad para controlar la visibilidad del formulario
+  
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
+
+  loading!: boolean;
+  periodo!: any;
 
   constructor(
     private solicitudesCorreosService: SolicitudesCorreosService,
     private translate: TranslateService,
     private popUpManager: PopUpManager,
-    private dialog: MatDialog,
     private fb: FormBuilder,
     private correoInscripcionMidService: CorreoInscripcionMidService,
-    private sgaAdmisionesMid: SgaAdmisionesMid
+    private sgaAdmisionesMid: SgaAdmisionesMid,
+    private inscripcionService: InscripcionService,
+    private oikosService: OikosService,
+    private terceroService: TercerosService,
+    /* private sgamidService: SgaMidService, */
   ) { }
 
   ngOnInit(): void {
@@ -128,14 +141,138 @@ export class CorreoUdnetComponent implements OnInit {
     return `${day}/${month}/${year}`;
   }
 
-  cargarDatosTabla2(periodo: number, opcion: number): void {
+
+
+
+
+/*   cargarDatosTabla2(periodo: number, opcion: number): void {
     this.sgaAdmisionesMid.get('gestion-correos/correo-sugerido?id_periodo='+periodo+'&opcion='+opcion).subscribe((response: any) => {
 
       this.dataSource2 = new MatTableDataSource(response.Data);
       this.dataSource2.paginator = this.paginator2;
       
     });
+  } */
+
+
+  async listarAspirantes() {
+    this.loading = true;
+    let aspirantesOficializados: any[] = [];
+    let aspirantesNoOficializados: any[] = [];
+    const facultades: any = await this.cargarFacultades();
+    for (const facultad of facultades) {
+      const proyectos = facultad.Opciones;
+      for (const proyecto of proyectos) {
+        const inscripcionesMatriculadas: any = await this.recuperarInscripciones(11, this.periodo, proyecto.Id);
+        if (Object.keys(inscripcionesMatriculadas[0]).length != 0) {
+          for (const inscripcion of inscripcionesMatriculadas) {
+            const persona: any = await this.consultarTercero(inscripcion.PersonaId);
+            const itemBody = {
+              facultad: facultad.Nombre,
+              proyecto: proyecto.Nombre,
+              codigo: inscripcion.Id,
+              documento: persona.NumeroIdentificacion,
+              nombre: `${persona.PrimerNombre} ${persona.SegundoNombre}`,
+              apellido: `${persona.PrimerApellido} ${persona.SegundoApellido}`,
+              correopersonal: persona.UsuarioWSO2,
+              telefono: persona.Telefono,
+              correoSugerido: `${persona.PrimerNombre}${persona.SegundoNombre}${persona.PrimerApellido}${persona.SegundoApellido}@udistrital.edu.co`,
+              correoAsignado: persona.UsuarioWSO2
+            }
+            aspirantesOficializados.push(itemBody);
+          }
+        }
+
+        const inscripcionesNoOficializadas: any = await this.recuperarInscripciones(12, this.periodo, proyecto.Id);
+        if (Object.keys(inscripcionesNoOficializadas[0]).length != 0) {
+          for (const inscripcion of inscripcionesNoOficializadas) {
+            const persona: any = await this.consultarTercero(inscripcion.PersonaId);
+            const itemBody = {
+              facultad: facultad.Nombre,
+              proyecto: proyecto.Nombre,
+              codigo: inscripcion.Id,
+              documento: persona.NumeroIdentificacion,
+              nombre: `${persona.PrimerNombre} ${persona.SegundoNombre}`,
+              apellido: `${persona.PrimerApellido} ${persona.SegundoApellido}`,
+              correopersonal: persona.UsuarioWSO2,
+              telefono: persona.Telefono,
+              correoSugerido: `${persona.PrimerNombre}${persona.SegundoNombre}${persona.PrimerApellido}${persona.SegundoApellido}@udistrital.edu.co`,
+              correoAsignado: persona.UsuarioWSO2
+            }
+            aspirantesNoOficializados.push(itemBody);
+          }
+        }
+      }
+    }
+
+    if (aspirantesOficializados.length > 0) {
+      this.dataSource2 = new MatTableDataSource(aspirantesOficializados);
+      this.dataSource2.paginator = this.paginator2;
+    } else {
+      this.popUpManager.showAlert(this.translate.instant('admision.titulo_aspirantes_no_encontrados'), this.translate.instant('admision.aspirantes_oficializados_no_encontrados'));
+    }
+
+    if (aspirantesNoOficializados.length > 0) {
+      this.dataSource2 = new MatTableDataSource(aspirantesNoOficializados);
+      this.dataSource2.paginator = this.paginator2;
+    } else {
+      this.popUpManager.showAlert(this.translate.instant('admision.titulo_aspirantes_no_encontrados'), this.translate.instant('admision.aspirantes_no_oficializados_no_encontrados'));
+    }
+
+    this.loading = false;
   }
+
+  cargarFacultades() {
+    return new Promise((resolve, reject) => {
+      this.oikosService.get('dependencia_padre/FacultadesConProyectos?Activo:true&limit=0')
+        .subscribe((res: any) => {
+          resolve(res)
+        },
+          (error: any) => {
+            console.error(error);
+            this.loading = false;
+            this.popUpManager.showErrorAlert(this.translate.instant('admision.facultades_error'));
+            reject(false);
+          });
+    });
+  }
+
+  recuperarInscripciones(idEstadoFormacion: any, periodo: any, programa: any) {
+    return new Promise((resolve, reject) => {
+      this.inscripcionService.get(`inscripcion?query=Activo:true,EstadoInscripcionId.Id:${idEstadoFormacion},PeriodoId:${periodo},ProgramaAcademicoId:${programa}&sortby=Id&order=asc&limit=0`)
+        .subscribe((res: any) => {
+          resolve(res)
+        },
+          (error: any) => {
+            console.error(error);
+            this.loading = false;
+            this.popUpManager.showErrorAlert(this.translate.instant('admision.inscripciones_error'));
+            reject(false);
+          });
+    });
+  }
+
+  consultarTercero(id: number) {
+    return this.terceroService.get(`tercero?query=Id:${id}`).toPromise();
+  }
+
+
+
+/*   onGestionClick(solicitud: any): void {
+    this.selectedSolicitudId = solicitud.id;
+    this.cargarDatosTabla2(solicitud.referencia.Periodo, solicitud.referencia.Opcion);
+    this.mostrarTabla('tabla2');
+  } */
+
+  onGestionClick(solicitud: any): void {
+    this.selectedSolicitudId = solicitud.id;
+    this.listarAspirantes();
+    this.mostrarTabla('tabla2');
+  }
+
+
+
+
 
   cargarCSV(event: any): void {
     const file: File = event.target.files[0];
@@ -170,12 +307,11 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   descargarCSV(): void {
-    const data = this.dataSource2.data.slice(0, 100); // Limitar a 100 registros
-    this.solicitudesCorreosService.descargarDatos(data).subscribe(blob => {
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = 'solicitudes_correos_tabla2.csv';
-      link.click();
+    const data = this.dataSource2.data;
+    const chunkSize = 1000;
+  
+    this.solicitudesCorreosService.descargarDatos(data, chunkSize).subscribe(() => {
+      this.popUpManager.showSuccessAlert('Archivo descargado correctamente.');
     }, error => {
       this.popUpManager.showErrorAlert('Error al descargar el archivo.');
     });
@@ -220,11 +356,6 @@ export class CorreoUdnetComponent implements OnInit {
     this.mostrarTabla1 = !this.mostrarTabla1;
   }
 
-  onGestionClick(solicitud: any): void {
-    this.selectedSolicitudId = solicitud.id;
-    this.cargarDatosTabla2(solicitud.referencia.Periodo, solicitud.referencia.Opcion);
-    this.mostrarTabla('tabla2');
-  }
 
   onEnviarClick(): void {
     const data = {
