@@ -7,7 +7,7 @@ export let FORM_TIPO_INSCRIPCION = {
   campos: [
       {
           etiqueta: 'input',
-          claseGrid: 'full-width',
+          claseGrid: 'form-col1',
           nombre: 'Nombre',
           label_i18n: 'nombre_inscripcion',
           placeholder_i18n: 'nombre_inscripcion',
@@ -16,7 +16,7 @@ export let FORM_TIPO_INSCRIPCION = {
       },
       {
           etiqueta: 'input',
-          claseGrid: 'full-width',
+          claseGrid: 'form-col1',
           nombre: 'Descripcion',
           label_i18n: 'descripcion',
           placeholder_i18n: 'descripcion',
@@ -25,7 +25,7 @@ export let FORM_TIPO_INSCRIPCION = {
       },
       {
           etiqueta: 'input',
-          claseGrid: 'full-width',
+          claseGrid: 'form-col1',
           nombre: 'CodigoAbreviacion',
           label_i18n: 'codigo_abreviacion',
           placeholder_i18n: 'codigo_abreviacion',
@@ -34,21 +34,21 @@ export let FORM_TIPO_INSCRIPCION = {
       },
       {
           etiqueta: 'checkbox',
-          claseGrid: 'full-width',
+          claseGrid: 'form-col1',
           nombre: 'Activo',
           label_i18n: 'activo',
           tipo: 'checkbox',
       },
       {
           etiqueta: 'checkbox',
-          claseGrid: 'full-width',
+          claseGrid: 'form-col1',
           nombre: 'Especial',
           label_i18n: 'cupos_especiales',
           tipo: 'checkbox',
       },
       {
           etiqueta: 'input',
-          claseGrid: 'one-third-width',
+          claseGrid: 'form-col1',
           nombre: 'NumeroOrden',
           label_i18n: 'numero_orden',
           placeholder_i18n: 'numero_orden',
@@ -57,7 +57,7 @@ export let FORM_TIPO_INSCRIPCION = {
       },
       {
           etiqueta: 'select',
-          claseGrid: 'half-width',
+          claseGrid: 'form-col1',
           nombre: 'NivelId',
           label_i18n: 'nivel',
           placeholder_i18n: 'nivel',

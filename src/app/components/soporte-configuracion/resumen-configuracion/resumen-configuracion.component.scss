@@ -100,3 +100,12 @@ mat-card {
 .title.soporte {
     margin-top: 40px;
 }
+
+th {
+    font-weight: bold;
+}
+
+//HOVER SOBRE LAS FILAS
+.mat-mdc-row:hover .mat-mdc-cell {
+    background-color: var(--color100);
+}

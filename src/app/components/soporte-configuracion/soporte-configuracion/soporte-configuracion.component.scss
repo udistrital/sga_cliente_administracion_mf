@@ -62,3 +62,12 @@
 .column-mas ::ng-deep .mat-sort-header-content {
     width: 80%;
 }
+
+th {
+    font-weight: bold;
+}
+
+//HOVER SOBRE LAS FILAS
+.mat-mdc-row:hover .mat-mdc-cell {
+    background-color: var(--color100);
+}

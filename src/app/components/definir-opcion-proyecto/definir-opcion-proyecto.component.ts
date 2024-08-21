@@ -25,33 +25,68 @@ export class DefinirOpcionProyectoComponent implements OnInit{
     private translate: TranslateService,
   ) { }
 
-  ngOnInit() {
-
+  async ngOnInit() {
     //Cargar el parametro con el "CodigoAbreviacion": "OPREGRADO"
-    this.parametrosService.get('parametro?query=Activo:true,CodigoAbreviacion:OPREGRADO').subscribe((response: any) => {
-      this.parametro_id = response.Data[0].Id;
-    });
-
+    const oPregrado: any = await this.recuperarParametroOPregrado(); 
+    this.parametro_id = oPregrado[0].Id;
     // Cargar los niveles académicos
-    this.parametrosService.get('periodo/?query=CodigoAbreviacion:PA&sortby=Id&order=desc&limit=0').subscribe((response: any) => {
-      console.log(response);
-      for (let i = 0; i < response.Data.length; i++) {
-        this.annos.push(response.Data[i]);
-      }
+    const niveles: any = await this.recuperarNivelesAcademicos();
+    for (let i = 0; i < niveles.length; i++) {
+      this.annos.push(niveles[i]);
+    }
+  }
+
+  recuperarNivelesAcademicos() {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.get('periodo/?query=CodigoAbreviacion:PA&sortby=Id&order=desc&limit=0').subscribe((res: any) => {
+        resolve(res.Data);
+      },
+        (error: any) => {
+          console.error(error);
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(error);
+        });
     });
   }
 
-  selectNivel() {
-    console.log(this.nivel);
-    this.parametrosService.get('parametro_periodo/?query=PeriodoId:' + this.nivel + ',ParametroId:' + this.parametro_id + ',Activo:true').subscribe((response: any) => {
-      if (response.Status === "200") {
-        if (this.isObjectEmpty(response.Data[0]) === false) {
-          this.opciones = JSON.parse(response.Data[0].Valor).Valor;
-        }else{
-          this.opciones = '';
-        }
-      }
+  recuperarParametroOPregrado() {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.get('parametro?query=Activo:true,CodigoAbreviacion:OPREGRADO').subscribe((res: any) => {
+        resolve(res.Data);
+      },
+        (error: any) => {
+          console.error(error);
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(error);
+        });
     });
+  }
+
+  recuperarNivelParametro(periodoId: any, parametroId: any) {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.get('parametro_periodo/?query=PeriodoId:' + periodoId + ',ParametroId:' + parametroId + ',Activo:true&sortby=Id&order=desc&limit=0').subscribe((res: any) => {
+        if (res.Status === "200") {
+          resolve(res.Data);
+        } else {
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(false);
+        }
+      },
+        (error: any) => {
+          console.error(error);
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(error);
+        });
+    });
+  }
+
+  async selectNivel() {
+    const nivel: any = await this.recuperarNivelParametro(this.nivel, this.parametro_id);
+    if (this.isObjectEmpty(nivel[0]) === false) {
+      this.opciones = JSON.parse(nivel[0].Valor).Valor;
+    }else{
+      this.opciones = '';
+    }
   }
 
   onFileSelected(event: any) {
@@ -72,83 +107,171 @@ export class DefinirOpcionProyectoComponent implements OnInit{
     return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.isFormValid()) {
-      this.parametrosService.get('parametro_periodo/?query=PeriodoId:' + this.nivel + ',ParametroId:' + this.parametro_id + ',Activo:true').subscribe((response: any) => {
-        if (response.Status === "200") {
-          if (this.isObjectEmpty(response.Data[0]) === false) {
-            // Actualizar el registro del periodo
-            console.log('Existe');
-            console.log(response.Data);
-            const formData = {
-              Id: parseInt(response.Data[0].Id),
-              Activo: true,
-              Valor: JSON.stringify({ Valor: this.opciones }),
-              PeriodoId: {
-                Id: parseInt(this.nivel)
-              },
-              ParametroId: {
-                Id: parseInt(this.parametro_id)
-              }
-            }
-
-            console.log(formData);
-
-            this.parametrosService.put('parametro_periodo', formData).subscribe((response: any) => {
-              const r = <any>response;
-              if (r !== null && r.Type !== 'error') {
-                this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
-              } else {
-                this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
-              }
-            },
-              (error: HttpErrorResponse) => {
-                Swal.fire({
-                  icon: 'error',
-                  title: error.status + '',
-                  text: this.translate.instant('ERROR.' + error.status),
-                  footer: this.translate.instant('GLOBAL.actualizar') + '-' +
-                    this.translate.instant('GLOBAL.info_estado'),
-                  confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
-                });
-              });
-
-          }else{
-            // Crear el registro del nuevo perido 
-            const formData = {
-              Activo: true,
-              Valor: JSON.stringify({ Valor: this.opciones }),
-              PeriodoId: {
-                Id: parseInt(this.nivel)
-              },
-              ParametroId: {
-                Id: parseInt(this.parametro_id)
-              }
-            }
-
-            this.parametrosService.post('parametro_periodo', formData).subscribe((response: any) => {
-              const r = <any>response;
-              if (r !== null && r.Type !== 'error') {
-                this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
-              } else {
-                this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
-              }
-            },
-              (error: HttpErrorResponse) => {
-                Swal.fire({
-                  icon: 'error',
-                  title: error.status + '',
-                  text: this.translate.instant('ERROR.' + error.status),
-                  footer: this.translate.instant('GLOBAL.actualizar') + '-' +
-                    this.translate.instant('GLOBAL.info_estado'),
-                  confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
-                });
-              });
+      const parametro: any = await this.recuperarNivelParametro(this.nivel, this.parametro_id)
+      if (this.isObjectEmpty(parametro[0]) === false) {
+        // Actualizar el registro del periodo
+        const formData = {
+          Id: parseInt(parametro[0].Id),
+          Activo: true,
+          Valor: JSON.stringify({ Valor: this.opciones }),
+          PeriodoId: {
+            Id: parseInt(this.nivel)
+          },
+          ParametroId: {
+            Id: parseInt(this.parametro_id)
           }
         }
-      });
 
+        await this.actualizarParametroPeriodo(formData);
+      } else {
+        // Crear el registro del nuevo perido 
+        const formData = {
+          Activo: true,
+          Valor: JSON.stringify({ Valor: this.opciones }),
+          PeriodoId: {
+            Id: parseInt(this.nivel)
+          },
+          ParametroId: {
+            Id: parseInt(this.parametro_id)
+          }
+        }
+
+        await this.crearParametroPeriodo(formData);
+      }
     }
   }
+
+  actualizarParametroPeriodo(body: any) {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.put('parametro_periodo', body).subscribe((res: any) => {
+        const r = <any>res;
+        if (r !== null && r.Type !== 'error') {
+          this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
+          resolve(res)
+        } else {
+          this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
+          reject(false)
+        }
+      },
+        (error: HttpErrorResponse) => {
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: error.status + '',
+            text: this.translate.instant('ERROR.' + error.status),
+            footer: this.translate.instant('GLOBAL.actualizar') + '-' + this.translate.instant('GLOBAL.info_estado'),
+            confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
+          });
+          reject(error);
+        });
+    });
+  }
+
+  crearParametroPeriodo(body: any) {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.post('parametro_periodo', body).subscribe((res: any) => {
+        const r = <any>res;
+        if (r !== null && r.Type !== 'error') {
+          this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
+          resolve(res)
+        } else {
+          this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
+          reject(false)
+        }
+      },
+        (error: HttpErrorResponse) => {
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: error.status + '',
+            text: this.translate.instant('ERROR.' + error.status),
+            footer: this.translate.instant('GLOBAL.actualizar') + '-' + this.translate.instant('GLOBAL.info_estado'),
+            confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
+          });
+          reject(error);
+        });
+    });
+  }
+
+  // onSubmit2() {
+  //   if (this.isFormValid()) {
+  //     this.parametrosService.get('parametro_periodo/?query=PeriodoId:' + this.nivel + ',ParametroId:' + this.parametro_id + ',Activo:true').subscribe((response: any) => {
+  //       if (response.Status === "200") {
+  //         if (this.isObjectEmpty(response.Data[0]) === false) {
+  //           // Actualizar el registro del periodo
+  //           console.log('Existe');
+  //           console.log(response.Data);
+  //           const formData = {
+  //             Id: parseInt(response.Data[0].Id),
+  //             Activo: true,
+  //             Valor: JSON.stringify({ Valor: this.opciones }),
+  //             PeriodoId: {
+  //               Id: parseInt(this.nivel)
+  //             },
+  //             ParametroId: {
+  //               Id: parseInt(this.parametro_id)
+  //             }
+  //           }
+
+  //           console.log(formData);
+
+  //           this.parametrosService.put('parametro_periodo', formData).subscribe((response: any) => {
+  //             const r = <any>response;
+  //             if (r !== null && r.Type !== 'error') {
+  //               this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
+  //             } else {
+  //               this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
+  //             }
+  //           },
+  //             (error: HttpErrorResponse) => {
+  //               Swal.fire({
+  //                 icon: 'error',
+  //                 title: error.status + '',
+  //                 text: this.translate.instant('ERROR.' + error.status),
+  //                 footer: this.translate.instant('GLOBAL.actualizar') + '-' +
+  //                   this.translate.instant('GLOBAL.info_estado'),
+  //                 confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
+  //               });
+  //             });
+
+  //         }else{
+  //           // Crear el registro del nuevo perido 
+  //           const formData = {
+  //             Activo: true,
+  //             Valor: JSON.stringify({ Valor: this.opciones }),
+  //             PeriodoId: {
+  //               Id: parseInt(this.nivel)
+  //             },
+  //             ParametroId: {
+  //               Id: parseInt(this.parametro_id)
+  //             }
+  //           }
+
+  //           this.parametrosService.post('parametro_periodo', formData).subscribe((response: any) => {
+  //             const r = <any>response;
+  //             if (r !== null && r.Type !== 'error') {
+  //               this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
+  //             } else {
+  //               this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
+  //             }
+  //           },
+  //             (error: HttpErrorResponse) => {
+  //               Swal.fire({
+  //                 icon: 'error',
+  //                 title: error.status + '',
+  //                 text: this.translate.instant('ERROR.' + error.status),
+  //                 footer: this.translate.instant('GLOBAL.actualizar') + '-' +
+  //                   this.translate.instant('GLOBAL.info_estado'),
+  //                 confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
+  //               });
+  //             });
+  //         }
+  //       }
+  //     });
+
+  //   }
+  // }
 
 }

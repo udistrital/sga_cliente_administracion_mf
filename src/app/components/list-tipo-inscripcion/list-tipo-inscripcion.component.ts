@@ -22,10 +22,9 @@ export class ListTipoInscripcionComponent implements OnInit {
   uid: number = 0;
   cambiotab: boolean = false;
 
-  //source: LocalDataSource = new LocalDataSource();
-  source: MatTableDataSource<any> = new MatTableDataSource<any>;
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort!: MatSort;
+  source!: MatTableDataSource<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   showInactives: boolean = true;
 
@@ -42,23 +41,42 @@ export class ListTipoInscripcionComponent implements OnInit {
     private inscripcionService: InscripcionService,
     private popUpManager: PopUpManager,
   ) {
-    this.loadData();
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
     });
+  }
+
+  async ngOnInit() {
+    await this.loadData();
   }
 
   useLanguage(language: string) {
     this.translate.use(language);
   }
 
-  loadData(): void {
-    this.inscripcionService.get('tipo_inscripcion/?limit=0').subscribe(res => {
-      if (res !== null) {
-        const data = <Array<any>><unknown>res;
-        //this.source.load(data);
-        this.datos = data
-        this.cargarDatosTabla(data);
-      }
+  async loadData() {
+    const data: any = await this.recuperarTiposInscripcion();
+    this.datos = data
+    this.cargarDatosTabla(data);
+  }
+
+  recuperarTiposInscripcion() {
+    return new Promise((resolve, reject) => {
+      this.inscripcionService.get('tipo_inscripcion?sortby=Id&order=desc&limit=0').subscribe(
+        (res: any) => {
+          if (res !== null) {
+            resolve(res);
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('inscripcion.error_tipo_inscripcion'));
+            reject([]);
+          }
+        },
+        (error: any) => {
+          console.error(error);
+          //this.loading = false;
+          this.popUpManager.showErrorAlert(this.translate.instant('inscripcion.error_tipo_inscripcion'));
+          reject([]);
+        }
+      );
     });
   }
 
@@ -74,84 +92,63 @@ export class ListTipoInscripcionComponent implements OnInit {
     this.cargarDatosTabla(this.datos);
   }
 
-  ngOnInit() {
-  }
-
-
-  onEdit(event: any) {
+  async onEdit(event: any) {
     if (event && event.Id) {
       this.uid = event.Id;
-      this.activetab();
+      await this.activetab();
     } else {
       console.error('No se pudo obtener el ID del elemento seleccionado.');
     }
   }
 
-
-  onCreate() {
+  async onCreate() {
     this.uid = 0;
-    this.activetab();
+    await this.activetab();
   }
 
-  onDelete(event: any): void {
-    this.popUpManager
-      .showConfirmAlert(
-        this.translate.instant(
-          'tipo_inscripcion.seguro_deshabilitar_tipo_inscripcion',
-        ),
-        this.translate.instant('tipo_inscripcion.inactivar'),
-      )
-      .then(willDelete => {
+  async onDelete(event: any) {
+    this.popUpManager.showConfirmAlert(this.translate.instant('tipo_inscripcion.seguro_deshabilitar_tipo_inscripcion',),this.translate.instant('tipo_inscripcion.inactivar'))
+      .then(async willDelete => {
         if (willDelete.value) {
-          this.inscripcionService
-            .put(
-              'tipo_inscripcion/' + event.Id,
-              JSON.stringify({
-                Activo: false,
-                CodigoAbreviacion: event.CodigoAbreviacion,
-                Descripcion: event.Descripcion,
-                Especial: event.Especial,
-                FechaCreacion: event.FechaCreacion,
-                FechaModificacion: event.FechaModificacion,
-                Id: event.Id,
-                NivelId: event.NivelId,
-                Nombre: event.Nombre,
-                NumeroOrden: event.NumeroOrden,
-              }),
-            )
-            .subscribe(
-              (response: any) => {
-                if (JSON.stringify(response) == null) {
-                  this.popUpManager.showErrorAlert(
-                    this.translate.instant(
-                      'tipo_inscripcion.tipo_inscripcion_deshabilitado_error',
-                    ),
-                  );
-                } else {
-                  this.popUpManager.showSuccessAlert(
-                    this.translate.instant(
-                      'tipo_inscripcion.tipo_inscripcion_deshabilitado',
-                    ),
-                  );
-                  // this.ngOnInit();
-                  this.loadData();
-                  //this.cargarCampos();
-                }
-              },
-              error => {
-                this.popUpManager.showErrorToast(
-                  this.translate.instant(
-                    'tipo_inscripcion.tipo_inscripcion_deshabilitado_error',
-                  ),
-                );
-              },
-            );
+          const tipoInscripcion = {
+            Activo: false,
+            CodigoAbreviacion: event.CodigoAbreviacion,
+            Descripcion: event.Descripcion,
+            Especial: event.Especial,
+            FechaCreacion: event.FechaCreacion,
+            FechaModificacion: event.FechaModificacion,
+            Id: event.Id,
+            NivelId: event.NivelId,
+            Nombre: event.Nombre,
+            NumeroOrden: event.NumeroOrden,
+          }
+
+          const actualizacion: any = await this.actualizarTipoInscripcion(tipoInscripcion);
+          await this.loadData();
         }
       });
   }
 
-  activetab(): void {
+  actualizarTipoInscripcion(body: any) {
+    return new Promise((resolve, reject) => {
+      this.inscripcionService.put('tipo_inscripcion/', body).subscribe(
+          (res: any) => {
+            this.popUpManager.showSuccessAlert(this.translate.instant('tipo_inscripcion.tipo_inscripcion_deshabilitado'));
+            resolve(true);
+          },
+          (error: any) => {
+            console.error(error);
+            //this.loading = false;
+            this.popUpManager.showErrorAlert(this.translate.instant('tipo_inscripcion.tipo_inscripcion_deshabilitado_error'));
+            reject(false);
+          }
+        );
+    });
+  }
+
+  async activetab() {
     this.cambiotab = !this.cambiotab;
+    await this.loadData()
   }
 
   selectTab(event: any): void{
@@ -162,15 +159,24 @@ export class ListTipoInscripcionComponent implements OnInit {
     }
   }
 
-  onChange(event: any) {
+  async onChange(event: any) {
     if (event) {
-      this.loadData();
+      await this.loadData();
       this.cambiotab = !this.cambiotab;
     }
   }
 
   itemselec(event: any): void {
     return
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.source.filter = filterValue.trim().toLowerCase();
+
+    if (this.source.paginator) {
+      this.source.paginator.firstPage();
+    }
   }
 
 }

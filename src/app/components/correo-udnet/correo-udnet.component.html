@@ -162,6 +162,29 @@
         </mat-card-content>
       </mat-card>
     </div>
+    <mat-card>
+      <mat-card-content>
+        <div *ngIf="mostrarFormulario">
+          <form [formGroup]="observacionForm" (ngSubmit)="agregarObservacion()">              
+            <div class="form-group">
+              <mat-card-title>
+                {{ "GLOBAL.observaciones" | translate }}
+              </mat-card-title>
+              <mat-card-subtitle>
+                {{ "solicitudes_correos.observacion_descripcion" | translate }}
+              </mat-card-subtitle>
+              <textarea id="cuerpoObservacion" formControlName="cuerpoObservacion"
+                class="full-width-textarea"></textarea>
+            </div>              
+            <div class="container-buttons">
+              <button mat-flat-button color="primary">
+                {{ "solicitudes_correos.observacion" | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </mat-card-content>
 
   <mat-card-actions *ngIf="!mostrarTabla1">
