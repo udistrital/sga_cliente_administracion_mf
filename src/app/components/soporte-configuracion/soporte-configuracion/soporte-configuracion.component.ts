@@ -68,7 +68,7 @@ export class SoporteConfiguracionComponent {
 
   recuperarSoporte() {
     return new Promise((resolve, reject) => {
-      this.admisionServices.get("admision/soporte/40/2").subscribe((res: any) => {
+      this.admisionServices.get("/admision/soporte/40/2").subscribe((res: any) => {
         if (res.status == 200 && res.success == true) {
           resolve(res);
         } else {
