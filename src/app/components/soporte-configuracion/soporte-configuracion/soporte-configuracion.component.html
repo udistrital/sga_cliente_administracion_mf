@@ -1,92 +1,81 @@
-<mat-card style="margin-top: 20px;" *ngIf="soporte">
-    <mat-card-content style="width: 100%; ">
-        <div>
-            <div class="title">
-                <div>
-                    &nbsp; {{ 'soporte.titulo' | translate }}
-                </div>
-            </div>
-            <div class="aviso_criterio" align="center">
-                <label class="fondo_aviso">
-                    <strong>{{ 'soporte.nota' | translate }}:</strong>{{ 'soporte.aviso' | translate }}
-                </label>
-            </div>
-            <div style="margin-top: 40px;">
+<mat-card *ngIf="soporte">
+    <mat-card-header>
+        <mat-card-title>{{ 'soporte.titulo' | translate }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="info-panel">
+            <strong>{{ 'soporte.nota' | translate }}:</strong>{{ 'soporte.aviso' | translate }}
+        </div>
+        <mat-card-title>{{'soporte.historicos' | translate}}</mat-card-title>
+        <mat-form-field class="filtro">
+            <mat-label>{{"GLOBAL.filtro" | translate}}</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+        </mat-form-field>
+        <div class="contenedor-tabla">
+            <table mat-table [dataSource]="dataSource" matSort>
+        
+                <ng-container matColumnDef="orden">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.orden" | translate}} </th>
+                    <td mat-cell *matCellDef="let row"> {{row.orden}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="convocatoria">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.convocatoria" | translate}} </th>
+                    <td mat-cell *matCellDef="let row"> {{row.convocatoria}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="generacion">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.generacion" | translate}} </th>
+                    <td mat-cell *matCellDef="let row"> {{row.generacion}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="usuario">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.usuario" | translate}} </th>
+                    <td mat-cell *matCellDef="let row"> {{row.usuario}} </td>
+                </ng-container>
 
-                <div>
-                    &nbsp; {{'soporte.historicos' | translate}}
-                </div>
-                <div>
-                    <table mat-table [dataSource]="dataSource" matSort class="tabla">
-                        <ng-container matColumnDef="orden">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="column">
-                                {{'soporte.orden' | translate}} </th>
-                            <td mat-cell *matCellDef="let row"> {{row.orden}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="convocatoria">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="column">
-                                {{'soporte.convocatoria' | translate}} </th>
-                            <td mat-cell *matCellDef="let row">{{row.convocatoria}} </td>
-                        </ng-container>
-                        <ng-container matColumnDef="generacion">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="column">
-                                {{'soporte.generacion' | translate}} </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{row.generacion}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="usuario">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="column">
-                                {{'soporte.usuario' | translate}} </th>
-                            <td mat-cell *matCellDef="let row">
-                                {{row.usuario}}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="+">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="column-mas">
-                                <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                                    <input class="boton-column" type="button" value="+" 
-                                        (click)="activateVariables()">
-                                </div>
-                            </th>
-                            <td mat-cell *matCellDef="let row">
-                                <div style="    display: flex; justify-content: space-between; align-items: center;">                                <button aria-hidden="false" title="{{'admision.tooltip_eliminar' | translate}}"
-                                    class="boton-table" (click)="documento('descargar')">
+                <ng-container matColumnDef="+" stickyEnd>
+                    <th mat-header-cell *matHeaderCellDef class="column-mas">
+                        <input class="boton-column" type="button" value="+" (click)="activateVariables()">
+                    </th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="contenedor-acciones">
+                            <button mat-icon-button [matMenuTriggerFor]="menu" class="boton-acciones"
+                                aria-label="Example icon-button with a menu">
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="documento('descargar')">
                                     <mat-icon>get_app</mat-icon>
+                                    <span>{{"GLOBAL.tooltip_descargar" | translate}}</span>
                                 </button>
-                                <button aria-hidden="false" title="{{'admision.tooltip_eliminar' | translate}}"
-                                    class="boton-table" (click)="documento('ver')">
-                                    <mat-icon>visibility</mat-icon>
+                                <button mat-menu-item (click)="documento('ver')">
+                                    <mat-icon class="icon-delete">visibility</mat-icon>
+                                    <span>{{"GLOBAL.tooltip_ver_registro" | translate}}</span>
                                 </button>
-                                <button aria-hidden="false" title="{{'admision.tooltip_eliminar' | translate}}"
-                                    class="boton-table">
-                                    <mat-icon>delete</mat-icon>
+                                <button mat-menu-item>
+                                    <mat-icon class="icon-delete">delete</mat-icon>
+                                    <span>{{"GLOBAL.eliminar" | translate}}</span>
                                 </button>
-                            </div>
-
-                            </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-
-                        <!-- Row shown when there is no matching data. -->
-                        <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell" colspan="4">{{'soporte.nodata' | translate}}</td>
-                        </tr>
-                    </table>
-                    <mat-paginator #paginator [pageSize]="6" [showFirstLastButtons]="true" class="paginator">
-                    </mat-paginator>
-                </div>
-
-            </div>
+                            </mat-menu>
+                        </div>
+                    </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="columns"></tr>
+                <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+        
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="5">{{'soporte.nodata' | translate}}</td>
+                </tr>
+            </table>
+        
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
         </div>
-        <div style="display: flex; justify-content: center; margin-top: 40px;">
-            <div>
-                <button class="boton-primary">{{ 'GLOBAL.cerrar' | translate }}</button>
-            </div>
-        </div>
-
     </mat-card-content>
+    <mat-card-actions>
+        <button class="boton-primary">{{ 'GLOBAL.cerrar' | translate }}</button>
+    </mat-card-actions>
 </mat-card>
 <div *ngIf="resumen">
     <app-resumen-configuracion (soportehijo)="visualizarSoporte($event)" />

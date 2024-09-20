@@ -10,12 +10,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSortModule } from '@angular/material/sort'
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import { MatSortModule } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -46,9 +46,14 @@ import { SgaCalendarioMidServiceService } from './services/sga-calendario-mid.se
 import { SgaDerechoPecuniarioMidService } from './services/sga-derecho-pecuniario-mid.service';
 import { VisualizarSoporteDocumento } from './components/soporte-configuracion/visualizar-soporte/visualizar-soporte.component';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { DefinirOpcionProyectoComponent } from './components/definir-opcion-proyecto/definir-opcion-proyecto.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
+import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
+import { CorreoInscripcionMidService } from './services/correo_inscripcion_mid.service';
+import { AuthGuard } from '../_guards/auth.guard';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -62,8 +67,9 @@ export function createTranslateLoader(http: HttpClient) {
     ListTipoInscripcionComponent,
     SoporteConfiguracionComponent,
     ResumenConfiguracionComponent,
-    VisualizarSoporteDocumento
-
+    VisualizarSoporteDocumento,
+    DefinirOpcionProyectoComponent,
+    CorreoUdnetComponent
   ],
   imports: [
     MatTabsModule,
@@ -106,6 +112,7 @@ export function createTranslateLoader(http: HttpClient) {
     SpinnerUtilModule
   ],
   providers: [
+    AuthGuard,
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
     AnyService,
@@ -117,6 +124,8 @@ export function createTranslateLoader(http: HttpClient) {
     SgaAdmisionesMid,
     SgaCalendarioMidServiceService,
     SgaDerechoPecuniarioMidService,
+    SolicitudesCorreosService,
+    CorreoInscripcionMidService, // Asegúrate de incluir el servicio aquí
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
