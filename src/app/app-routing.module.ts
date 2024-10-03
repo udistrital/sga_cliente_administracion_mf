@@ -26,7 +26,7 @@ const routes: Routes = [
   },
   {
     path: "soporte",
-    canActivate: [AuthGuard],
+    //canActivate: [AuthGuard],
     component: SoporteConfiguracionComponent
   },
   {
