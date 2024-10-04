@@ -45,10 +45,10 @@ interface Observacion {
 export class CorreoUdnetComponent implements OnInit {
   mostrarTabla1: boolean = true;
   displayedColumns: string[] = ['#', 'procesoAdminicion', 'fecha', 'estado', 'gestion'];
-  displayedColumns2: string[] = ['facultad', 'codigo', 'numeroDocumento', 'primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'correoPersonal', 'telefono', 'usuarioAsignado', 'correoAsignado'];
+  displayedColumns2: string[] = ['facultad', 'proyecto', 'codigo', 'numeroDocumento', 'primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'correoPersonal', 'telefono', 'usuarioAsignado', 'correoAsignado'];
 
   dataSource!: MatTableDataSource<any>;
-  dataSource2!: MatTableDataSource<Element>;
+  dataSource2!: MatTableDataSource<any>;
 
   selectedSolicitudId!: number;
   observaciones: Observacion[] = []; // Arreglo para almacenar las observaciones
@@ -78,6 +78,7 @@ export class CorreoUdnetComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadData();
+    this.periodo= 27;
   }
 
   initForm(): void {
@@ -92,7 +93,7 @@ export class CorreoUdnetComponent implements OnInit {
   }
 
   loadData(): void {
-    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40,Activo:true,Id__gt:48578&limit=0').subscribe(res => {
+    this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40,Activo:true&limit=0&sortby=Id&order=desc').subscribe(res => {
       if (res !== null) {
         const data = <Array<any>>res;
         const formattedData = data.map(item => ({
@@ -145,14 +146,15 @@ export class CorreoUdnetComponent implements OnInit {
 
 
 
-/*   cargarDatosTabla2(periodo: number, opcion: number): void {
+  cargarDatosTabla2(periodo: number, opcion: number): void {
     this.sgaAdmisionesMid.get('gestion-correos/correo-sugerido?id_periodo='+periodo+'&opcion='+opcion).subscribe((response: any) => {
 
       this.dataSource2 = new MatTableDataSource(response.Data);
       this.dataSource2.paginator = this.paginator2;
+      this.mostrarTabla('tabla2');
       
     });
-  } */
+  }
 
 
   async listarAspirantes() {
@@ -266,8 +268,12 @@ export class CorreoUdnetComponent implements OnInit {
 
   onGestionClick(solicitud: any): void {
     this.selectedSolicitudId = solicitud.id;
-    this.listarAspirantes();
-    this.mostrarTabla('tabla2');
+    this.cargarDatosTabla2(solicitud.referencia.Periodo, solicitud.referencia.Opcion)
+    if (solicitud.referencia.Observacion) {
+      this.observacionForm.get('cuerpoObservacion')?.setValue(solicitud.referencia.Observacion);
+    }
+    //this.listarAspirantes();
+    //this.mostrarTabla('tabla2');
   }
 
 
@@ -304,6 +310,9 @@ export class CorreoUdnetComponent implements OnInit {
 
   mostrarTabla(tablaId: string): void {
     this.mostrarTabla1 = tablaId === 'tabla1';
+    if (this.mostrarTabla1) {
+      this.loadData();
+    }
   }
 
   descargarCSV(): void {
@@ -324,30 +333,46 @@ export class CorreoUdnetComponent implements OnInit {
       return;
     }
 
-    const updatedSolicitud = {
-      Id: this.selectedSolicitudId,
-      EstadoTipoSolicitudId: {
-        Id: 95
-      },
-      Referencia: "{}",
-      Resultado: "",
-      FechaRadicacion: "2024-06-15 16:00:00 +0000 +0000",
-      FechaCreacion: "2024-06-15 16:48:37.638665 +0000 +0000",
-      FechaModificacion: "2024-06-15 16:48:37.63876 +0000 +0000",
-      SolicitudFinalizada: false,
-      Activo: true,
-      SolicitudPadreId: null
-    };
+    let solicitud: any = null;
+    this.solicitudesCorreosService.get('solicitud/'+this.selectedSolicitudId).subscribe(
+      resp => {
+        solicitud = resp;
+      }
+    )
 
-    this.solicitudesCorreosService.put(`solicitud/${this.selectedSolicitudId}`, updatedSolicitud).subscribe(
-      () => {
-        this.popUpManager.showSuccessAlert('Gestión de solicitudes confirmada.');
-        this.loadData();
-        this.mostrarTabla('tabla1');
+    const data = this.dataSource2.data.map(item => ({
+        Id: item.Id,
+        Correo: item.correo_asignado
+      }));
+    
+    this.correoInscripcionMidService.post('personas/asignar-correo-institucional', data).subscribe(
+      response => {
+        
+        const observacion = this.observacionForm.value.cuerpoObservacion;
+        let referenciaUpdate = JSON.parse(solicitud.Referencia);
+        referenciaUpdate["Observacion"] = observacion;
+        let estado = 95;
+        if (observacion !== "") {
+          estado = 96;
+        }
+        solicitud.EstadoTipoSolicitudId.Id = estado;
+        solicitud.Referencia = JSON.stringify(referenciaUpdate);
+
+        this.solicitudesCorreosService.put('solicitud/'+this.selectedSolicitudId, solicitud).subscribe(
+          resp => {
+            this.popUpManager.showSuccessAlert('Correos asignados correctamente.');
+            console.log(resp);
+          },
+          error => {
+            this.popUpManager.showErrorAlert('Error al asignar correos.');
+            console.error('Error al asignar correos:', error);
+          }
+        );
+
       },
       error => {
-        this.popUpManager.showErrorAlert('Error al confirmar la gestión de solicitudes.');
-        console.error('Error:', error);
+        this.popUpManager.showErrorAlert('Error al asignar correos.');
+        console.error('Error al asignar correos:', error);
       }
     );
   }

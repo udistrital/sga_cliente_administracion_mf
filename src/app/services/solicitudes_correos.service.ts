@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SolicitudesCorreosService {
 
-  private baseUrl = 'http://pruebasapi2.intranetoas.udistrital.edu.co:8117/v1/';
+  private baseUrl = environment.SOLICITUDES_ADMINISTRACION;
 
   constructor(private http: HttpClient) {}
 
