@@ -95,7 +95,7 @@ export class CorreoUdnetComponent implements OnInit {
   loadData(): void {
     this.solicitudesCorreosService.get('solicitud?query=EstadoTipoSolicitudId.TipoSolicitud.Id:40,Activo:true&limit=0&sortby=Id&order=desc').subscribe(res => {
       if (res !== null) {
-        const data = <Array<any>>res;
+        const data = <Array<any>><unknown>res;
         const formattedData = data.map(item => ({
           id: item.Id,
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
@@ -358,7 +358,7 @@ export class CorreoUdnetComponent implements OnInit {
         solicitud.EstadoTipoSolicitudId.Id = estado;
         solicitud.Referencia = JSON.stringify(referenciaUpdate);
 
-        this.solicitudesCorreosService.put('solicitud/'+this.selectedSolicitudId, solicitud).subscribe(
+        this.solicitudesCorreosService.put('solicitud', solicitud).subscribe(
           resp => {
             this.popUpManager.showSuccessAlert('Correos asignados correctamente.');
             console.log(resp);

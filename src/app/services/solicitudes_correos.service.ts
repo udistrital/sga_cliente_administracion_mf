@@ -1,38 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { environment } from '../../environments/environment';
+import { RequestManager } from '../managers/requestManager';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SolicitudesCorreosService {
 
-  private baseUrl = environment.SOLICITUDES_ADMINISTRACION;
-
-  constructor(private http: HttpClient) {}
-
-  get(endpoint: string): Observable<any> {
-    const url = `${this.baseUrl}${endpoint}`;
-    return this.http.get(url);
+  constructor(private requestManager: RequestManager) {
+    this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
   }
 
-  post(endpoint: string, element: any): Observable<any> {
-    const url = `${this.baseUrl}${endpoint}`;
-    return this.http.post(url, element);
+  get(endpoint:string) {
+    this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
+    return this.requestManager.get(endpoint);
   }
 
-  put(endpoint: string, element: any): Observable<any> {
-    const url = `${this.baseUrl}${endpoint}`; 
-    return this.http.put(url, element);
+  post(endpoint:string, element:any) {
+    this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
+    return this.requestManager.post(endpoint, element);
   }
 
-  delete(endpoint: string, id: any): Observable<any> {
-    const url = `${this.baseUrl}${endpoint}/${id}`;
-    return this.http.delete(url);
+  put(endpoint:string, element:any) {
+    this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
+    return this.requestManager.put(endpoint, element);
+  }
+
+  delete(endpoint:string, element:any) {
+    this.requestManager.setPath('SOLICITUDES_ADMINISTRACION');
+    return this.requestManager.delete(endpoint, element.Id);
   }
 
   cargarDatos(file: File): Observable<any[]> {
