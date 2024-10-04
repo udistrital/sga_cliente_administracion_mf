@@ -1,9 +1,13 @@
-import { Component, Input, } from '@angular/core';
+import { Component, Input, ViewChild, } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { VisualizarSoporteDocumento } from '../visualizar-soporte/visualizar-soporte.component';
 import { SgaAdmisionesMid } from '../../../services/sga_admisiones_mid.service';
 import saveAs from 'file-saver';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { PopUpManager } from '../../../managers/popUpManager';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-soporte-configuracion',
@@ -11,6 +15,10 @@ import saveAs from 'file-saver';
   styleUrls: ['./soporte-configuracion.component.scss']
 })
 export class SoporteConfiguracionComponent {
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  
   soporte: boolean = true
   resumen: boolean = false
   folderTagtoReload!: string;
@@ -19,10 +27,17 @@ export class SoporteConfiguracionComponent {
 
 
 
-  constructor(private dialog: MatDialog, private admisionServices: SgaAdmisionesMid) { }
+  constructor(
+    private dialog: MatDialog, 
+    private admisionServices: SgaAdmisionesMid,
+    private popUpManager: PopUpManager,
+    private translate: TranslateService,
+  ) { }
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource([{ orden: 1, convocatoria: "2024-1", generacion: "2021", usuario: "admin" }])
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   activateVariables() {
@@ -42,16 +57,30 @@ export class SoporteConfiguracionComponent {
     });
   }
 
-  documento(option: string) {
-    this.admisionServices.get("admision/soporte/40/2").subscribe((response: any) => {
-      console.log(response)
-      if (response.status == 200 && response.success == true) {
-        if (option == "ver") {
-          this.VisualizarPdf(response.data.pdf);
+  async documento(option: string) {
+    const soporte: any = await this.recuperarSoporte();
+    if (option == "ver") {
+      this.VisualizarPdf(soporte.data.pdf);
+    } else {
+      this.downloadPdf(soporte.data.pdf, "Soporte.pdf");
+    }
+  }
+
+  recuperarSoporte() {
+    return new Promise((resolve, reject) => {
+      this.admisionServices.get("/admision/soporte/40/2").subscribe((res: any) => {
+        if (res.status == 200 && res.success == true) {
+          resolve(res);
         } else {
-          this.downloadPdf(response.data.pdf, "Soporte.pdf");
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(false);
         }
-      }
+      },
+        (error: any) => {
+          console.error(error);
+          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+          reject(error);
+        });
     });
   }
 
@@ -82,17 +111,21 @@ export class SoporteConfiguracionComponent {
     saveAs(blob, fileName);
   }
 
+  visualizarSoporte(valor: boolean) {
+    console.log("fds")
+    console.log(this.soporte)
+    this.soporte = !valor
+    this.resumen = valor
+    console.log(this.soporte)
+  }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
-visualizarSoporte(valor: boolean) {
-  console.log("fds")
-  console.log(this.soporte)
-  this.soporte = !valor
-  this.resumen = valor
-  console.log(this.soporte)
 }
-
-}
-
-

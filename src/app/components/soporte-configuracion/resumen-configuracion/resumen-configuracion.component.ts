@@ -72,11 +72,11 @@ export class ResumenConfiguracionComponent {
     private sgaDerechoPecunarioMidService: SgaDerechoPecuniarioMidService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.tagsObject = { ...TAGS_INSCRIPCION_PROGRAMA };
-    this.cargarPeriodo()
-    this.loadLevel()
-    this.loadDataCunetaPecuniarios()
+    await this.cargarPeriodo()
+    await this.loadLevel()
+    await this.loadDataCunetaPecuniarios()
   }
 
   selectPeriodo() {
@@ -84,10 +84,10 @@ export class ResumenConfiguracionComponent {
     this.proyectos_selected = undefined;
   }
 
-  loadResumen() {
+  async loadResumen() {
     this.resumen = true
-    this.loadCalendario()
-    this.loadCriterioSubCriterio()
+    //await this.loadCriterioSubCriterio()
+    await this.loadCalendario()
   }
 
   cargarPeriodo() {
@@ -103,232 +103,326 @@ export class ResumenConfiguracionComponent {
             periodos.forEach((element: any) => {
               this.periodos.push(element);
             });
-
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('inscripcion.periodo_error'));
+            reject(false);
           }
         },
           (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('inscripcion.periodo_error'));
             reject(error);
           });
     });
-
   }
 
   loadLevel() {
-    this.projectService.get('nivel_formacion?limit=0').subscribe(
-      (response: any) => {
-        console.log(response)
-        if (response !== null || response !== undefined) {
-          this.nivel_load = <any>response;
-        }
-      },
-      error => {
-        this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
-        this.loading = false;
-      },
-    );
-  }
-
-
-
-  loadCalendario() {
-    this.parametrosService.get('periodo/' + this.periodo["Id"]).subscribe((response: any) => {
-      console.log("Calendario")
-      console.log(response)
-      if (response.Success === true && response.Status === '200') {
-        this.nombrePeriodo = response.Data.Descripcion
-        this.FechaGlobal = response.Data.Year
-        this.nombreP = response.Data.Nombre
-        const inicioVigencia = new Date(response.Data.InicioVigencia);
-        const finVigencia = new Date(response.Data.FinVigencia);
-        const diferenciaMs = finVigencia.getTime() - inicioVigencia.getTime();
-        const semanas = diferenciaMs / (1000 * 60 * 60 * 24 * 7);
-        const semanasRedondeadas = Math.floor(semanas);
-        this.semanasCalendario = semanasRedondeadas
-        this.loadDatacalendario()
-        this.loadDerechoPecuniarios()
-      }
-    })
-  }
-
-  loadDatacalendario() {
-    let periodo: any[] = []
-    this.sgaCalendarioMidService.get('calendario-academico/').subscribe(
-      (response: any) => {
-        console.log(response)
-        if (response.Status === 200) {
-          response.Data.forEach((element: any) => {
-            if (element.Activo == true && this.nombreP == element.Periodo && element.Nombre.includes(this.selectednivel)) {
-              periodo.push(element)
-            }
-          });
-          this.loadProcessActivity(periodo[0])
-        } else if (response.Status !== 200) {
-          this.popUpManager.showErrorAlert(this.translate.instant('ERROR.invalidResponse'));
-        } else if (!response.data) {
-          this.popUpManager.showErrorAlert(this.translate.instant('ERROR.noData'));
-        }
-      })
-  };
-
-
-
-  loadProcessActivity(periodo: any) {
-    this.sgaCalendarioMidService.get('calendario-academico/v2/' + periodo.Id).subscribe(
-      (response: any) => {
-        console.log("DataCalendario")
-        console.log(response)
-        if (response.Status === 200 && response.Success === true) {
-          this.procesos = response.Data[0].proceso
-          this.proyectosId = JSON.parse(response.Data[0].DependenciaId);
-          this.loadProyectosCurriculares(this.proyectosId)
-        }
-      })
-  }
-
-  loadDerechoPecuniarios() {
-    let datosCargados: Concepto[] = [];
-    this.parametrosService.get('periodo?query=CodigoAbreviacion:VG&limit=0&sortby=Id&order=desc').subscribe((response: any) => {
-      console.log("Ultimo")
-      console.log(response)
-      if(response.Status === "200" && response.Success === true){
-        for (let index = 0; index < response.Data.length; index++) {
-          console.log(response.Data[index].Year)
-          console.log(this.FechaGlobal)
-          if(response.Data[index].Year == this.FechaGlobal  ){
-            this.sgaDerechoPecunarioMidService
-            .get('derechos-pecuniarios/vigencias/' + response.Data[index].Id)
-            .subscribe(
-              (response: any) => {
-                console.log("Pecuniarios")
-                console.log(response)
-                var data: any[] = response.Data;
-                if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
-                  data.forEach((obj) => {
-                    var concepto = new Concepto();
-                    concepto.Id = obj.ParametroId.Id;
-                    concepto.Codigo = obj.ParametroId.CodigoAbreviacion;
-                    concepto.Nombre = obj.ParametroId.Nombre;
-                    concepto.FactorId = obj.Id;
-                    concepto.Factor = JSON.parse(obj.Valor).NumFactor;
-                    if (JSON.parse(obj.Valor).Costo !== undefined) {
-                      concepto.Costo = JSON.parse(obj.Valor).Costo;
-                    }
-                    datosCargados.push(concepto);
-    
-                  });
-                } else {
-                  this.popUpManager.showAlert(
-                    'info',
-                    this.translate.instant('derechos_pecuniarios.no_conceptos')
-                  );
-                }
-    
-    
-                this.derechosPecuniarios = new MatTableDataSource(datosCargados);
-                this.derechosPecuniarios.paginator = this.paginator;
-              },
-              () => {
-                this.popUpManager.showErrorAlert(
-                  this.translate.instant('ERROR.general')
-                );
-              }
-            );
-            
-          }
-        }
-
-
-      }
-
-    })
-
-
-  }
-
-  loadDataCunetaPecuniarios() {
-
-    this.parametrosService.get("parametro?query=TipoParametroId:37")
-      .subscribe(
-        (response: any) => {
-          console.log(response)
-          if (response.Status === "200") {
-            this.cuentaDerechosPecuniarios = new MatTableDataSource(response.Data)
+    return new Promise((resolve, reject) => {
+      this.projectService.get('nivel_formacion?limit=0')
+        .subscribe((response: any) => {
+          if (response !== null || response !== undefined) {
+            this.nivel_load = <any>response;
+            resolve(response);
           } else {
-            console.log("Error cuentas de banco")
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(false);
           }
-        })
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
   }
 
+  // loadLevel2() {
+  //   this.projectService.get('nivel_formacion?limit=0').subscribe(
+  //     (response: any) => {
+  //       console.log(response)
+  //       if (response !== null || response !== undefined) {
+  //         this.nivel_load = <any>response;
+  //       }
+  //     },
+  //     error => {
+  //       this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
+  //       this.loading = false;
+  //     },
+  //   );
+  // }
 
-  loadProyectosCurriculares(proyectosId: any) {
-    let data: any = []
-    if (!Number.isNaN(this.selectednivel)) {
-      this.projectService.get('proyecto_academico_institucion?limit=0').subscribe(
-        (response: any) => {
+  async loadCalendario() {
+    const periodo: any = await this.recuperarPeriodo(this.periodo["Id"]);
+    this.nombrePeriodo = periodo.Descripcion
+    this.FechaGlobal = periodo.Year
+    this.nombreP = periodo.Nombre
+    const inicioVigencia = new Date(periodo.InicioVigencia);
+    const finVigencia = new Date(periodo.FinVigencia);
+    const diferenciaMs = finVigencia.getTime() - inicioVigencia.getTime();
+    const semanas = diferenciaMs / (1000 * 60 * 60 * 24 * 7);
+    const semanasRedondeadas = Math.floor(semanas);
+    this.semanasCalendario = semanasRedondeadas
+    await this.loadDatacalendario()
+    await this.loadDerechoPecuniarios()
+  }
 
-          if (response.length > 0) {
-            response.forEach((proyecto: any) => {
-              proyectosId.proyectos.forEach((id: any) => {
-                if (id === proyecto.Id && this.selectednivel == proyecto.NivelFormacionId.Nombre) {
-                  data.push(proyecto)
-                }
-              });
-            })
-            this.proyectoCurricular = new MatTableDataSource(data)
-            console.log("Proyectos")
-            console.log(this.proyectoCurricular.data)
+  recuperarPeriodo(idPeriodo: any) {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.get('periodo/' + idPeriodo)
+        .subscribe((response: any) => {
+          if (response.Success === true && response.Status === '200') {
+            resolve(response.Data);
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('inscripcion.periodo_error'));
+            reject(false);
           }
-          this.activeCriterios()
-          this.loadsuite()
         },
-        error => {
-          this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
-          this.loading = false;
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('inscripcion.periodo_error'));
+            reject(error);
+          });
+    });
+  }
+
+  async loadDatacalendario() {
+    let periodo: any[] = []
+    const calendario: any = await this.recuperarCalendarioAcademico(); 
+
+    for (const element of calendario) {
+      if (element.Activo == true && this.nombreP == element.Periodo && element.Nombre.includes(this.selectednivel)) {
+        periodo.push(element)
+      }
+    }
+
+    await this.loadProcessActivity(periodo[0])
+  }
+
+  recuperarCalendarioAcademico() {
+    return new Promise((resolve, reject) => {
+      this.sgaCalendarioMidService.get('/calendario-academico/')
+        .subscribe((response: any) => {
+          if (response.Status === 200) {
+            resolve(response.Data)
+          } else if (response.Status !== 200) {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.invalidResponse'));
+            reject(false);
+          } else if (!response.data) {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.noData'));
+            reject(false);
+          }
         },
-      );
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.noData'));
+            reject(error);
+          });
+    });
+  }
+
+  async loadProcessActivity(periodo: any) {
+    const calendarioPeriodo: any = await this.recuperarCalendarioPeriodo(periodo.Id);
+    this.procesos = calendarioPeriodo[0].proceso
+    this.proyectosId = JSON.parse(calendarioPeriodo[0].DependenciaId);
+    await this.loadProyectosCurriculares(this.proyectosId)
+  }
+
+  recuperarCalendarioPeriodo(periodo: any) {
+    return new Promise((resolve, reject) => {
+      this.sgaCalendarioMidService.get('calendario-academico/v2/' + periodo)
+        .subscribe((response: any) => {
+          if (response.Status === 200 && response.Success === true) {
+            resolve(response.Data)
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.noData'));
+            reject(false);
+          }
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.noData'));
+            reject(error);
+          });
+    });
+  }
+
+  async loadDerechoPecuniarios() {
+    let datosCargados: Concepto[] = [];
+    const periodos: any = await this.recuperarPeriodosVG();
+
+    for (let index = 0; index < periodos.length; index++) {
+      if(periodos[index].Year == this.FechaGlobal  ) {
+        const derechos: any = await this.recuperarDerechosPecunarios(periodos[index].Id);
+        var data: any[] = derechos;
+        if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
+          for (const obj of data) {
+            var concepto = new Concepto();
+            concepto.Id = obj.ParametroId.Id;
+            concepto.Codigo = obj.ParametroId.CodigoAbreviacion;
+            concepto.Nombre = obj.ParametroId.Nombre;
+            concepto.FactorId = obj.Id;
+            concepto.Factor = JSON.parse(obj.Valor).NumFactor;
+            if (JSON.parse(obj.Valor).Costo !== undefined) {
+              concepto.Costo = JSON.parse(obj.Valor).Costo;
+            }
+            datosCargados.push(concepto);
+          }
+        } else {
+          this.popUpManager.showAlert('info', this.translate.instant('derechos_pecuniarios.no_conceptos'));
+        }
+        this.derechosPecuniarios = new MatTableDataSource(datosCargados);
+        this.derechosPecuniarios.paginator = this.paginator;
+      }
     }
   }
 
-
-
-  loadCriterioSubCriterio() {
-    this.criterios = [];
-    this.subCriterios = []
-    this.sgaMidAdmisiones.get('admision/criterio').subscribe(
-      (response: any) => {
-        console.log("Criterios")
-        console.log(response)
-        if (response.status === 200 && response.success === true) {
-          this.criterios = response.data;
-        }
-
-      })
-
+  recuperarDerechosPecunarios(id: any) {
+    return new Promise((resolve, reject) => {
+      this.sgaDerechoPecunarioMidService.get('derechos-pecuniarios/vigencias/' + id)
+        .subscribe((response: any) => {
+          resolve(response.Data);
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
   }
 
-  activeCriterios() {
-    this.proyectoCurricular.data.forEach((element: any) => {
-      let data: any[] = [];
-      this.evaluacionService.get('requisito_programa_academico?query=ProgramaAcademicoId:' + element.Id +
-        ',PeriodoId:' + this.periodo.Id).subscribe((response: any) => {
-          this.criterios.forEach((criterio: any) => {
-
-            let encontrado = false;
-            response.forEach((res: any) => {
-              if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
-                if (res["RequisitoId"]["Id"] === criterio.Id) {
-                  encontrado = true;
-                }
-              }
-            });
-            if (!encontrado) {
-              data.push(criterio);
-            }
-          });
-          this.criteriosTable = data;
+  recuperarPeriodosVG() {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.get('periodo?query=CodigoAbreviacion:VG&limit=0&sortby=Id&order=desc')
+        .subscribe((response: any) => {
+          if (response.Status === "200" && response.Success === true) {
+            resolve(response.Data);
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(false);
+          }
         },
-          error => {
-            console.log("Error")
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
+  }
+
+  loadDataCunetaPecuniarios() {
+    return new Promise((resolve, reject) => {
+      this.parametrosService.get("parametro?query=TipoParametroId:37")
+        .subscribe((response: any) => {
+          if (response.Status === "200") {
+            this.cuentaDerechosPecuniarios = new MatTableDataSource(response.Data)
+            resolve(response);
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(false);
+          }
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
+  }
+
+  async loadProyectosCurriculares(proyectosId: any) {
+    let data: any = []
+    if (!Number.isNaN(this.selectednivel)) {
+      const proyectos: any = await this.recuperarProyectosCurriculares();
+
+      for (const proyecto of proyectos) {
+        for (const id of proyectosId.proyectos) {
+          if (id === proyecto.Id && this.selectednivel == proyecto.NivelFormacionId.Nombre) {
+            data.push(proyecto)
+          }
+        }
+      }
+      this.proyectoCurricular = new MatTableDataSource(data)
+      await this.activeCriterios()
+      await this.loadsuite()
+    }
+  }
+
+  recuperarProyectosCurriculares() {
+    return new Promise((resolve, reject) => {
+      this.projectService.get('proyecto_academico_institucion?limit=0')
+        .subscribe((response: any) => {
+          if (response.length > 0) {
+            resolve(response);
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(false);
+          }
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
+  }
+
+  async loadCriterioSubCriterio() {
+    this.criterios = [];
+    this.subCriterios = []
+    const admision: any = await this.recuperarAdmision();
+    this.criterios = admision;
+  }
+
+  recuperarAdmision() {
+    return new Promise((resolve, reject) => {
+      this.sgaMidAdmisiones.get('admision/criterio')
+        .subscribe((response: any) => {
+          if (response.status === 200 && response.success === true) {
+            resolve(response.data);
+          } else {
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(false);
+          }
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
+  }
+
+  async activeCriterios() {
+    for (const element of this.proyectoCurricular.data) {
+      let data: any[] = [];
+      const requisitoPrograma: any = await this.recuperarRequisitoPrograma(element.Id, this.periodo.Id);
+      for (const criterio of this.criterios) {
+        let encontrado = false;
+        for (const requisito of requisitoPrograma) {
+          if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
+            if (requisito["RequisitoId"]["Id"] === criterio.Id) {
+              encontrado = true;
+            }
+          }
+        }
+        if (!encontrado) {
+          data.push(criterio);
+        }
+      }
+      this.criteriosTable = data;
+    }
+  }
+
+  recuperarRequisitoPrograma(programaId: any, periodoId: any) {
+    return new Promise((resolve, reject) => {
+      this.evaluacionService.get('requisito_programa_academico?query=ProgramaAcademicoId:' + programaId + ',PeriodoId:' + periodoId)
+        .subscribe((response: any) => {
+          resolve(response);
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
           });
     });
   }
@@ -351,41 +445,51 @@ export class ResumenConfiguracionComponent {
     });
   }
 
-
-
   async loadsuite() {
     this.tagsObject = { ...TAGS_INSCRIPCION_PROGRAMA };
     const tiposInscripcion = await this.cargarTipoInscripcion()
-    this.proyectoCurricular.data.forEach((element: any) => {
-      tiposInscripcion.forEach((inscripcion: any) => {
-        this.evaluacionService.get('tags_por_dependencia?query=Activo:true,PeriodoId:' + this.periodo.Id + ',DependenciaId:' + element.Id + ',TipoInscripcionId:' + inscripcion.Id)
-          .subscribe((response: any) => {
-            if (response != null && response.Status == '200') {
-              if (Object.keys(response.Data[0]).length > 0) {
-                const data = JSON.parse(response.Data[0].ListaTags);
-                for (const key in data) {
-                  if (data.hasOwnProperty(key) && this.tagsObject.hasOwnProperty(key)) {
-                    const value = data[key];
-                    if (value.selected) {
-                      this.tagsObject[key].selected = true;
-                    }
-                    if (value.required) {
-                      this.tagsObject[key].required = true;
-                    }
-                  }
-                }
+
+    for (const element of this.proyectoCurricular.data) {
+      for (const inscripcion of tiposInscripcion) {
+        const tags: any = await this.recuperarTagsdependencia(this.periodo.Id, element.Id, inscripcion.Id);
+        if (Object.keys(tags[0]).length > 0) {
+          const data = JSON.parse(tags[0].ListaTags);
+          for (const key in data) {
+            if (data.hasOwnProperty(key) && this.tagsObject.hasOwnProperty(key)) {
+              const value = data[key];
+              if (value.selected) {
+                this.tagsObject[key].selected = true;
               }
-            } else {
-              this.loading = false;
-              this.popUpManager.showAlert(this.translate.instant('admision.definicion_suite_inscripcion_programa'), this.translate.instant('admision.no_tiene_suite'));
+              if (value.required) {
+                this.tagsObject[key].required = true;
+              }
             }
-          })
-      })
+          }
+        }
+      }
     }
-    );
   }
+
+  recuperarTagsdependencia(periodoId: any, dependenciaId: any, tipoInscripcionId: any) {
+    return new Promise((resolve, reject) => {
+      this.evaluacionService.get('tags_por_dependencia?query=Activo:true,PeriodoId:' + periodoId + ',DependenciaId:' + dependenciaId + ',TipoInscripcionId:' + tipoInscripcionId)
+        .subscribe((response: any) => {
+          if (response != null && response.Status == '200') {
+            resolve(response.Data);
+          } else {
+            this.popUpManager.showAlert(this.translate.instant('admision.definicion_suite_inscripcion_programa'), this.translate.instant('admision.no_tiene_suite'));
+            reject(false);
+          }
+        },
+          (error: HttpErrorResponse) => {
+            console.error(error);
+            this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
+            reject(error);
+          });
+    });
+  }
+
   cerrar(){
     this.soportehijo.emit(false)
-    console.log("hola")
   }
 }

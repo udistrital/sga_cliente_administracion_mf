@@ -1,133 +1,106 @@
-<div class="col-12">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{
-        "tipo_inscripcion.titulo" | translate
-      }}</mat-card-title>
-    </mat-card-header>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ "tipo_inscripcion.titulo" | translate }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
     <mat-card-content>
-      <mat-card-content>
-        <mat-tab-group fullWidth (changeTab)="selectTab($event)">
-          <div class="table">
-          <mat-tab label="{{ 'GLOBAL.lista' | translate }}" *ngIf="!cambiotab">
-              <mat-table [dataSource]="source">
-                <!-- Columna ID -->
-                <ng-container matColumnDef="Id">
-                  <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
-                  <mat-cell *matCellDef="let row; let i = index">{{
-                    i + 1
-                  }}</mat-cell>
-                </ng-container>
+      <mat-tab-group fullWidth (changeTab)="selectTab($event)">
+        <mat-tab label="{{ 'GLOBAL.lista' | translate }}" *ngIf="!cambiotab">
+          <mat-toolbar>
+            <button mat-mini-fab color="accent" (click)="onCreate()" matTooltip="{{ 'GLOBAL.agregar' | translate }}">
+              <mat-icon>add</mat-icon>
+            </button>
+          </mat-toolbar>
+      
+          <mat-form-field class="filtro">
+            <mat-label>{{"GLOBAL.filtro" | translate}}</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+          </mat-form-field>
+      
+          <div class="contenedor-tabla">
+            <table mat-table [dataSource]="source" matSort>
+      
+              <ng-container matColumnDef="Id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> # </th>
+                <td mat-cell *matCellDef="let row; let i = index"> {{i + 1}} </td>
+              </ng-container>
+      
+              <ng-container matColumnDef="Nombre">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"GLOBAL.Nombre" | translate}} </th>
+                <td mat-cell *matCellDef="let row"> {{row.Nombre}} </td>
+              </ng-container>
+      
+              <ng-container matColumnDef="Descripcion">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"GLOBAL.descripcion" | translate}} </th>
+                <td mat-cell *matCellDef="let row"> {{row.Descripcion}} </td>
+              </ng-container>
+      
+              <ng-container matColumnDef="NivelId">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"GLOBAL.nivel" | translate}} </th>
+                <td mat-cell *matCellDef="let row"> {{row.NivelId == 1 ? ("GLOBAL.pregrado" | translate) : ("GLOBAL.posgrado" | translate)}} </td>
+              </ng-container>
 
-                <!-- Columna Nombre -->
-                <ng-container matColumnDef="Nombre">
-                  <mat-header-cell *matHeaderCellDef>{{
-                    "GLOBAL.nombre" | translate
-                  }}</mat-header-cell>
-                  <mat-cell *matCellDef="let row">{{ row.Nombre }}</mat-cell>
-                </ng-container>
-
-                <!-- Columna Descripcion -->
-                <ng-container matColumnDef="Descripcion">
-                  <mat-header-cell *matHeaderCellDef>{{
-                    "GLOBAL.descripcion" | translate
-                  }}</mat-header-cell>
-                  <mat-cell *matCellDef="let row">{{
-                    row.Descripcion
-                  }}</mat-cell>
-                </ng-container>
-
-                <!-- Columna NivelId -->
-                <ng-container matColumnDef="NivelId">
-                  <mat-header-cell *matHeaderCellDef>{{
-                    "GLOBAL.nivel" | translate
-                  }}</mat-header-cell>
-                  <mat-cell *matCellDef="let row">{{
-                    row.NivelId == 1
-                      ? ("GLOBAL.pregrado" | translate)
-                      : ("GLOBAL.posgrado" | translate)
-                  }}</mat-cell>
-                </ng-container>
-
-                <!-- Columna Especial -->
-                <ng-container matColumnDef="Especial">
-                  <mat-header-cell *matHeaderCellDef>{{
-                    "tipo_inscripcion.cupo_especial" | translate
-                  }}</mat-header-cell>
-                  <mat-cell *matCellDef="let row">{{
-                    row.Especial
-                      ? ("GLOBAL.activo" | translate)
-                      : ("GLOBAL.inactivo" | translate)
-                  }}</mat-cell>
-                </ng-container>
-
-                <!-- Columna Activo -->
-                <ng-container matColumnDef="Activo">
-                  <mat-header-cell *matHeaderCellDef>{{
-                    "tipo_inscripcion.estado" | translate
-                  }}</mat-header-cell>
-                  <mat-cell *matCellDef="let row">{{
-                    row.Activo
-                      ? ("GLOBAL.activo" | translate)
-                      : ("GLOBAL.inactivo" | translate)
-                  }}</mat-cell>
-                </ng-container>
-
-                <!-- Columna de acciones -->
-                <ng-container matColumnDef="Acciones">
-                  <mat-header-cell *matHeaderCellDef>
-                    <button
-                      mat-flat-button
-                      color="accent"
-                      style="width: 6rem; min-width: 6rem;"
-                      (click)="onCreate()"
-                    >
-                      <mat-icon>add_outline</mat-icon>
-                      {{ "GLOBAL.agregar" | translate }}
-                    </button>
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <div style="width: 6rem; min-width: 6rem;">
-                      <button mat-mini-fab color="accent" (click)="onEdit(row)">
-                        <mat-icon>edit_outline</mat-icon>
-                      </button>
-                      <button
-                        mat-mini-fab
-                        color="warn"
-                        style="margin-left: 0.4rem"
-                        (click)="onDelete(row)"
-                      >
-                        <mat-icon>delete_outline</mat-icon>
-                      </button>
+              <ng-container matColumnDef="Especial">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"tipo_inscripcion.cupo_especial" | translate}} </th>
+                <td mat-cell *matCellDef="let row"> {{row.Especial ? ("GLOBAL.activo" | translate) : ("GLOBAL.inactivo" | translate)}} </td>
+              </ng-container>
+      
+              <ng-container matColumnDef="Activo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"tipo_inscripcion.estado" | translate}} </th>
+                <td mat-cell *matCellDef="let row">
+                  <div class="status-indicator" [ngClass]="{active: row.Activo, inactive: !row.Activo}">
+                    <div *ngIf="row.Activo">
+                      {{ "GLOBAL.activo" | translate }}
                     </div>
-                  </mat-cell>
-                </ng-container>
-
-                <mat-header-row
-                  *matHeaderRowDef="displayedColumns"
-                ></mat-header-row>
-                <mat-row
-                  *matRowDef="let row; columns: displayedColumns"
-                ></mat-row>
-              </mat-table>
-            </mat-tab>
+                    <div *ngIf="!row.Activo">
+                      {{ "GLOBAL.inactivo" | translate }}
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+      
+              <ng-container matColumnDef="Acciones" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"GLOBAL.acciones" | translate}} </th>
+                <td mat-cell *matCellDef="let row">
+                  <div class="contenedor-acciones">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" class="boton-acciones"
+                      aria-label="Example icon-button with a menu">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="onEdit(row)">
+                        <mat-icon class="icon-edit">edit_outline</mat-icon>
+                        <span>{{"GLOBAL.editar" | translate}}</span>
+                      </button>
+                      <button mat-menu-item (click)="onDelete(row)" *ngIf="row.Activo">
+                        <mat-icon class="icon-delete">delete_outline</mat-icon>
+                        <span>{{"GLOBAL.eliminar" | translate}}</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                </td>
+              </ng-container>
+      
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="7">No data matching the filter "{{input.value}}"</td>
+              </tr>
+            </table>
+      
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
           </div>
-          <mat-tab
-            label="{{ 'GLOBAL.formulario' | translate }}"
-            *ngIf="cambiotab"
-          >
-            <udistrital-crud-tipo-inscripcion
-              [tipo_periodo_id]="uid"
-              (eventChange)="onChange($event)"
-            ></udistrital-crud-tipo-inscripcion>
-            <div class="container-bottons margin-y">
-              <button (click)="activetab()" mat-flat-button color="warn">
-                {{ "GLOBAL.regresar" | translate }}
-              </button>
-            </div>
-          </mat-tab>
-        </mat-tab-group>
-      </mat-card-content>
+        </mat-tab>
+        <mat-tab label="{{ 'GLOBAL.formulario' | translate }}" *ngIf="cambiotab">
+          <udistrital-crud-tipo-inscripcion [tipo_periodo_id]="uid" (eventChange)="onChange($event)"></udistrital-crud-tipo-inscripcion>
+          <div class="contenedor-boton">
+            <button (click)="activetab()" mat-flat-button color="warn">
+              {{ "GLOBAL.regresar" | translate }}
+            </button>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
     </mat-card-content>
-  </mat-card>
-</div>
+  </mat-card-content>
+</mat-card>
