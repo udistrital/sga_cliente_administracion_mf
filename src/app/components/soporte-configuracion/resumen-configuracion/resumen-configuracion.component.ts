@@ -200,7 +200,7 @@ export class ResumenConfiguracionComponent {
 
   recuperarCalendarioAcademico() {
     return new Promise((resolve, reject) => {
-      this.sgaCalendarioMidService.get('calendario-academico/')
+      this.sgaCalendarioMidService.get('/calendario-academico/')
         .subscribe((response: any) => {
           if (response.Status === 200) {
             resolve(response.Data)

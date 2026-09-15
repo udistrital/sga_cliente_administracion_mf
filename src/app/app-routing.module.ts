@@ -26,12 +26,12 @@ const routes: Routes = [
   },
   {
     path: "soporte",
-    canActivate: [AuthGuard],
+    //canActivate: [AuthGuard],
     component: SoporteConfiguracionComponent
   },
   {
     path: "opcion",
-    canActivate: [AuthGuard],
+//    canActivate: [AuthGuard],
     component: DefinirOpcionProyectoComponent
   },
   {
@@ -41,7 +41,7 @@ const routes: Routes = [
   },
   {
     path: "correo-institucional",
-    /* canActivate: [AuthGuard], */
+    canActivate: [AuthGuard],
     component: CorreoUdnetComponent
   },
   {
