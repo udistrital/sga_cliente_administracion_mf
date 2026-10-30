@@ -10,9 +10,10 @@ import { PopUpManager } from '../../../managers/popUpManager';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-soporte-configuracion',
-  templateUrl: './soporte-configuracion.component.html',
-  styleUrls: ['./soporte-configuracion.component.scss']
+    selector: 'app-soporte-configuracion',
+    templateUrl: './soporte-configuracion.component.html',
+    styleUrls: ['./soporte-configuracion.component.scss'],
+    standalone: false
 })
 export class SoporteConfiguracionComponent {
 

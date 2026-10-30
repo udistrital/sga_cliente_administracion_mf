@@ -16,9 +16,10 @@ import { SgaAdmisionesMid } from '../../../services/sga_admisiones_mid.service';
 import { TAGS_INSCRIPCION_PROGRAMA } from './def_tags_por_programa';
 
 @Component({
-  selector: 'app-resumen-configuracion',
-  templateUrl: './resumen-configuracion.component.html',
-  styleUrls: ['./resumen-configuracion.component.scss']
+    selector: 'app-resumen-configuracion',
+    templateUrl: './resumen-configuracion.component.html',
+    styleUrls: ['./resumen-configuracion.component.scss'],
+    standalone: false
 })
 export class ResumenConfiguracionComponent {
   @Output() soportehijo= new EventEmitter<boolean>();

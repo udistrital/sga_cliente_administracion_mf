@@ -677,5 +677,9 @@
     "opciones": "Opciones",
     "archivo": "Seleccionar archivo",
     "aceptar": "Aceptar"
+  },
+  "ERROR": {
+    "rol_insuficiente_titulo": "El usuario no cuenta con permisos",
+    "rol_insuficiente": "El usuario no cuenta con los permisos suficientes para usar el sistema."
   }
 }
