@@ -7,14 +7,18 @@
       <mat-form-field appearance="fill">
         <mat-label>{{ 'opcion.periodo' | translate }}</mat-label>
         <mat-select [(ngModel)]="nivel" name="nivel" (selectionChange)="selectNivel()" required>
-          <mat-option *ngFor="let anno of annos" [value]="anno.Id">{{ anno.Nombre }}</mat-option>
+          @for (anno of annos; track anno) {
+            <mat-option [value]="anno.Id">{{ anno.Nombre }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
         <mat-label>{{ 'opcion.opciones' | translate }}</mat-label>
         <mat-select [(ngModel)]="opciones" name="opciones" required>
-          <mat-option *ngFor="let opcion of opcionesList" [value]="opcion">{{ opcion }}</mat-option>
+          @for (opcion of opcionesList; track opcion) {
+            <mat-option [value]="opcion">{{ opcion }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -25,7 +29,9 @@
         <mat-card-content>
           <button mat-raised-button color="primary" (click)="fileInput.click()">{{ 'opcion.archivo' | translate }}</button>
           <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" required>
-          <span *ngIf="fileName" class="file-name">{{ fileName }}</span>
+          @if (fileName) {
+            <span class="file-name">{{ fileName }}</span>
+          }
         </mat-card-content>
       </mat-card>
       <button mat-raised-button color="primary" [disabled]="!isFormValid()" (click)="onSubmit()">{{ 'opcion.aceptar' | translate }}</button>

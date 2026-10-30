@@ -1,82 +1,78 @@
-<mat-card *ngIf="soporte">
+@if (soporte) {
+  <mat-card>
     <mat-card-header>
-        <mat-card-title>{{ 'soporte.titulo' | translate }}</mat-card-title>
+      <mat-card-title>{{ 'soporte.titulo' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <div class="alert warning" align="center">
-            <strong>{{ 'soporte.nota' | translate }}:</strong>{{ 'soporte.aviso' | translate }}
-        </div>
-        <mat-card-title>{{'soporte.historicos' | translate}}</mat-card-title>
-        <mat-form-field class="filtro">
-            <mat-label>{{"GLOBAL.filtro" | translate}}</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-        </mat-form-field>
-        <div class="contenedor-tabla">
-            <table mat-table [dataSource]="dataSource" matSort>
-        
-                <ng-container matColumnDef="orden">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.orden" | translate}} </th>
-                    <td mat-cell *matCellDef="let row"> {{row.orden}} </td>
-                </ng-container>
-        
-                <ng-container matColumnDef="convocatoria">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.convocatoria" | translate}} </th>
-                    <td mat-cell *matCellDef="let row"> {{row.convocatoria}} </td>
-                </ng-container>
-        
-                <ng-container matColumnDef="generacion">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.generacion" | translate}} </th>
-                    <td mat-cell *matCellDef="let row"> {{row.generacion}} </td>
-                </ng-container>
-        
-                <ng-container matColumnDef="usuario">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.usuario" | translate}} </th>
-                    <td mat-cell *matCellDef="let row"> {{row.usuario}} </td>
-                </ng-container>
-
-                <ng-container matColumnDef="+" stickyEnd>
-                    <th mat-header-cell *matHeaderCellDef class="column-mas">
-                        <input class="boton-column" type="button" value="+" (click)="activateVariables()">
-                    </th>
-                    <td mat-cell *matCellDef="let row">
-                        <div class="contenedor-acciones">
-                            <button mat-icon-button [matMenuTriggerFor]="menu" class="boton-acciones"
-                                aria-label="Example icon-button with a menu">
-                                <mat-icon>more_vert</mat-icon>
-                            </button>
-                            <mat-menu #menu="matMenu">
-                                <button mat-menu-item (click)="documento('descargar')">
-                                    <mat-icon>get_app</mat-icon>
-                                    <span>{{"GLOBAL.tooltip_descargar" | translate}}</span>
-                                </button>
-                                <button mat-menu-item (click)="documento('ver')">
-                                    <mat-icon class="icon-delete">visibility</mat-icon>
-                                    <span>{{"GLOBAL.tooltip_ver_registro" | translate}}</span>
-                                </button>
-                                <button mat-menu-item>
-                                    <mat-icon class="icon-delete">delete</mat-icon>
-                                    <span>{{"GLOBAL.eliminar" | translate}}</span>
-                                </button>
-                            </mat-menu>
-                        </div>
-                    </td>
-                </ng-container>
-        
-                <tr mat-header-row *matHeaderRowDef="columns"></tr>
-                <tr mat-row *matRowDef="let row; columns: columns;"></tr>
-        
-                <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell" colspan="5">{{'soporte.nodata' | translate}}</td>
-                </tr>
-            </table>
-        
-            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-        </div>
+      <div class="alert warning" align="center">
+        <strong>{{ 'soporte.nota' | translate }}:</strong>{{ 'soporte.aviso' | translate }}
+      </div>
+      <mat-card-title>{{'soporte.historicos' | translate}}</mat-card-title>
+      <mat-form-field class="filtro">
+        <mat-label>{{"GLOBAL.filtro" | translate}}</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
+      </mat-form-field>
+      <div class="contenedor-tabla">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="orden">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.orden" | translate}} </th>
+            <td mat-cell *matCellDef="let row"> {{row.orden}} </td>
+          </ng-container>
+          <ng-container matColumnDef="convocatoria">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.convocatoria" | translate}} </th>
+            <td mat-cell *matCellDef="let row"> {{row.convocatoria}} </td>
+          </ng-container>
+          <ng-container matColumnDef="generacion">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.generacion" | translate}} </th>
+            <td mat-cell *matCellDef="let row"> {{row.generacion}} </td>
+          </ng-container>
+          <ng-container matColumnDef="usuario">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"soporte.usuario" | translate}} </th>
+            <td mat-cell *matCellDef="let row"> {{row.usuario}} </td>
+          </ng-container>
+          <ng-container matColumnDef="+" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef class="column-mas">
+              <input class="boton-column" type="button" value="+" (click)="activateVariables()">
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <div class="contenedor-acciones">
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="boton-acciones"
+                  aria-label="Example icon-button with a menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="documento('descargar')">
+                    <mat-icon>get_app</mat-icon>
+                    <span>{{"GLOBAL.tooltip_descargar" | translate}}</span>
+                  </button>
+                  <button mat-menu-item (click)="documento('ver')">
+                    <mat-icon class="icon-delete">visibility</mat-icon>
+                    <span>{{"GLOBAL.tooltip_ver_registro" | translate}}</span>
+                  </button>
+                  <button mat-menu-item>
+                    <mat-icon class="icon-delete">delete</mat-icon>
+                    <span>{{"GLOBAL.eliminar" | translate}}</span>
+                  </button>
+                </mat-menu>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="5">{{'soporte.nodata' | translate}}</td>
+          </tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+      </div>
     </mat-card-content>
     <mat-card-actions>
-        <button class="boton-primary">{{ 'GLOBAL.cerrar' | translate }}</button>
+      <button class="boton-primary">{{ 'GLOBAL.cerrar' | translate }}</button>
     </mat-card-actions>
-</mat-card>
-<div *ngIf="resumen">
+  </mat-card>
+}
+@if (resumen) {
+  <div>
     <app-resumen-configuracion (soportehijo)="visualizarSoporte($event)" />
-</div>
+  </div>
+}

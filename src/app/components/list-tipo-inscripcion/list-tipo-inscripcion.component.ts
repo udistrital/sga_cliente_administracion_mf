@@ -13,9 +13,10 @@ import { MatSort } from '@angular/material/sort';
 
 
 @Component({
-  selector: 'udistrital-list-tipo-inscripcion',
-  templateUrl: './list-tipo-inscripcion.component.html',
-  styleUrls: ['./list-tipo-inscripcion.component.scss']
+    selector: 'udistrital-list-tipo-inscripcion',
+    templateUrl: './list-tipo-inscripcion.component.html',
+    styleUrls: ['./list-tipo-inscripcion.component.scss'],
+    standalone: false
 })
 export class ListTipoInscripcionComponent implements OnInit {
 

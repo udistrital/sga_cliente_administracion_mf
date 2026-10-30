@@ -25,7 +25,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion/crud-tipo-inscripcion.component';
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -107,7 +107,6 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
-    HttpClientModule,
     StoreModule.forRoot({}, {}),
     SpinnerUtilModule
   ],
@@ -126,7 +125,8 @@ export function createTranslateLoader(http: HttpClient) {
     SgaDerechoPecuniarioMidService,
     SolicitudesCorreosService,
     CorreoInscripcionMidService, // Asegúrate de incluir el servicio aquí
-    { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true },
+    provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
 })

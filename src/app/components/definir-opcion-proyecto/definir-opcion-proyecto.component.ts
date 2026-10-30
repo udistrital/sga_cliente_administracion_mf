@@ -6,9 +6,10 @@ import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'udistrital-definir-opcion-proyecto',
-  templateUrl: './definir-opcion-proyecto.component.html',
-  styleUrls: ['./definir-opcion-proyecto.component.scss']
+    selector: 'udistrital-definir-opcion-proyecto',
+    templateUrl: './definir-opcion-proyecto.component.html',
+    styleUrls: ['./definir-opcion-proyecto.component.scss'],
+    standalone: false
 })
 export class DefinirOpcionProyectoComponent implements OnInit{
   nivel: string = '';

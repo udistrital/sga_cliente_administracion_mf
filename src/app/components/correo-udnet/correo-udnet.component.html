@@ -11,24 +11,26 @@
     <!-- Inicia tabla principal -->
     <div id="tabla1" class="centered-cells blue-background table-rounded table"
       [style.display]="mostrarTabla1 ? 'block' : 'none'">
-    <mat-form-field class="form-field" *ngIf="mostrarTabla1">
-      <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
-      <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
-    </mat-form-field>
-    <!-- Inicia tabla principal -->
+      @if (mostrarTabla1) {
+        <mat-form-field class="form-field">
+          <mat-label>{{ "GLOBAL.buscar" | translate }}</mat-label>
+          <input matInput (keyup)="aplicarFiltro($event, 'tabla1')" placeholder="Buscar" #inputTabla1 />
+        </mat-form-field>
+      }
+      <!-- Inicia tabla principal -->
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z5">
 
         <ng-container matColumnDef="#">
           <th mat-header-cell *matHeaderCellDef>#</th>
           <td mat-cell *matCellDef="let element; let i = index" data-column="procesoAdminicion">{{ i +
-            1 }}</td>
+          1 }}</td>
         </ng-container>
 
         <ng-container matColumnDef="procesoAdminicion">
           <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.proceso_admision" | translate }}
           </th>
           <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">{{
-            element.procesoAdminicion }}</td>
+          element.procesoAdminicion }}</td>
         </ng-container>
 
         <ng-container matColumnDef="fecha">
@@ -43,7 +45,7 @@
             {{ element.estado }}
           </td>
         </ng-container>
-       
+
         <ng-container matColumnDef="gestion">
           <th mat-header-cell *matHeaderCellDef>{{ "GLOBAL.acciones" | translate }}</th>
           <td mat-cell *matCellDef="let element" data-column="procesoAdminicion">
@@ -119,13 +121,13 @@
 
         <ng-container matColumnDef="usuarioAsignado">
           <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.usuario_asignado" |
-            translate }}</th>
+          translate }}</th>
           <td mat-cell *matCellDef="let element">{{ element.correo_asignado }}</td>
         </ng-container>
 
         <ng-container matColumnDef="correoAsignado">
           <th mat-header-cell *matHeaderCellDef>{{ "solicitudes_correos.correo_asignado" |
-            translate }}</th>
+          translate }}</th>
           <td mat-cell *matCellDef="let element">{{ element.correo_asignado }}</td>
         </ng-container>
 
@@ -135,45 +137,49 @@
       <mat-paginator #paginator2 [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </div>
 
-    
+
     <mat-card>
       <mat-card-content>
-        <div *ngIf="!mostrarTabla1">
-          <form [formGroup]="observacionForm" (ngSubmit)="agregarObservacion()">              
-            <div class="form-group">
-              <mat-card-title>
-                {{ "GLOBAL.observaciones" | translate }}
-              </mat-card-title>
-              <mat-card-subtitle>
-                {{ "solicitudes_correos.observacion_descripcion" | translate }}
-              </mat-card-subtitle>
-              <textarea id="cuerpoObservacion" formControlName="cuerpoObservacion"
+        @if (!mostrarTabla1) {
+          <div>
+            <form [formGroup]="observacionForm" (ngSubmit)="agregarObservacion()">
+              <div class="form-group">
+                <mat-card-title>
+                  {{ "GLOBAL.observaciones" | translate }}
+                </mat-card-title>
+                <mat-card-subtitle>
+                  {{ "solicitudes_correos.observacion_descripcion" | translate }}
+                </mat-card-subtitle>
+                <textarea id="cuerpoObservacion" formControlName="cuerpoObservacion"
                 class="full-width-textarea"></textarea>
-            </div>
-          </form>
-        </div>
+              </div>
+            </form>
+          </div>
+        }
       </mat-card-content>
     </mat-card>
   </mat-card-content>
 
-  <mat-card-actions *ngIf="!mostrarTabla1">
-    <div class="container-return">
-      <div class="container-buttons">
-        <button mat-flat-button color="warn" (click)="descargarCSV()">
-          {{ "solicitudes_correos.descargar_listado" | translate }}
-        </button>
-        <button mat-flat-button color="accent" (click)="inputFile.click()">
-          {{ "solicitudes_correos.cargar_listado" | translate }}
-          <input #inputFile type="file" (change)="cargarCSV($event)" accept=".csv" style="display: none;">
-        </button>
-        <button mat-flat-button color="primary" (click)="confirmarGestion()">
-          {{ "solicitudes_correos.confirmar_gestion" | translate }}
+  @if (!mostrarTabla1) {
+    <mat-card-actions>
+      <div class="container-return">
+        <div class="container-buttons">
+          <button mat-flat-button color="warn" (click)="descargarCSV()">
+            {{ "solicitudes_correos.descargar_listado" | translate }}
+          </button>
+          <button mat-flat-button color="accent" (click)="inputFile.click()">
+            {{ "solicitudes_correos.cargar_listado" | translate }}
+            <input #inputFile type="file" (change)="cargarCSV($event)" accept=".csv" style="display: none;">
+          </button>
+          <button mat-flat-button color="primary" (click)="confirmarGestion()">
+            {{ "solicitudes_correos.confirmar_gestion" | translate }}
+          </button>
+        </div>
+        <button mat-flat-button color="primary" (click)="mostrarTabla('tabla1')">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+          {{ "GLOBAL.regresar" | translate }}
         </button>
       </div>
-      <button mat-flat-button color="primary" (click)="mostrarTabla('tabla1')">
-        <mat-icon>keyboard_arrow_left</mat-icon>
-        {{ "GLOBAL.regresar" | translate }}
-      </button>
-    </div>
-  </mat-card-actions>
+    </mat-card-actions>
+  }
 </mat-card>

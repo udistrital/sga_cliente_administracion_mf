@@ -38,9 +38,10 @@ interface Observacion {
 }
 
 @Component({
-  selector: 'udistrital-correo-udnet',
-  templateUrl: './correo-udnet.component.html',
-  styleUrls: ['./correo-udnet.component.scss']
+    selector: 'udistrital-correo-udnet',
+    templateUrl: './correo-udnet.component.html',
+    styleUrls: ['./correo-udnet.component.scss'],
+    standalone: false
 })
 export class CorreoUdnetComponent implements OnInit {
   mostrarTabla1: boolean = true;
