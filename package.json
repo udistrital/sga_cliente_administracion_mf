@@ -66,5 +66,11 @@
     "style-loader": "^3.3.1",
     "typescript": "~5.9.3",
     "webpack": "^5.112.0"
+  },
+  "overrides": {
+    "spinner-util": {
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core"
+    }
   }
 }
