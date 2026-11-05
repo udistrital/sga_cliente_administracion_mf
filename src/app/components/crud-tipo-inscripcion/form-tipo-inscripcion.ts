@@ -64,6 +64,7 @@ export let FORM_TIPO_INSCRIPCION = {
           requerido: true,
           tipo: "any",
           key: 'Nombre',
+          relacion: false, // el API espera NivelId como número, no el objeto del nivel
           opciones: [],
       },
   ],

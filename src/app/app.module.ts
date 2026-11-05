@@ -54,6 +54,7 @@ import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.com
 import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 import { CorreoInscripcionMidService } from './services/correo_inscripcion_mid.service';
 import { AuthGuard } from '../_guards/auth.guard';
+import { PaginatorIntl } from './utils/paginator-intl';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -126,6 +127,7 @@ export function createTranslateLoader(http: HttpClient) {
     SolicitudesCorreosService,
     CorreoInscripcionMidService, // Asegúrate de incluir el servicio aquí
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true },
+    { provide: MatPaginatorIntl, useClass: PaginatorIntl },
     provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]

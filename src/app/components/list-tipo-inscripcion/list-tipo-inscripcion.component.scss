@@ -10,6 +10,7 @@
   padding: 0.5rem;
   border-radius: 0.25rem;
   margin-bottom: 0.3rem;
+  text-align: center;
 }
 .status-indicator.active {
   color: white;
@@ -22,6 +23,11 @@
 
 th {
   font-weight: bold;
+}
+
+// La enumeración es solo de referencia: se aclara para que no compita con los datos
+.celda-indice {
+  color: rgba(0, 0, 0, 0.55);
 }
 
 mat-toolbar {

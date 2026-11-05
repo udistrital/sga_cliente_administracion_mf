@@ -129,7 +129,6 @@ export class CrudTipoInscripcionComponent implements OnInit{
         if(tipoInscripcion['Especial'] == ''){
           tipoInscripcion.Especial = false;
         }
-        tipoInscripcion.NivelId = tipoInscripcion['Nivel']['Id'];
         this.info_tipo_inscripcion = <TipoInscripcion>tipoInscripcion;
         this.inscripcionService.put('tipo_inscripcion', this.info_tipo_inscripcion)
           .subscribe(res => {
@@ -157,7 +156,6 @@ export class CrudTipoInscripcionComponent implements OnInit{
         if(tipoInscripcion['Especial'] == ''){
           tipoInscripcion.Especial = false;
         }
-        tipoInscripcion.NivelId = tipoInscripcion['Nivel']['Id'];
         this.info_tipo_inscripcion = <TipoInscripcion>tipoInscripcion;
         this.inscripcionService.post('tipo_inscripcion', this.info_tipo_inscripcion)
           .subscribe(res => {

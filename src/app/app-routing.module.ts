@@ -3,7 +3,6 @@ import { RouterModule, Routes, provideRouter } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { provideSingleSpa } from 'single-spa-angular';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { AppComponent } from './app.component';
 import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion/crud-tipo-inscripcion.component';
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
 import { SoporteConfiguracionComponent } from './components/soporte-configuracion/soporte-configuracion/soporte-configuracion.component';
@@ -21,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: "crear",
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: CrudTipoInscripcionComponent
   },
   {
@@ -35,34 +34,24 @@ const routes: Routes = [
     component: DefinirOpcionProyectoComponent
   },
   {
-    path: "lista",
-    canActivate: [AuthGuard],
-    component: AppComponent
-  },
-  {
     path: "correo-institucional",
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: CorreoUdnetComponent
   },
   {
     path: "inscripcion/lista",
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: ListTipoInscripcionComponent
   },
   {
     path: "inscripcion/crear",
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: CrudTipoInscripcionComponent
   },
   {
     path: "inscripcion/soporte",
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: SoporteConfiguracionComponent
-  },
-  {
-    path: "inscripcion/lista",
-    canActivate: [AuthGuard],
-    component: AppComponent
   }
 ];
 

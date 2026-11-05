@@ -654,5 +654,13 @@
   "ERROR": {
     "rol_insuficiente_titulo": "The user does not have permissions",
     "rol_insuficiente": "The user does not have sufficient permissions to use the system."
+  },
+  "PAGINADOR": {
+    "items_por_pagina": "Items per page",
+    "siguiente": "Next page",
+    "anterior": "Previous page",
+    "primera": "First page",
+    "ultima": "Last page",
+    "de": "of"
   }
 }

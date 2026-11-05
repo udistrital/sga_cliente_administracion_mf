@@ -20,7 +20,7 @@
               <table mat-table [dataSource]="source" matSort>
                 <ng-container matColumnDef="Id">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header> # </th>
-                  <td mat-cell *matCellDef="let row; let i = index"> {{i + 1}} </td>
+                  <td mat-cell *matCellDef="let row; let i = index" class="celda-indice"> {{i + 1}} </td>
                 </ng-container>
                 <ng-container matColumnDef="Nombre">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"GLOBAL.Nombre" | translate}} </th>
