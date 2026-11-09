@@ -29,7 +29,7 @@ export class ResumenConfiguracionComponent {
   periodo!: any
   nivel!: number
   proyectos: any;
-  criterios: any;
+  criterios: any[] = [];
   fecha!: string;
   nivel_load: any;
   tiposInscrip!: any
@@ -43,6 +43,17 @@ export class ResumenConfiguracionComponent {
   criterio_selected!: any;
   proyectos_selected!: any;
   tagsObject: any = undefined;
+  seccionesSuite = [
+    { clave: 'info_persona', etiqueta: 'inscripcion.info_basica', icono: 'account_circle' },
+    { clave: 'formacion_academica', etiqueta: 'inscripcion.formacion_academica', icono: 'school' },
+    { clave: 'idiomas', etiqueta: 'inscripcion.idiomas', icono: 'public' },
+    { clave: 'experiencia_laboral', etiqueta: 'inscripcion.experiencia_laboral', icono: 'work' },
+    { clave: 'produccion_academica', etiqueta: 'inscripcion.produccion_academica', icono: 'book' },
+    { clave: 'documento_programa', etiqueta: 'inscripcion.documento_programa', icono: 'description' },
+    { clave: 'descuento_matricula', etiqueta: 'inscripcion.descuento_matricula', icono: 'attach_money' },
+    { clave: 'propuesta_grado', etiqueta: 'inscripcion.propuesta_grado', icono: 'insert_drive_file' },
+    { clave: 'perfil', etiqueta: 'inscripcion.perfil', icono: 'person' },
+  ];
   proyectosId: any[] = []
   semanasCalendario!: number
   Calendario_academico: string = "";
@@ -74,20 +85,28 @@ export class ResumenConfiguracionComponent {
   ) { }
 
   async ngOnInit() {
-    this.tagsObject = { ...TAGS_INSCRIPCION_PROGRAMA };
+    this.tagsObject = structuredClone(TAGS_INSCRIPCION_PROGRAMA);
     await this.cargarPeriodo()
     await this.loadLevel()
     await this.loadDataCunetaPecuniarios()
+    await this.loadCriterioSubCriterio().catch(() => this.criterios = [])
   }
 
   selectPeriodo() {
     this.selectednivel = undefined;
     this.proyectos_selected = undefined;
+    this.resumen = false;
   }
 
   async loadResumen() {
-    this.resumen = true
-    //await this.loadCriterioSubCriterio()
+    this.procesos = [];
+    this.proyectoCurricular = new MatTableDataSource<any>([]);
+    this.criteriosTable = [];
+    this.tagsObject = structuredClone(TAGS_INSCRIPCION_PROGRAMA);
+    this.resumen = !!this.selectednivel;
+    if (!this.resumen) {
+      return;
+    }
     await this.loadCalendario()
   }
 
@@ -188,20 +207,26 @@ export class ResumenConfiguracionComponent {
 
   async loadDatacalendario() {
     let periodo: any[] = []
-    const calendario: any = await this.recuperarCalendarioAcademico(); 
+    const calendario: any = await this.recuperarCalendarioAcademico();
+    const nivel = (this.nivel_load || []).find((n: any) => n.Nombre === this.selectednivel);
 
     for (const element of calendario) {
-      if (element.Activo == true && this.nombreP == element.Periodo && element.Nombre.includes(this.selectednivel)) {
+      const mismoNivel = (nivel && element.Nivel === nivel.Id) || element.Nombre.includes(this.selectednivel);
+      if (element.Activo == true && this.nombreP == element.Periodo && mismoNivel) {
         periodo.push(element)
       }
     }
 
+    if (periodo.length === 0) {
+      this.popUpManager.showAlert(this.translate.instant('GLOBAL.atencion'), this.translate.instant('soporte.sin_calendario'));
+      return;
+    }
     await this.loadProcessActivity(periodo[0])
   }
 
   recuperarCalendarioAcademico() {
     return new Promise((resolve, reject) => {
-      this.sgaCalendarioMidService.get('/calendario-academico/')
+      this.sgaCalendarioMidService.get('calendario-academico/')
         .subscribe((response: any) => {
           if (response.Status === 200) {
             resolve(response.Data)
@@ -269,7 +294,7 @@ export class ResumenConfiguracionComponent {
             datosCargados.push(concepto);
           }
         } else {
-          this.popUpManager.showAlert('info', this.translate.instant('derechos_pecuniarios.no_conceptos'));
+          this.popUpManager.showAlert('info', this.translate.instant('soporte.no_conceptos'));
         }
         this.derechosPecuniarios = new MatTableDataSource(datosCargados);
         this.derechosPecuniarios.paginator = this.paginator;
@@ -378,8 +403,8 @@ export class ResumenConfiguracionComponent {
     return new Promise((resolve, reject) => {
       this.sgaMidAdmisiones.get('admision/criterio')
         .subscribe((response: any) => {
-          if (response.status === 200 && response.success === true) {
-            resolve(response.data);
+          if (response.Status === 200 && response.Success === true) {
+            resolve(response.Data);
           } else {
             this.popUpManager.showErrorAlert(this.translate.instant('ERROR.general'));
             reject(false);
@@ -394,29 +419,21 @@ export class ResumenConfiguracionComponent {
   }
 
   async activeCriterios() {
+    const idsConfigurados = new Set<number>();
     for (const element of this.proyectoCurricular.data) {
-      let data: any[] = [];
-      const requisitoPrograma: any = await this.recuperarRequisitoPrograma(element.Id, this.periodo.Id);
-      for (const criterio of this.criterios) {
-        let encontrado = false;
-        for (const requisito of requisitoPrograma) {
-          if (Object.keys(data).length > 0 && Object.keys(data[0]).length > 0) {
-            if (requisito["RequisitoId"]["Id"] === criterio.Id) {
-              encontrado = true;
-            }
-          }
-        }
-        if (!encontrado) {
-          data.push(criterio);
+      const requisitoPrograma: any = await this.recuperarRequisitoPrograma(element.Id, this.periodo.Id).catch(() => []);
+      for (const requisito of requisitoPrograma || []) {
+        if (requisito?.RequisitoId?.Id !== undefined) {
+          idsConfigurados.add(requisito.RequisitoId.Id);
         }
       }
-      this.criteriosTable = data;
     }
+    this.criteriosTable = this.criterios.filter((criterio: any) => idsConfigurados.has(criterio.Id));
   }
 
   recuperarRequisitoPrograma(programaId: any, periodoId: any) {
     return new Promise((resolve, reject) => {
-      this.evaluacionService.get('requisito_programa_academico?query=ProgramaAcademicoId:' + programaId + ',PeriodoId:' + periodoId)
+      this.evaluacionService.get('requisito_programa_academico?query=Activo:true,ProgramaAcademicoId:' + programaId + ',PeriodoId:' + periodoId + '&limit=0')
         .subscribe((response: any) => {
           resolve(response);
         },
@@ -447,7 +464,7 @@ export class ResumenConfiguracionComponent {
   }
 
   async loadsuite() {
-    this.tagsObject = { ...TAGS_INSCRIPCION_PROGRAMA };
+    this.tagsObject = structuredClone(TAGS_INSCRIPCION_PROGRAMA);
     const tiposInscripcion = await this.cargarTipoInscripcion()
 
     for (const element of this.proyectoCurricular.data) {
@@ -478,7 +495,7 @@ export class ResumenConfiguracionComponent {
           if (response != null && response.Status == '200') {
             resolve(response.Data);
           } else {
-            this.popUpManager.showAlert(this.translate.instant('admision.definicion_suite_inscripcion_programa'), this.translate.instant('admision.no_tiene_suite'));
+            this.popUpManager.showAlert(this.translate.instant('soporte.definicion_suite_inscripcion_programa'), this.translate.instant('soporte.no_tiene_suite'));
             reject(false);
           }
         },

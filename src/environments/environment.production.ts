@@ -12,7 +12,7 @@ export const environment = {
   SGA_ADMISIONES_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/admisiones_mid/v1/',
   EVALUACION_INSCRIPCION_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/evaluacion_inscripcion_crud/v1/',
   PARAMETROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/parametros/v1/',
-  SGA_DERECHO_PECUNARIO_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/derecho_pecunario_mid/v1',
+  SGA_DERECHO_PECUNARIO_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/derecho_pecunario_mid/v1/',
   CALENDARIO_MID_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/calendario_mid/v1/',
   SOLICITUDES_ADMINISTRACION:'https://autenticacion.portaloas.udistrital.edu.co/apioas/solicitudes_crud/v1/',
   SGA_CORREOS_MID: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/admisiones_mid/v1/',

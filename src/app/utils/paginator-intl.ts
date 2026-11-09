@@ -3,8 +3,6 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
 
-// Traduce los textos de todos los mat-paginator del MF.
-// El idioma se cambia con setDefaultLang (ver AppComponent), por eso se escuchan ambos eventos.
 @Injectable()
 export class PaginatorIntl extends MatPaginatorIntl {
 

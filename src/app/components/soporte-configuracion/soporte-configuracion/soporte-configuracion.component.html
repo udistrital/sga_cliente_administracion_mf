@@ -4,9 +4,7 @@
       <mat-card-title>{{ 'soporte.titulo' | translate }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="alert warning" align="center">
-        <strong>{{ 'soporte.nota' | translate }}:</strong>{{ 'soporte.aviso' | translate }}
-      </div>
+      <p class="nota-aviso">{{ 'soporte.aviso' | translate }}</p>
       <mat-card-title>{{'soporte.historicos' | translate}}</mat-card-title>
       <mat-form-field class="filtro">
         <mat-label>{{"GLOBAL.filtro" | translate}}</mat-label>
@@ -32,7 +30,9 @@
           </ng-container>
           <ng-container matColumnDef="+" stickyEnd>
             <th mat-header-cell *matHeaderCellDef class="column-mas">
-              <input class="boton-column" type="button" value="+" (click)="activateVariables()">
+              <button type="button" class="boton-agregar" (click)="activateVariables()" [matTooltip]="'GLOBAL.agregar' | translate">
+                <mat-icon>add</mat-icon>
+              </button>
             </th>
             <td mat-cell *matCellDef="let row">
               <div class="contenedor-acciones">
@@ -42,15 +42,15 @@
                 </button>
                 <mat-menu #menu="matMenu">
                   <button mat-menu-item (click)="documento('descargar')">
-                    <mat-icon>get_app</mat-icon>
+                    <mat-icon class="icon-descargar">get_app</mat-icon>
                     <span>{{"GLOBAL.tooltip_descargar" | translate}}</span>
                   </button>
                   <button mat-menu-item (click)="documento('ver')">
-                    <mat-icon class="icon-delete">visibility</mat-icon>
+                    <mat-icon class="icon-ver">visibility</mat-icon>
                     <span>{{"GLOBAL.tooltip_ver_registro" | translate}}</span>
                   </button>
                   <button mat-menu-item>
-                    <mat-icon class="icon-delete">delete</mat-icon>
+                    <mat-icon class="icon-eliminar">delete</mat-icon>
                     <span>{{"GLOBAL.eliminar" | translate}}</span>
                   </button>
                 </mat-menu>

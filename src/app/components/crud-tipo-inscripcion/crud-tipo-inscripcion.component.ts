@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter, importProvidersFrom } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostBinding } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { InscripcionService } from '../../services/inscripcion.service';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { PopUpManager } from '../../managers/popUpManager';
 import { ProyectoAcademicoService } from '../../services/proyecto_academico.service';
 import { NivelFormacion } from '../../models/proyecto_academico/nivel_formacion';
 import { TipoInscripcion } from '../../models/inscripcion/tipo_inscripcion';
-import { FORM_TIPO_INSCRIPCION } from './form-tipo-inscripcion';
 // @ts-ignore
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
@@ -16,10 +17,11 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
     styleUrls: ['./crud-tipo-inscripcion.component.scss'],
     standalone: false
 })
-export class CrudTipoInscripcionComponent implements OnInit{
+export class CrudTipoInscripcionComponent {
   tipo_inscripcion_id!: number;
-  niveles: NivelFormacion[] | undefined;
-  
+  niveles: NivelFormacion[] = [];
+  info_tipo_inscripcion: TipoInscripcion | undefined;
+  form: FormGroup;
 
   @Input('tipo_periodo_id')
   set name(tipo_inscripcion_id: number) {
@@ -27,59 +29,44 @@ export class CrudTipoInscripcionComponent implements OnInit{
     this.loadTipoInscripcion();
   }
 
+  @Input() embebido = false;
+
+  @HostBinding('class.tarjeta')
+  get esTarjeta(): boolean {
+    return !this.embebido;
+  }
+
   @Output() eventChange = new EventEmitter();
+  @Output() cancelar = new EventEmitter<void>();
 
-  info_tipo_inscripcion: TipoInscripcion | undefined;
-  formTipoInscripcion: any;
-  //regTipoInscripcion: any;
-  clean!: boolean;
-
-  constructor(private translate: TranslateService, 
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private translate: TranslateService,
     private inscripcionService: InscripcionService,
     private projectService: ProyectoAcademicoService,
     private popUpManager: PopUpManager) {
-    this.formTipoInscripcion = FORM_TIPO_INSCRIPCION;
+    this.form = this.fb.group({
+      Nombre: ['', Validators.required],
+      Descripcion: ['', Validators.required],
+      CodigoAbreviacion: ['', Validators.required],
+      NumeroOrden: [null, Validators.required],
+      NivelId: [null, Validators.required],
+      Activo: [false],
+      Especial: [false],
+    });
     this.nivel_load();
-    this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-      this.construirForm();
-    });
-}
-
-  // constructor(private translate: TranslateService, 
-  //   private inscripcionService: InscripcionService,
-  //   private projectService: ProyectoAcademicoService,
-  //   private popUpManager: PopUpManager,
-  //   //private store: Store<IAppState>
-  //   ) {
-  //   this.formTipoInscripcion = FORM_TIPO_INSCRIPCION;
-  //   this.nivel_load();
-  //   this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-  //     this.construirForm();
-  //   });
-  //  }
-
-  construirForm() {
-    this.formTipoInscripcion.titulo = this.translate.instant('tipo_inscripcion.sub_titulo');
-    this.formTipoInscripcion.btn = this.translate.instant('GLOBAL.guardar');
-    this.formTipoInscripcion.campos.forEach((campo: any) => {
-      campo.label = this.translate.instant('GLOBAL.' + campo.label_i18n);
-      campo.placeholder = this.translate.instant('GLOBAL.placeholder_' + campo.label_i18n);
-      if (campo.etiqueta === 'select') {
-        campo.opciones = this.niveles;
-      }
-    });
   }
 
-  useLanguage(language: string) {
-    this.translate.use(language);
+  get esEdicion(): boolean {
+    return this.info_tipo_inscripcion !== undefined;
   }
 
   nivel_load() {
     this.projectService.get('nivel_formacion?limit=0').subscribe(
-      (response: any) => { // Update the type of the response parameter to 'any'
-        const nivelFormacionResponse = response as NivelFormacion[]; // Cast the response to the expected type 'NivelFormacion[]'
+      (response: any) => {
+        const nivelFormacionResponse = response as NivelFormacion[];
         this.niveles = nivelFormacionResponse.filter(nivel => nivel.NivelFormacionPadreId === null);
-        this.construirForm();
       },
       error => {
         this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
@@ -87,33 +74,44 @@ export class CrudTipoInscripcionComponent implements OnInit{
     );
   }
 
-  getIndexForm(nombre: String): number {
-    for (let index = 0; index < this.formTipoInscripcion.campos.length; index++) {
-      const element = this.formTipoInscripcion.campos[index];
-      if (element.nombre === nombre) {
-        return index
-      }
-    }
-    return 0;
-  }
-
-
   public loadTipoInscripcion(): void {
     if (this.tipo_inscripcion_id !== undefined && this.tipo_inscripcion_id !== 0) {
       this.inscripcionService.get('tipo_inscripcion/?query=id:' + this.tipo_inscripcion_id)
         .subscribe((res: any) => {
           if (res !== null) {
             this.info_tipo_inscripcion = <TipoInscripcion>res[0];
+            this.form.reset({ Activo: false, Especial: false });
+            this.form.patchValue(this.info_tipo_inscripcion);
           }
         });
-    } else  {
+    } else {
       this.info_tipo_inscripcion = undefined;
-      this.clean = !this.clean;
+      this.form.reset({ Activo: false, Especial: false });
+    }
+  }
+
+  onCancelar(): void {
+    if (this.embebido) {
+      this.cancelar.emit();
+      return;
+    }
+    this.router.navigateByUrl(this.router.url.replace(/crear$/, 'lista'));
+  }
+
+  guardar(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const tipoInscripcion = { ...this.info_tipo_inscripcion, ...this.form.value };
+    if (this.esEdicion) {
+      this.updateTipoInscripcion(tipoInscripcion);
+    } else {
+      this.createTipoInscripcion(tipoInscripcion);
     }
   }
 
   updateTipoInscripcion(tipoInscripcion: any): void {
-
     const opt: any = {
       title: this.translate.instant('GLOBAL.actualizar'),
       text: this.translate.instant('tipo_inscripcion.seguro_actualizar_tipo_inscripcion'),
@@ -123,12 +121,6 @@ export class CrudTipoInscripcionComponent implements OnInit{
     Swal.fire(opt)
     .then((willDelete: any) => {
       if (willDelete.value) {
-        if(tipoInscripcion['Activo'] == ''){
-          tipoInscripcion.Activo = false;
-        }
-        if(tipoInscripcion['Especial'] == ''){
-          tipoInscripcion.Especial = false;
-        }
         this.info_tipo_inscripcion = <TipoInscripcion>tipoInscripcion;
         this.inscripcionService.put('tipo_inscripcion', this.info_tipo_inscripcion)
           .subscribe(res => {
@@ -150,35 +142,13 @@ export class CrudTipoInscripcionComponent implements OnInit{
     Swal.fire(opt)
     .then((willDelete: any) => {
       if (willDelete.value) {
-        if(tipoInscripcion['Activo'] == ''){
-          tipoInscripcion.Activo = false;
-        }
-        if(tipoInscripcion['Especial'] == ''){
-          tipoInscripcion.Especial = false;
-        }
-        this.info_tipo_inscripcion = <TipoInscripcion>tipoInscripcion;
-        this.inscripcionService.post('tipo_inscripcion', this.info_tipo_inscripcion)
+        this.inscripcionService.post('tipo_inscripcion', tipoInscripcion)
           .subscribe(res => {
             this.info_tipo_inscripcion = <TipoInscripcion><unknown>res;
             this.eventChange.emit(true);
-            this.popUpManager.showSuccessAlert(this.translate.instant('tipo_periodo.tipo_periodo_creado'))
+            this.popUpManager.showSuccessAlert(this.translate.instant('tipo_inscripcion.tipo_inscripcion_creado'))
           });
       }
     });
   }
-
-  ngOnInit() {
-    this.loadTipoInscripcion();
-  }
-
-  validarForm(event: any) {
-    if (event.valid) {
-      if (this.info_tipo_inscripcion === undefined) {
-        this.createTipoInscripcion(event.data.TipoInscripcion);
-      } else {
-        this.updateTipoInscripcion(event.data.TipoInscripcion);
-      }
-    }
-  }
 }
-

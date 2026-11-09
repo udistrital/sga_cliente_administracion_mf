@@ -1,5 +1,10 @@
 {
   "soporte": {
+    "no_proyectos": "No curricular projects found",
+    "no_subcriterios": "This criterion has no registered subcriteria",
+    "no_conceptos": "There are no registered concepts for the chosen validity.",
+    "no_tiene_suite": "This program does not yet have a defined Suite",
+    "definicion_suite_inscripcion_programa": "Definition of enrollment SUITE by curricular project",
     "titulo": "Support for system configuration for calls",
     "nota": "Note",
     "aviso": "Next, you will be able to generate the system configuration voucher for a specific call. To do this, you must select the required initial variables.",
@@ -15,6 +20,8 @@
     "variables": "Variables",
     "periodo": "Period to consult:",
     "nivel_aviso": "Level to consult:",
+    "error_selec_nivel": "Please select the level",
+    "sin_calendario": "There is no active academic calendar for the selected period and level, so processes, curricular projects, criteria and registration suite are not shown.",
     "seleccionar": "Select",
     "resumen": "Information Summary",
     "nombre_periodo": "Period Name",
@@ -52,6 +59,11 @@
     "descuento_matricula": "Tuition Discounts",
     "propuesta_grado": "Thesis Proposal",
     "suite_inscripcion": "Registration Suite",
+    "suite_descripcion": "Registration form sections configured for the selected call. A section is shown as included or required if it is in at least one curricular project.",
+    "seccion_incluida": "Included",
+    "seccion_no_incluida": "Not included",
+    "seccion_obligatoria": "Required",
+    "seccion_opcional": "Optional",
     "perfil": "Registration Details",
     "periodo_error": "Error loading periods",
     "error_tipo_inscripcion": "An error occurred while retrieving registration types"
@@ -59,6 +71,9 @@
   "tipo_inscripcion": {
     "titulo": "Inscriptions Type",
     "sub_titulo": "Inscription Type",
+    "crear_titulo": "New registration type",
+    "editar_titulo": "Edit registration type",
+    "campo_obligatorio": "This field is required",
     "nivel": "Level",
     "cupo_especial": "Special space",
     "estado": "State",
@@ -652,6 +667,9 @@
     "aceptar": "Accept"
   },
   "ERROR": {
+    "general": "The request could not be satisfied",
+    "noData": "No data found",
+    "invalidResponse": "The server response is not valid",
     "rol_insuficiente_titulo": "The user does not have permissions",
     "rol_insuficiente": "The user does not have sufficient permissions to use the system."
   },

@@ -12,10 +12,12 @@
   margin-bottom: 0.3rem;
   text-align: center;
 }
+
 .status-indicator.active {
   color: white;
   background-color: var(--success-accent);
 }
+
 .status-indicator.inactive {
   color: white;
   background-color: var(--danger-base);
@@ -25,9 +27,27 @@ th {
   font-weight: bold;
 }
 
-// La enumeración es solo de referencia: se aclara para que no compita con los datos
 .celda-indice {
   color: rgba(0, 0, 0, 0.55);
+}
+
+.encabezado-centrado ::ng-deep .mat-sort-header-container {
+  justify-content: center;
+}
+
+.celda-cupo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.icono-cupo {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.icono-cupo.con-cupo {
+  color: var(--success-accent);
 }
 
 mat-toolbar {
@@ -39,8 +59,16 @@ mat-toolbar {
   color: var(--others-accent) !important;
 }
 
-.icon-delete {
+.icon-inactivar {
   color: var(--danger-accent) !important;
+}
+
+.icono-agregar {
+  color: white;
+}
+
+.paginador {
+  margin-top: 30px;
 }
 
 .contenedor-tabla {
@@ -60,11 +88,4 @@ mat-toolbar {
 .filtro {
   width: 100%;
   margin-top: 20px;
-}
-
-.contenedor-boton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
 }

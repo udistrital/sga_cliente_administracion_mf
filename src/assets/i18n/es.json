@@ -1,5 +1,10 @@
 {
   "soporte": {
+    "no_proyectos": "No se encontraron proyectos curriculares",
+    "no_subcriterios": "Este criterio no tiene subcriterios registrados",
+    "no_conceptos": "No hay conceptos registrados para la vigencia seleccionada.",
+    "no_tiene_suite": "Este programa aún no cuenta con Suite definida",
+    "definicion_suite_inscripcion_programa": "Definición de SUITE de inscripción por proyecto curricular",
     "titulo": "Soporte de configuración del sistema para convocatorias",
     "nota": "Nota",
     "aviso": " A continuación usted podrá generar el comprobante de configuración del sistema para una convocatoria específica, para ello deberá seleccionar las variables iniciales requeridas.",
@@ -15,6 +20,8 @@
     "variables": "Variables",
     "periodo": "Periodo a consultar:",
     "nivel_aviso": "Nivel a consultar:",
+    "error_selec_nivel": "Por favor, seleccione el nivel",
+    "sin_calendario": "No hay un calendario académico activo para el periodo y nivel seleccionados, por lo que no se muestran procesos, proyectos curriculares, criterios ni suite de inscripción.",
     "seleccionar": "Seleccionar",
     "resumen": "Resumen Información",
     "nombre_periodo": "Nombre del periodo",
@@ -53,12 +60,20 @@
     "propuesta_grado": "Propuesta de trabajo de grado",
     "perfil": "Detalle de inscripción",
     "suite_inscripcion": "Suite de inscripción",
+    "suite_descripcion": "Secciones del formulario de inscripción configuradas para la convocatoria seleccionada. Una sección se marca como incluida u obligatoria si lo es en al menos un proyecto curricular.",
+    "seccion_incluida": "Incluida",
+    "seccion_no_incluida": "No incluida",
+    "seccion_obligatoria": "Obligatoria",
+    "seccion_opcional": "Opcional",
     "periodo_error": "Error cargando los periodos",
     "error_tipo_inscripcion": "Ocurrio un error al recuperar los tipos de inscripción"
   },
   "tipo_inscripcion": {
     "titulo": "Tipos de Inscripción",
     "sub_titulo": "Tipo de Inscripción",
+    "crear_titulo": "Nuevo tipo de inscripción",
+    "editar_titulo": "Editar tipo de inscripción",
+    "campo_obligatorio": "Este campo es obligatorio",
     "nivel": "Nivel",
     "cupo_especial": "Cupo especial",
     "estado": "Estado",
@@ -679,6 +694,9 @@
     "aceptar": "Aceptar"
   },
   "ERROR": {
+    "general": "La solicitud no pudo ser cumplida",
+    "noData": "No se encontraron datos",
+    "invalidResponse": "La respuesta del servidor no es válida",
     "rol_insuficiente_titulo": "El usuario no cuenta con permisos",
     "rol_insuficiente": "El usuario no cuenta con los permisos suficientes para usar el sistema."
   },
