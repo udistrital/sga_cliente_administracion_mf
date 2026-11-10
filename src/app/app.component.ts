@@ -5,9 +5,10 @@ import { getCookie } from './utils/cookie';
 
 
 @Component({
-  selector: 'sga-administracion-mf',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'sga-administracion-mf',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })  
 export class AppComponent {
   title = 'administracion';

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, provideRouter } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
-import { getSingleSpaExtraProviders } from 'single-spa-angular';
+import { provideSingleSpa } from 'single-spa-angular';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion/crud-tipo-inscripcion.component';
@@ -16,7 +16,7 @@ const routes: Routes = [
 
   {
     path: "lista",
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: ListTipoInscripcionComponent
   },
   {
@@ -73,7 +73,7 @@ const routes: Routes = [
   providers: [
     provideRouter(routes),
     { provide: APP_BASE_HREF, useValue: '/administracion/' },
-    getSingleSpaExtraProviders(),
+    provideSingleSpa(),
     provideHttpClient(withFetch())]
 })
 export class AppRoutingModule { }
