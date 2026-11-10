@@ -6,9 +6,10 @@ import { BehaviorSubject, Subject, combineLatest, debounceTime, distinctUntilCha
 import { AnyService } from '../../services/any.service';
 
 @Component({
-  selector: 'ngx-dinamicform',
-  templateUrl: './dynamic-form.component.html',
-  styleUrls: ['./dynamic-form.component.scss']
+    selector: 'ngx-dinamicform',
+    templateUrl: './dynamic-form.component.html',
+    styleUrls: ['./dynamic-form.component.scss'],
+    standalone: false
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
 
