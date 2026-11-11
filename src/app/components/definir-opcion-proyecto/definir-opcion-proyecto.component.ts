@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ParametrosService } from '../../services/parametros.service';
 import { PopUpManager } from '../../managers/popUpManager';
-import { HttpErrorResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -99,6 +97,12 @@ export class DefinirOpcionProyectoComponent implements OnInit{
     }
   }
 
+  quitarArchivo(input: HTMLInputElement) {
+    input.value = '';
+    this.file = null;
+    this.fileName = null;
+  }
+
   isFormValid() {
     return this.nivel && this.opciones && this.fileName;
   }
@@ -115,6 +119,7 @@ export class DefinirOpcionProyectoComponent implements OnInit{
         // Actualizar el registro del periodo
         const formData = {
           Id: parseInt(parametro[0].Id),
+          FechaCreacion: parametro[0].FechaCreacion,
           Activo: true,
           Valor: JSON.stringify({ Valor: this.opciones }),
           PeriodoId: {
@@ -125,7 +130,7 @@ export class DefinirOpcionProyectoComponent implements OnInit{
           }
         }
 
-        await this.actualizarParametroPeriodo(formData);
+        await this.actualizarParametroPeriodo(formData).catch(() => null);
       } else {
         // Crear el registro del nuevo perido 
         const formData = {
@@ -139,9 +144,15 @@ export class DefinirOpcionProyectoComponent implements OnInit{
           }
         }
 
-        await this.crearParametroPeriodo(formData);
+        await this.crearParametroPeriodo(formData).catch(() => null);
       }
     }
+  }
+
+  mensajeError(status: number | string): string {
+    const clave = 'ERROR.' + status;
+    const texto = this.translate.instant(clave);
+    return texto !== clave ? texto : this.translate.instant('ERROR.general');
   }
 
   actualizarParametroPeriodo(body: any) {
@@ -149,22 +160,16 @@ export class DefinirOpcionProyectoComponent implements OnInit{
       this.parametrosService.put('parametro_periodo', body).subscribe((res: any) => {
         const r = <any>res;
         if (r !== null && r.Type !== 'error') {
-          this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
+          this.popUpManager.showSuccessAlert(this.translate.instant('opcion.registro_exito'));
           resolve(res)
         } else {
-          this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
+          this.popUpManager.showErrorToast(this.translate.instant('opcion.registro_error'));
           reject(false)
         }
       },
-        (error: HttpErrorResponse) => {
+        (error: any) => {
           console.error(error);
-          Swal.fire({
-            icon: 'error',
-            title: error.status + '',
-            text: this.translate.instant('ERROR.' + error.status),
-            footer: this.translate.instant('GLOBAL.actualizar') + '-' + this.translate.instant('GLOBAL.info_estado'),
-            confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
-          });
+          this.popUpManager.showErrorAlert(this.mensajeError(error?.Status ?? error?.status));
           reject(error);
         });
     });
@@ -175,22 +180,16 @@ export class DefinirOpcionProyectoComponent implements OnInit{
       this.parametrosService.post('parametro_periodo', body).subscribe((res: any) => {
         const r = <any>res;
         if (r !== null && r.Type !== 'error') {
-          this.popUpManager.showSuccessAlert(this.translate.instant('admision.registro_exito'));
+          this.popUpManager.showSuccessAlert(this.translate.instant('opcion.registro_exito'));
           resolve(res)
         } else {
-          this.popUpManager.showErrorToast(this.translate.instant('GLOBAL.error'));
+          this.popUpManager.showErrorToast(this.translate.instant('opcion.registro_error'));
           reject(false)
         }
       },
-        (error: HttpErrorResponse) => {
+        (error: any) => {
           console.error(error);
-          Swal.fire({
-            icon: 'error',
-            title: error.status + '',
-            text: this.translate.instant('ERROR.' + error.status),
-            footer: this.translate.instant('GLOBAL.actualizar') + '-' + this.translate.instant('GLOBAL.info_estado'),
-            confirmButtonText: this.translate.instant('GLOBAL.aceptar'),
-          });
+          this.popUpManager.showErrorAlert(this.mensajeError(error?.Status ?? error?.status));
           reject(error);
         });
     });

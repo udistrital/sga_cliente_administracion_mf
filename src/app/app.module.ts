@@ -52,6 +52,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
+import { CargandoComponent } from './components/cargando/cargando.component';
 import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 import { CorreoInscripcionMidService } from './services/correo_inscripcion_mid.service';
 import { AuthGuard } from '../_guards/auth.guard';
@@ -71,7 +72,8 @@ export function createTranslateLoader(http: HttpClient) {
     ResumenConfiguracionComponent,
     VisualizarSoporteDocumento,
     DefinirOpcionProyectoComponent,
-    CorreoUdnetComponent
+    CorreoUdnetComponent,
+    CargandoComponent
   ],
   imports: [
     MatTabsModule,
