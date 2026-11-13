@@ -10,7 +10,7 @@ import { SgaAdmisionesMid } from '../../services/sga_admisiones_mid.service';
 import { InscripcionService } from '../../services/inscripcion.service';
 import { OikosService } from '../../services/oikos.service';
 import { TercerosService } from '../../services/terceros.service';
-import { forkJoin, of } from 'rxjs';
+import { Observable, firstValueFrom, forkJoin, of } from 'rxjs';
 import { mergeMap, map, switchMap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 /* import { SgaMidService } from '../../services/sga_mid.service'; */
@@ -37,6 +37,13 @@ interface Observacion {
   fecha: Date;
 }
 
+interface EstadoSolicitudVista {
+  id: number;
+  icono: string;
+  clase: string;
+  etiqueta: string;
+}
+
 @Component({
     selector: 'udistrital-correo-udnet',
     templateUrl: './correo-udnet.component.html',
@@ -46,7 +53,14 @@ interface Observacion {
 export class CorreoUdnetComponent implements OnInit {
   mostrarTabla1: boolean = true;
   displayedColumns: string[] = ['#', 'procesoAdminicion', 'fecha', 'estado', 'gestion'];
-  displayedColumns2: string[] = ['facultad', 'proyecto', 'codigo', 'numeroDocumento', 'primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'correoPersonal', 'telefono', 'usuarioAsignado', 'correoAsignado'];
+  estadosSolicitud: EstadoSolicitudVista[] = [
+    { id: 100, icono: 'hourglass_top', clase: 'estado-radicada', etiqueta: 'solicitudes_correos.estado_radicada' },
+    { id: 105, icono: 'check_circle', clase: 'estado-gestionado', etiqueta: 'solicitudes_correos.estado_gestionado' },
+    { id: 106, icono: 'mark_chat_read', clase: 'estado-observaciones', etiqueta: 'solicitudes_correos.estado_gestionado_observaciones' },
+  ];
+  private estadoDesconocido: EstadoSolicitudVista = { id: 0, icono: 'help_outline', clase: 'estado-otro', etiqueta: '' };
+  aspirantes$!: Observable<any[]>;
+  solicitudSeleccionada: any = null;
 
   dataSource!: MatTableDataSource<any>;
   dataSource2!: MatTableDataSource<any>;
@@ -57,7 +71,7 @@ export class CorreoUdnetComponent implements OnInit {
   mostrarFormulario: boolean = true; // Propiedad para controlar la visibilidad del formulario
   
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('paginator1') paginator!: MatPaginator;
   @ViewChild('paginator2') paginator2!: MatPaginator;
 
   loading!: boolean;
@@ -102,14 +116,15 @@ export class CorreoUdnetComponent implements OnInit {
           procesoAdminicion: item.EstadoTipoSolicitudId.TipoSolicitud.Nombre,
           fecha: this.formatDate(item.FechaRadicacion),
           estado: item.EstadoTipoSolicitudId.EstadoId.Nombre,
-          referencia: JSON.parse(item.Referencia),
-          estadoStyle: this.getEstadoStyle(item.EstadoTipoSolicitudId.EstadoId.Id)
+          estadoId: item.EstadoTipoSolicitudId.EstadoId.Id,
+          estadoVista: this.getEstado(item.EstadoTipoSolicitudId.EstadoId.Id),
+          referencia: JSON.parse(item.Referencia)
         }));
   
         formattedData.sort((a, b) => {
-          if (a.estado === 'Radicado' && b.estado !== 'Radicado') {
+          if (a.estadoId === 100 && b.estadoId !== 100) {
             return -1;
-          } else if (a.estado !== 'Radicado' && b.estado === 'Radicado') {
+          } else if (a.estadoId !== 100 && b.estadoId === 100) {
             return 1;
           } else {
             const dateA = new Date(a.fecha);
@@ -123,16 +138,31 @@ export class CorreoUdnetComponent implements OnInit {
       }
     });
   }
+
+  nombreCompleto(aspirante: any): string {
+    return [aspirante.PrimerNombre, aspirante.SegundoNombre, aspirante.PrimerApellido, aspirante.SegundoApellido]
+      .filter(parte => !!parte)
+      .join(' ');
+  }
+
+  iniciales(aspirante: any): string {
+    return `${(aspirante.PrimerNombre ?? '').charAt(0)}${(aspirante.PrimerApellido ?? '').charAt(0)}`.toUpperCase();
+  }
+
+  tieneCorreoUd(aspirante: any): boolean {
+    return String(aspirante.CorreoPersonal ?? '').toLowerCase().endsWith('@udistrital.edu.co');
+  }
+
+  get totalAspirantes(): number {
+    return this.dataSource2?.data.length ?? 0;
+  }
+
+  get aspirantesConCorreoUd(): number {
+    return this.dataSource2?.data.filter(aspirante => this.tieneCorreoUd(aspirante)).length ?? 0;
+  }
   
-  getEstadoStyle(EstadoId: number): { color: string } {
-    switch (EstadoId) {
-      case 105:
-        return { color: 'var(--success-accent)' };
-      case 100:
-        return { color: 'var(--danger-base)' };
-      default:
-        return { color: 'black'};
-    }
+  getEstado(estadoId: number): EstadoSolicitudVista {
+    return this.estadosSolicitud.find(e => e.id === estadoId) ?? this.estadoDesconocido;
   }
   
   formatDate(dateString: string): string {
@@ -152,6 +182,7 @@ export class CorreoUdnetComponent implements OnInit {
 
       this.dataSource2 = new MatTableDataSource(response.Data);
       this.dataSource2.paginator = this.paginator2;
+      this.aspirantes$ = this.dataSource2.connect();
       this.mostrarTabla('tabla2');
       
     });
@@ -269,10 +300,9 @@ export class CorreoUdnetComponent implements OnInit {
 
   onGestionClick(solicitud: any): void {
     this.selectedSolicitudId = solicitud.id;
+    this.solicitudSeleccionada = solicitud;
     this.cargarDatosTabla2(solicitud.referencia.Periodo, solicitud.referencia.Opcion)
-    if (solicitud.referencia.Observacion) {
-      this.observacionForm.get('cuerpoObservacion')?.setValue(solicitud.referencia.Observacion);
-    }
+    this.observacionForm.get('cuerpoObservacion')?.setValue(solicitud.referencia?.Observacion ?? '');
     //this.listarAspirantes();
     //this.mostrarTabla('tabla2');
   }
@@ -288,6 +318,7 @@ export class CorreoUdnetComponent implements OnInit {
         const limitedData = data.slice(0, 100); // Limitar a 100 registros
         this.dataSource2 = new MatTableDataSource<Element>(limitedData);
         this.dataSource2.paginator = this.paginator2;
+        this.aspirantes$ = this.dataSource2.connect();
       }, error => {
         console.error('Error al cargar el archivo CSV:', error);
       });
@@ -328,54 +359,60 @@ export class CorreoUdnetComponent implements OnInit {
   }
   
 
-  confirmarGestion(): void {
+  async confirmarGestion(): Promise<void> {
     if (!this.selectedSolicitudId) {
       this.popUpManager.showErrorAlert('No se ha seleccionado ninguna solicitud.');
       return;
     }
 
-    let solicitud: any = null;
-    this.solicitudesCorreosService.get('solicitud/'+this.selectedSolicitudId).subscribe(
-      resp => {
-        solicitud = resp;
-      }
-    )
+    const asignaciones = this.dataSource2.data
+      .filter((item: any) => item?.Id && item?.correo_asignado)
+      .map((item: any) => ({ Id: Number(item.Id), Correo: String(item.correo_asignado).trim() }));
 
-    const data = this.dataSource2.data.map(item => ({
-        Id: item.Id,
-        Correo: item.correo_asignado
-      }));
-    
-    this.correoInscripcionMidService.post('personas/asignar-correo-institucional', data).subscribe(
-      response => {
-        
-        const observacion = this.observacionForm.value.cuerpoObservacion;
-        let referenciaUpdate = JSON.parse(solicitud.Referencia);
-        referenciaUpdate["Observacion"] = observacion;
-        let estado = 95;
-        if (observacion !== "") {
-          estado = 96;
-        }
-        solicitud.EstadoTipoSolicitudId.Id = estado;
-        solicitud.Referencia = JSON.stringify(referenciaUpdate);
+    if (asignaciones.length === 0) {
+      this.popUpManager.showErrorAlert(this.translate.instant('solicitudes_correos.listado_sin_columnas'));
+      return;
+    }
 
-        this.solicitudesCorreosService.put('solicitud', solicitud).subscribe(
-          resp => {
-            this.popUpManager.showSuccessAlert('Correos asignados correctamente.');
-            console.log(resp);
-          },
-          error => {
-            this.popUpManager.showErrorAlert('Error al asignar correos.');
-            console.error('Error al asignar correos:', error);
-          }
+    try {
+      const solicitud: any = await firstValueFrom(this.solicitudesCorreosService.get('solicitud/' + this.selectedSolicitudId));
+      const respuesta: any = await firstValueFrom(this.correoInscripcionMidService.post('personas/asignar-correo-institucional', asignaciones));
+
+      const resultados: any[] = Array.isArray(respuesta?.Data) ? respuesta.Data : [];
+      const yaTenianUsuario = new Set(resultados.filter(r => r?.Error === 'Correo institucional ya existe').map(r => r.Id));
+      const noActualizados = new Set(resultados
+        .filter(r => r?.Error === 'Error al actualizar la información' || r?.Error === 'Hubo problemas al consultar el servicio')
+        .map(r => r.Id));
+      const asignados = asignaciones.length - yaTenianUsuario.size - noActualizados.size;
+
+      if (asignados <= 0) {
+        this.popUpManager.showAlert(
+          this.translate.instant('GLOBAL.atencion'),
+          this.translate.instant('solicitudes_correos.ningun_correo_asignado', {
+            total: asignaciones.length,
+            existentes: yaTenianUsuario.size,
+            fallidos: noActualizados.size,
+          })
         );
-
-      },
-      error => {
-        this.popUpManager.showErrorAlert('Error al asignar correos.');
-        console.error('Error al asignar correos:', error);
+        return;
       }
-    );
+
+      const observacion = this.observacionForm.value.cuerpoObservacion ?? '';
+      const referenciaUpdate = JSON.parse(solicitud.Referencia);
+      referenciaUpdate['Observacion'] = observacion;
+      solicitud.EstadoTipoSolicitudId.Id = observacion !== '' ? 96 : 95;
+      solicitud.Referencia = JSON.stringify(referenciaUpdate);
+      await firstValueFrom(this.solicitudesCorreosService.put('solicitud', solicitud));
+
+      this.popUpManager.showSuccessAlert(this.translate.instant('solicitudes_correos.resumen_asignacion', {
+        asignados,
+        total: asignaciones.length,
+        existentes: yaTenianUsuario.size,
+      }));
+    } catch (error) {
+      console.error('Error al asignar correos:', error);
+      this.popUpManager.showErrorAlert(this.translate.instant('solicitudes_correos.error_asignacion'));
+    }
   }
 
   toggleFormVisibility(): void {
