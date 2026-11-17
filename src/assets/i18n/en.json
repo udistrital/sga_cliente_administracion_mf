@@ -650,6 +650,9 @@
     "opciones": "Options",
     "archivo": "Select file",
     "aceptar": "Accept"
+  },
+  "ERROR": {
+    "rol_insuficiente_titulo": "The user does not have permissions",
+    "rol_insuficiente": "The user does not have sufficient permissions to use the system."
   }
-
 }

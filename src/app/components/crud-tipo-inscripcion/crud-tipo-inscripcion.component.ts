@@ -11,9 +11,10 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 
 @Component({
-  selector: 'udistrital-crud-tipo-inscripcion',
-  templateUrl: './crud-tipo-inscripcion.component.html',
-  styleUrls: ['./crud-tipo-inscripcion.component.scss']
+    selector: 'udistrital-crud-tipo-inscripcion',
+    templateUrl: './crud-tipo-inscripcion.component.html',
+    styleUrls: ['./crud-tipo-inscripcion.component.scss'],
+    standalone: false
 })
 export class CrudTipoInscripcionComponent implements OnInit{
   tipo_inscripcion_id!: number;
