@@ -15,12 +15,12 @@ const routes: Routes = [
 
   {
     path: "lista",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: ListTipoInscripcionComponent
   },
   {
     path: "crear",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: CrudTipoInscripcionComponent
   },
   {
@@ -35,22 +35,22 @@ const routes: Routes = [
   },
   {
     path: "correo-institucional",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: CorreoUdnetComponent
   },
   {
     path: "inscripcion/lista",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: ListTipoInscripcionComponent
   },
   {
     path: "inscripcion/crear",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: CrudTipoInscripcionComponent
   },
   {
     path: "inscripcion/soporte",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: SoporteConfiguracionComponent
   }
 ];
