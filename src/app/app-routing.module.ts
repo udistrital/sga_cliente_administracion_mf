@@ -3,7 +3,6 @@ import { RouterModule, Routes, provideRouter } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { provideSingleSpa } from 'single-spa-angular';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { AppComponent } from './app.component';
 import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion/crud-tipo-inscripcion.component';
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
 import { SoporteConfiguracionComponent } from './components/soporte-configuracion/soporte-configuracion/soporte-configuracion.component';
@@ -16,7 +15,7 @@ const routes: Routes = [
 
   {
     path: "lista",
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: ListTipoInscripcionComponent
   },
   {
@@ -33,11 +32,6 @@ const routes: Routes = [
     path: "opcion",
 //    canActivate: [AuthGuard],
     component: DefinirOpcionProyectoComponent
-  },
-  {
-    path: "lista",
-    canActivate: [AuthGuard],
-    component: AppComponent
   },
   {
     path: "correo-institucional",
@@ -58,11 +52,6 @@ const routes: Routes = [
     path: "inscripcion/soporte",
     canActivate: [AuthGuard],
     component: SoporteConfiguracionComponent
-  },
-  {
-    path: "inscripcion/lista",
-    canActivate: [AuthGuard],
-    component: AppComponent
   }
 ];
 

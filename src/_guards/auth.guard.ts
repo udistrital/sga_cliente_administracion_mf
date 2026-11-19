@@ -4,8 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, filter, interval, map, of, take, timeout } from 'rxjs';
 import { PopUpManager } from '../app/managers/popUpManager';
 
-// El core puede limpiar y volver a pedir el menú al cargar la página,
-// así que se espera un tiempo prudente a que quede en localStorage.
 const MENU_POLL_MS = 200;
 const MENU_TIMEOUT_MS = 10000;
 
@@ -28,7 +26,6 @@ export class AuthGuard implements CanActivate {
         if (menuPermisos != null && checkUrlExists(menuPermisos, path, params)) {
           return true;
         }
-        // translate.get espera a que cargue el archivo de idioma antes de mostrar el aviso
         this.translate.get('ERROR.rol_insuficiente_titulo').subscribe((message: string) => {
           this.popUpManager.showErrorAlert(message);
         });
