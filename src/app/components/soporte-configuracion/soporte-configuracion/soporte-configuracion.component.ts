@@ -19,7 +19,7 @@ export class SoporteConfiguracionComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  
+
   soporte: boolean = true
   resumen: boolean = false
   folderTagtoReload!: string;
@@ -29,7 +29,7 @@ export class SoporteConfiguracionComponent {
 
 
   constructor(
-    private dialog: MatDialog, 
+    private dialog: MatDialog,
     private admisionServices: SgaAdmisionesMid,
     private popUpManager: PopUpManager,
     private translate: TranslateService,
@@ -61,16 +61,16 @@ export class SoporteConfiguracionComponent {
   async documento(option: string) {
     const soporte: any = await this.recuperarSoporte();
     if (option == "ver") {
-      this.VisualizarPdf(soporte.data.pdf);
+      this.VisualizarPdf(soporte.Data.pdf);
     } else {
-      this.downloadPdf(soporte.data.pdf, "Soporte.pdf");
+      this.downloadPdf(soporte.Data.pdf, "Soporte.pdf");
     }
   }
 
   recuperarSoporte() {
     return new Promise((resolve, reject) => {
-      this.admisionServices.get("/admision/soporte/40/2").subscribe((res: any) => {
-        if (res.status == 200 && res.success == true) {
+      this.admisionServices.get("admision/soporte/40/2").subscribe((res: any) => {
+        if (res.Status == 200 && res.Success == true) {
           resolve(res);
         } else {
           this.popUpManager.showErrorToast(this.translate.instant('ERROR.general'));
@@ -113,11 +113,8 @@ export class SoporteConfiguracionComponent {
   }
 
   visualizarSoporte(valor: boolean) {
-    console.log("fds")
-    console.log(this.soporte)
     this.soporte = !valor
     this.resumen = valor
-    console.log(this.soporte)
   }
 
   applyFilter(event: Event) {

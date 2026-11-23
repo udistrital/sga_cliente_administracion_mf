@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+:host(.tarjeta) {
+  margin: 16px;
+  padding: 8px 16px 16px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 8px 8px;
+}
+
+.titulo {
+  margin: 0 0 20px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #02547c;
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 4px;
+}
+
+.campos mat-form-field {
+  width: 100%;
+}
+
+.campo-ancho {
+  grid-column: span 2;
+}
+
+.campo-completo {
+  grid-column: 1 / -1;
+}
+
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 4px 0 20px;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.boton-cancelar {
+  --mat-button-filled-container-color: var(--danger-base);
+  --mat-button-filled-label-text-color: white;
+  --mat-button-filled-state-layer-color: white;
+  --mat-button-filled-ripple-color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+  .campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campo-ancho {
+    grid-column: auto;
+  }
+}

@@ -25,6 +25,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { CrudTipoInscripcionComponent } from './components/crud-tipo-inscripcion/crud-tipo-inscripcion.component';
 import { ListTipoInscripcionComponent } from './components/list-tipo-inscripcion/list-tipo-inscripcion.component';
@@ -51,9 +52,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CorreoUdnetComponent } from './components/correo-udnet/correo-udnet.component';
+import { CargandoComponent } from './components/cargando/cargando.component';
 import { SolicitudesCorreosService } from './services/solicitudes_correos.service';
 import { CorreoInscripcionMidService } from './services/correo_inscripcion_mid.service';
 import { AuthGuard } from '../_guards/auth.guard';
+import { PaginatorIntl } from './utils/paginator-intl';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, environment.apiUrl+'assets/i18n/', '.json');
@@ -69,7 +72,8 @@ export function createTranslateLoader(http: HttpClient) {
     ResumenConfiguracionComponent,
     VisualizarSoporteDocumento,
     DefinirOpcionProyectoComponent,
-    CorreoUdnetComponent
+    CorreoUdnetComponent,
+    CargandoComponent
   ],
   imports: [
     MatTabsModule,
@@ -100,6 +104,7 @@ export function createTranslateLoader(http: HttpClient) {
     MatMenuModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatSlideToggleModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -126,6 +131,7 @@ export function createTranslateLoader(http: HttpClient) {
     SolicitudesCorreosService,
     CorreoInscripcionMidService, // Asegúrate de incluir el servicio aquí
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerUtilInterceptor, multi: true },
+    { provide: MatPaginatorIntl, useClass: PaginatorIntl },
     provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]

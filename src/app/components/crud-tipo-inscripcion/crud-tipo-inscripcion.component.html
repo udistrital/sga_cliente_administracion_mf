@@ -1,2 +1,51 @@
-<ngx-dinamicform [normalform]="formTipoInscripcion" [modeloData]="info_tipo_inscripcion" (result)="validarForm($event)" [clean]="clean">
-</ngx-dinamicform>
+<form [formGroup]="form" (ngSubmit)="guardar()" class="formulario">
+  <h3 class="titulo">
+    {{ (esEdicion ? 'tipo_inscripcion.editar_titulo' : 'tipo_inscripcion.crear_titulo') | translate }}
+  </h3>
+
+  <div class="campos">
+    <mat-form-field appearance="outline" class="campo-ancho">
+      <mat-label>{{ 'GLOBAL.nombre_inscripcion' | translate }}</mat-label>
+      <input matInput formControlName="Nombre" [placeholder]="'GLOBAL.placeholder_nombre_inscripcion' | translate">
+      <mat-error>{{ 'tipo_inscripcion.campo_obligatorio' | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'GLOBAL.codigo_abreviacion' | translate }}</mat-label>
+      <input matInput formControlName="CodigoAbreviacion" [placeholder]="'GLOBAL.placeholder_codigo_abreviacion' | translate">
+      <mat-error>{{ 'tipo_inscripcion.campo_obligatorio' | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="campo-completo">
+      <mat-label>{{ 'GLOBAL.descripcion' | translate }}</mat-label>
+      <textarea matInput rows="2" formControlName="Descripcion" [placeholder]="'GLOBAL.placeholder_descripcion' | translate"></textarea>
+      <mat-error>{{ 'tipo_inscripcion.campo_obligatorio' | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'GLOBAL.nivel' | translate }}</mat-label>
+      <mat-select formControlName="NivelId">
+        @for (nivel of niveles; track nivel.Id) {
+          <mat-option [value]="nivel.Id">{{ nivel.Nombre }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>{{ 'tipo_inscripcion.campo_obligatorio' | translate }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'GLOBAL.numero_orden' | translate }}</mat-label>
+      <input matInput type="number" formControlName="NumeroOrden" [placeholder]="'GLOBAL.placeholder_numero_orden' | translate">
+      <mat-error>{{ 'tipo_inscripcion.campo_obligatorio' | translate }}</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="opciones">
+    <mat-slide-toggle formControlName="Activo" color="primary">{{ 'GLOBAL.activo' | translate }}</mat-slide-toggle>
+    <mat-slide-toggle formControlName="Especial" color="primary">{{ 'GLOBAL.cupos_especiales' | translate }}</mat-slide-toggle>
+  </div>
+
+  <div class="acciones">
+    <button mat-flat-button type="button" class="boton-cancelar" (click)="onCancelar()">{{ 'GLOBAL.cancelar' | translate }}</button>
+    <button mat-flat-button color="primary" type="submit">{{ 'GLOBAL.guardar' | translate }}</button>
+  </div>
+</form>

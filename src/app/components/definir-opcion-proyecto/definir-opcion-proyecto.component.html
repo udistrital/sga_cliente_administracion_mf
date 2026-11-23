@@ -1,40 +1,50 @@
 <mat-card class="card">
-  <mat-card-header>
-    <mat-card-title>{{ 'opcion.titulo1' | translate }}</mat-card-title>
-  </mat-card-header>
   <mat-card-content>
-    <form >
-      <mat-form-field appearance="fill">
-        <mat-label>{{ 'opcion.periodo' | translate }}</mat-label>
-        <mat-select [(ngModel)]="nivel" name="nivel" (selectionChange)="selectNivel()" required>
-          @for (anno of annos; track anno) {
-            <mat-option [value]="anno.Id">{{ anno.Nombre }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    <form class="formulario">
+      <h3 class="titulo">{{ 'opcion.titulo1' | translate }}</h3>
 
-      <mat-form-field appearance="fill">
-        <mat-label>{{ 'opcion.opciones' | translate }}</mat-label>
-        <mat-select [(ngModel)]="opciones" name="opciones" required>
-          @for (opcion of opcionesList; track opcion) {
-            <mat-option [value]="opcion">{{ opcion }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <div class="campos">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'opcion.periodo' | translate }}</mat-label>
+          <mat-select [(ngModel)]="nivel" name="nivel" (selectionChange)="selectNivel()" required>
+            @for (anno of annos; track anno) {
+              <mat-option [value]="anno.Id">{{ anno.Nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-      <mat-card class="card-documento">
-        <mat-card-header>
-          <mat-card-title>{{ 'opcion.titulo2' | translate }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <button mat-raised-button color="primary" (click)="fileInput.click()">{{ 'opcion.archivo' | translate }}</button>
-          <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" required>
-          @if (fileName) {
-            <span class="file-name">{{ fileName }}</span>
-          }
-        </mat-card-content>
-      </mat-card>
-      <button mat-raised-button color="primary" [disabled]="!isFormValid()" (click)="onSubmit()">{{ 'opcion.aceptar' | translate }}</button>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'opcion.opciones' | translate }}</mat-label>
+          <mat-select [(ngModel)]="opciones" name="opciones" required>
+            @for (opcion of opcionesList; track opcion) {
+              <mat-option [value]="opcion">{{ opcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <h4 class="subtitulo">{{ 'opcion.titulo2' | translate }}</h4>
+      <div class="zona-archivo" [class.con-archivo]="fileName">
+        <mat-icon class="icono-subir">cloud_upload</mat-icon>
+        @if (fileName) {
+          <div class="archivo-seleccionado">
+            <mat-icon class="icono-archivo">description</mat-icon>
+            <span class="nombre-archivo">{{ fileName }}</span>
+            <button mat-icon-button type="button" class="boton-quitar" (click)="quitarArchivo(fileInput)"
+              [matTooltip]="'opcion.quitar_archivo' | translate">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        } @else {
+          <span class="sin-archivo">{{ 'opcion.sin_archivo' | translate }}</span>
+        }
+        <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">{{ 'opcion.archivo' | translate }}</button>
+        <input #fileInput type="file" (change)="onFileSelected($event)" hidden>
+      </div>
+
+      <div class="acciones">
+        <button mat-flat-button color="primary" type="button" [disabled]="!isFormValid()" (click)="onSubmit()">{{ 'opcion.aceptar' | translate }}</button>
+      </div>
     </form>
   </mat-card-content>
 </mat-card>
